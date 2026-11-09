@@ -31,8 +31,8 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
 
 - React 19 + Vite + TypeScript SPA in `src/`, served as Workers static assets.
 - Node 24 for all tooling (dev, build, tests' host, wrangler, CI), pinned in
-  `.nvmrc`; `engines` + `engine-strict` make npm refuse other versions. The
-  Worker itself runs on workerd, not Node.
+  `.nvmrc`; `engines` + `engineStrict` (pnpm-workspace.yaml) make pnpm refuse
+  other versions. The Worker itself runs on workerd, not Node.
 - Cloudflare Worker API in `worker/` (`/api/*`), via `@cloudflare/vite-plugin`.
 - D1 (`DB`) for items, orders, settings — schema in `migrations/`.
 - R2 (`FILES`) for receipt uploads (`receipts/`) and item photos (`photos/`).
@@ -40,14 +40,20 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
   prices) — replace via a new migration (see `docs/PLACEHOLDERS.md`) or /admin.
 - Resend for customer confirmation email (skipped when `RESEND_API_KEY` unset).
 - Domain: balloonxbros.com (registered on Cloudflare).
+- pnpm, version pinned in `packageManager` (Corepack or a plain `pnpm` picks it
+  up). Dependency install scripts are off except those in `allowBuilds`.
+  pnpm 12's `minimumReleaseAge` policy rejects lockfile entries published
+  less than a day ago. It failed CI's frozen install even though the local
+  install passed. Pick the newest version older than a day rather than
+  relaxing the policy.
 
 ## Commands
 
-- `npm run dev` — Vite + local Worker/D1/R2 (run `npm run db:migrate:local` first)
-- `npm run check` — typecheck + tests. Tests run inside workerd via
+- `pnpm run dev` — Vite + local Worker/D1/R2 (run `pnpm run db:migrate:local` first)
+- `pnpm run check` — typecheck + tests. Tests run inside workerd via
   `@cloudflare/vitest-plugin` with local D1 (migrations applied) and R2;
   `tests/api/` drives the Worker through its real entry point.
-- `npm run build` / `npm run deploy`
+- `pnpm run build` / `pnpm run deploy`
 
 ## Conventions
 

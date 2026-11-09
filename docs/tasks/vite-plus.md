@@ -13,7 +13,7 @@ dependency, with CI using the same commands.
 
 ## Design
 
-- Run `vp migrate` (or `npx --package=vite-plus@<version> vp migrate`). It
+- Run `vp migrate` (or `pnpm dlx --package=vite-plus@<version> vp migrate`). It
   updates dependencies, rewrites `vite` imports, merges tool config into
   `vite.config.ts` and rewrites scripts. Docs say most projects need manual
   fixes after.

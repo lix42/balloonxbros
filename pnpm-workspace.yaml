@@ -1,0 +1,11 @@
+# pnpm settings for this single-package repo (no workspace packages).
+
+# Refuse to install on a Node outside package.json "engines" (Node 24).
+engineStrict: true
+
+# Install scripts stay off unless a binary needs one: esbuild (Vite/wrangler's
+# bundler) and workerd (the Workers runtime for dev and tests) fetch theirs in
+# the install script.
+allowBuilds:
+  esbuild: true
+  workerd: true

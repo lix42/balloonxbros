@@ -18,11 +18,11 @@ Live at https://balloonxbros.com.
 ## Local development
 
 ```sh
-npm install
+pnpm install
 cp .dev.vars.example .dev.vars        # local admin password = localdev
-npm run db:migrate:local
-npm run dev                           # http://localhost:5173, admin at /admin
-npm run check                         # typecheck + tests
+pnpm run db:migrate:local
+pnpm run dev                          # http://localhost:5173, admin at /admin
+pnpm run check                        # typecheck + tests
 ```
 
 ## First deploy (done 2026-11-08, kept for reference)
@@ -31,12 +31,12 @@ The D1 database `balloonxbros` (id already in `wrangler.jsonc`) and the R2
 bucket `balloonxbros-files` exist. Steps that were run:
 
 ```sh
-npx wrangler login
-npm run db:migrate:remote
-npx wrangler secret put ADMIN_PASSWORD
-npx wrangler secret put SESSION_SECRET         # any long random string: openssl rand -hex 32
-npx wrangler secret put RESEND_API_KEY         # optional, see below
-npm run deploy
+pnpm exec wrangler login
+pnpm run db:migrate:remote
+pnpm exec wrangler secret put ADMIN_PASSWORD
+pnpm exec wrangler secret put SESSION_SECRET   # any long random string: openssl rand -hex 32
+pnpm exec wrangler secret put RESEND_API_KEY   # optional, see below
+pnpm run deploy
 ```
 
 `wrangler.jsonc` routes the Worker to `balloonxbros.com` and
