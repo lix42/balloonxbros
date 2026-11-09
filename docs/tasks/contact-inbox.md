@@ -1,8 +1,9 @@
 ---
 title: Contact inbox for hello@
-status: todo
+status: done
 deps: []
 summary: Cloudflare Email Routing forwards hello@balloonxbros.com to Li
+done: 2026-11-09
 ---
 # Contact inbox for hello@
 

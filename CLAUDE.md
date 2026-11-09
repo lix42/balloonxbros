@@ -14,7 +14,7 @@ https://claude.ai/artifact/XxCQyYroyUzx8EyymEZv5b
 `project/*.dc.html`). The built UI in `src/` follows it; `docs/DESIGN.md`
 records tokens and decisions. If the canvas and code disagree, ask Li which wins.
 
-## Status (as of 2026-11-08)
+## Status (as of 2026-11-09)
 
 - Live at https://balloonxbros.com (Worker `balloonxbros`, custom domains
   balloonxbros.com + www). Admin at `/admin`.
@@ -24,6 +24,12 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
   `0002_*.sql` and up. CI (`.github/workflows/deploy.yml`) applies migrations
   and deploys on push to `main` using repo secrets `CLOUDFLARE_API_TOKEN` /
   `CLOUDFLARE_ACCOUNT_ID`.
+- Email Routing on (root MX + SPF): `hello@balloonxbros.com` forwards to Li's
+  Gmail; the catch-all drops. Manage with `wrangler email routing …` or the
+  dashboard. Li's Fastmail inbox (also a verified destination) rejects mail
+  forwarded from the brand-new domain (451 "blacklisted - RLR633"), so it
+  can't be the target until Fastmail trusts balloonxbros.com. Resend's records
+  live on `send.` and `resend._domainkey`, apart from the root MX.
 - Next: content PRs (event details, real menu/prices/stock, photos in
   `public/balloons/`), then Resend domain verification.
 
