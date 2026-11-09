@@ -78,3 +78,10 @@ How each task is actually being carried out. One `##` section per task; append e
 **Updated:** 2026-11-08
 
 - 2026-11-08: filed. Goal: vp migrate; scripts and CI on vp check/test/build
+
+## api-tests
+
+**Status:** not started
+**Updated:** 2026-11-08
+
+- 2026-11-08: filed. Goal: route-level tests on local D1/R2 via @cloudflare/vitest-plugin; safety net for server-functions

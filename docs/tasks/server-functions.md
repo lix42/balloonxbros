@@ -1,7 +1,7 @@
 ---
 title: API as server functions
 status: todo
-deps: [tanstack-start]
+deps: [tanstack-start, api-tests]
 summary: move worker/ routes to Start server functions and server routes
 ---
 # API as server functions
