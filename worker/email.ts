@@ -18,7 +18,7 @@ export function confirmationEmail(order: PublicOrder, s: Settings, siteUrl: stri
 <p style="font-size:22px;font-weight:700;margin:0 0 16px">Balloon <span style="color:#D93A31">×</span> Bros</p>
 <div style="background:#fff;border-radius:18px;padding:22px;border:1px solid #E2E7F5">
 <h1 style="font-size:24px;margin:0 0 8px">Thanks, ${esc(order.name)}! We got your pre-order.</h1>
-<p style="margin:0 0 16px;line-height:1.5;color:#454B6B">Order <strong style="color:#1B1F3B">${order.id}</strong>. We'll check your donation receipt and have your balloons ready.</p>
+<p style="margin:0 0 16px;line-height:1.5;color:#454B6B">Order <strong style="color:#1B1F3B">${order.id}</strong>. We'll check your donation receipt and have your balloons ready. If anything doesn't match, we'll reach out by email or phone.</p>
 <table style="width:100%;border-collapse:collapse;font-size:15px">${rows}
 <tr><td style="padding:10px 0 0;border-top:1px solid #E2E7F5;font-weight:800">Donated</td><td style="padding:10px 0 0;border-top:1px solid #E2E7F5;text-align:right;font-weight:800">${formatCents(order.totalCents)}</td></tr></table>
 <p style="margin:18px 0 0;line-height:1.5"><strong>Pick up:</strong> ${esc(s.event_date)}, ${esc(s.event_time)} at ${esc(s.event_place)}. Just give your name at the Balloon x Bros table.</p>

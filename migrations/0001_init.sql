@@ -7,7 +7,7 @@ CREATE TABLE items (
   stock       INTEGER CHECK (stock IS NULL OR stock >= 0),
   glyph       TEXT,          -- built-in illustration key, used when no photo
   tint        TEXT,          -- tile background color
-  photo_key   TEXT,          -- R2 key of an uploaded photo
+  photo_key   TEXT,          -- R2 key of an uploaded photo, or a /static path in public/
   active      INTEGER NOT NULL DEFAULT 1,
   sort        INTEGER NOT NULL DEFAULT 0
 );
@@ -21,7 +21,7 @@ CREATE TABLE orders (
   receipt_key  TEXT NOT NULL,
   receipt_type TEXT NOT NULL,
   status       TEXT NOT NULL DEFAULT 'submitted'
-               CHECK (status IN ('submitted', 'verified', 'picked_up', 'cancelled')),
+               CHECK (status IN ('submitted', 'issue', 'verified', 'picked_up', 'cancelled')),
   admin_note   TEXT,
   email_sent   INTEGER NOT NULL DEFAULT 0,
   created_at   TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
@@ -46,7 +46,7 @@ CREATE TABLE settings (
 
 -- Placeholder content until the real details are known (see docs/DESIGN.md).
 INSERT INTO settings (key, value) VALUES
-  ('school_name', '[SCHOOL NAME]'),
+  ('school_name', 'Kirkland Middle School (KIMS)'),
   ('event_date', '[DATE]'),
   ('event_time', '[TIME]'),
   ('event_place', '[PLACE]'),

@@ -16,8 +16,7 @@
     {
       "binding": "DB",
       "database_name": "balloonxbros",
-      // Replace with the id from `wrangler d1 create balloonxbros`
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "6dea8689-d00a-458f-ba16-154865f13f84",
       "migrations_dir": "migrations"
     }
   ],

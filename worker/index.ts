@@ -190,7 +190,7 @@ async function createOrder(req: Request, env: Env, ctx: ExecutionContext): Promi
 
 // ---------- admin ----------
 
-const STATUSES: OrderStatus[] = ["submitted", "verified", "picked_up", "cancelled"];
+const STATUSES: OrderStatus[] = ["submitted", "issue", "verified", "picked_up", "cancelled"];
 
 async function handleAdmin(req: Request, env: Env, url: URL): Promise<Response> {
   const { pathname } = url;

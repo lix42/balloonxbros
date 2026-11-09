@@ -14,6 +14,7 @@ type Tab = "orders" | "menu" | "event";
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   submitted: "New",
+  issue: "Receipt issue",
   verified: "Verified",
   picked_up: "Picked up",
   cancelled: "Cancelled",
@@ -132,7 +133,7 @@ function Orders({ onAuthLost }: { onAuthLost: () => void }) {
   const toMake = useMemo(() => {
     const m = new Map<string, number>();
     for (const o of orders ?? []) {
-      if (o.status !== "submitted" && o.status !== "verified") continue;
+      if (o.status === "picked_up" || o.status === "cancelled") continue;
       for (const l of o.lines) m.set(l.name, (m.get(l.name) ?? 0) + l.qty);
     }
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
@@ -186,7 +187,17 @@ function OrderCard({ order: o, onUpdate }: { order: AdminOrder; onUpdate: (id: s
   const [note, setNote] = useState(o.adminNote ?? "");
   const next: { label: string; status: OrderStatus }[] =
     o.status === "submitted"
-      ? [{ label: "Mark verified", status: "verified" }, { label: "Cancel", status: "cancelled" }]
+      ? [
+          { label: "Mark verified", status: "verified" },
+          { label: "Receipt issue", status: "issue" },
+          { label: "Cancel", status: "cancelled" },
+        ]
+      : o.status === "issue"
+        ? [
+            { label: "Mark verified", status: "verified" },
+            { label: "Back to new", status: "submitted" },
+            { label: "Cancel", status: "cancelled" },
+          ]
       : o.status === "verified"
         ? [{ label: "Picked up", status: "picked_up" }, { label: "Back to new", status: "submitted" }]
         : o.status === "picked_up"
@@ -213,7 +224,10 @@ function OrderCard({ order: o, onUpdate }: { order: AdminOrder; onUpdate: (id: s
         ))}
       </ul>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <strong style={{ marginRight: "auto" }}>{formatCents(o.totalCents)}</strong>
+        <span style={{ marginRight: "auto" }}>
+          <span className="small">Receipt should show </span>
+          <strong>{formatCents(o.totalCents)}</strong>
+        </span>
         <a className="tab" style={{ display: "inline-flex", alignItems: "center", textDecoration: "none", color: "var(--ink)" }} href={o.receiptUrl} target="_blank" rel="noreferrer">
           View receipt
         </a>
@@ -223,6 +237,12 @@ function OrderCard({ order: o, onUpdate }: { order: AdminOrder; onUpdate: (id: s
           </button>
         ))}
       </div>
+      {o.status === "issue" && (
+        <div className="card-yellow">
+          Contact {o.name.split(" ")[0]} about the receipt: <a href={`mailto:${o.email}?subject=${encodeURIComponent(`Your Balloon x Bros pre-order ${o.id}`)}`}>email</a> or{" "}
+          <a href={`tel:${o.phone}`}>call {o.phone}</a>. Note what you found below.
+        </div>
+      )}
       <input
         className="input sm"
         placeholder="Private note (e.g. receipt amount checked)"

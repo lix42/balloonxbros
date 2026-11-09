@@ -52,7 +52,12 @@ export function toItem(r: ItemRow): Item {
     stock: r.stock,
     glyph: r.glyph,
     tint: r.tint,
-    photoUrl: r.photo_key ? `/api/files/${r.photo_key}` : null,
+    // A key starting with "/" is a static image committed under public/.
+    photoUrl: r.photo_key
+      ? r.photo_key.startsWith("/")
+        ? r.photo_key
+        : `/api/files/${r.photo_key}`
+      : null,
     active: r.active === 1,
     sort: r.sort,
   };

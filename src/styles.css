@@ -519,6 +519,7 @@ select {
   letter-spacing: 0.6px;
 }
 .status.submitted { background: #fff3cc; color: #6b4d00; }
+.status.issue { background: #fde8e7; color: #8f1f19; }
 .status.verified { background: #e1ebff; color: #163f99; }
 .status.picked_up { background: #dff4e8; color: #1e6b45; }
 .status.cancelled { background: #eceef4; color: #545a78; }

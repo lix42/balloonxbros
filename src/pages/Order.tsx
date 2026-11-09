@@ -215,6 +215,12 @@ export function Order() {
             </label>
           </div>
 
+          <div className="card-yellow">
+            <strong>Before you submit:</strong> check that your receipt shows <strong>{settings.school_name}</strong> and
+            the amount <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if something doesn't
+            match, we'll contact you by email or phone.
+          </div>
+
           <p className="small">
             Pick up your balloons at the Balloon x Bros table on {settings.event_date}. Give your name and we'll have
             them ready.

@@ -59,7 +59,7 @@ export interface OrderInput {
   lines: OrderLineInput[];
 }
 
-export type OrderStatus = "submitted" | "verified" | "picked_up" | "cancelled";
+export type OrderStatus = "submitted" | "issue" | "verified" | "picked_up" | "cancelled";
 
 export interface OrderLine {
   itemId: string;
