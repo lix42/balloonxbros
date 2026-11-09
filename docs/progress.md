@@ -18,10 +18,12 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## contact-inbox
 
-**Status:** not started
-**Updated:** 2026-11-08
+**Status:** done
+**Updated:** 2026-11-09
 
 - 2026-11-08: filed. Goal: Cloudflare Email Routing forwards hello@balloonxbros.com to Li
+- 2026-11-09: Routing set up with wrangler 4.158 (email routing, open beta): enabled on the zone (root MX route1-3.mx.cloudflare.net + SPF include:_spf.mx.cloudflare.net, DKIM cf2024-1._domainkey), destination Li's Fastmail inbox verified, rule hello@ -> it; catch-all stays off (drop). Resend's records (send. CNAME to forge.rmta.net, resend._domainkey TXT) sit apart from the root MX, no clash; no _dmarc record yet (for resend-email). Gotchas: the worktree guard rejects 'wrangler email routing enable' (reads enable as the shell builtin), so Li ran it; the rule can't be created until the destination is verified (code 2054); my network blocks port 25, so no SMTP probe. BLOCKED on delivery: Cloudflare accepts mail (SPF/DKIM/DMARC pass) but Fastmail answers 451 4.7.1 'balloonxbros.com is blacklisted - RLR633' because Cloudflare's forward uses balloonxbros.com as the envelope domain and the domain is under a day old (created 2026-11-08 20:54 UTC). Cloudflare doesn't retry, so those test mails are lost. Note for resend-email: mail from orders@balloonxbros.com to Fastmail users likely hits the same block while the domain is new.
+- 2026-11-09: Done. Workaround for the Fastmail block: added Li's Gmail as a second verified destination and pointed the hello@ rule (e1fe1f41…) at it alone; Li's Fastmail stays registered, so switching back is one 'wrangler email routing rules update'. Verified: a test from an outside account to hello@balloonxbros.com arrived in Gmail; dig MX on the public resolvers shows route1-3.mx.cloudflare.net. Follow-up options: ask Fastmail support to whitelist balloonxbros.com, or retest the Fastmail destination once the domain has some age. For launch-check: replying to a confirmation email lands in Li's Gmail.
 
 ## resend-email
 
