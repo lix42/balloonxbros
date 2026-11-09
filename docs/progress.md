@@ -83,6 +83,7 @@ How each task is actually being carried out. One `##` section per task; append e
 **Updated:** 2026-11-08
 
 - 2026-11-08: filed. Goal: vp migrate; scripts and CI on vp check/test/build
+- 2026-11-08: Implemented with vite-plus 1.5.0 (newest older than a day): vp migrate --no-interactive --no-agent --no-editor --no-hooks. It pinned vite (to @voidzero-dev/vite-plus-core) and vitest via a pnpm catalog/overrides, rewrote vite/vitest imports to vite-plus, wrapped plugins in lazyPlugins, and moved scripts to vp. Adopted Oxfmt + Oxlint (type-aware with typeCheck); generated files and the tasks-CLI docs are excluded from fmt (formatting them would fight the CLI and break tasks check). Verified vp check really type-checks: injected type errors in src/, worker/, tests/ and vite.config.ts all fail it, and so does document used in worker/ (it honours each tsconfig), so tsc -b was dropped (Li asked to confirm). check = vp check && vp test run; typecheck = vp check --no-fmt --no-lint; fix = vp check --fix. Format pass is its own commit. 5 lint warnings remain in worker/index.ts (no-base-to-string on String(x ?? ""), no-misused-spread on headers): not errors, left as is. Verified: check, build, vp dev SSR + /api, CI=true frozen install passes the release-age policy.
 
 ## api-tests
 

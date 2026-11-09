@@ -63,9 +63,9 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
 
 - `pnpm run dev` — Vite+ dev server + local Worker/D1/R2 (run
   `pnpm run db:migrate:local` first)
-- `pnpm run check` — the CI gate: `vp check` (Oxfmt format check, Oxlint,
-  type-aware type check), `tsc -b` (each tsconfig on its own, e.g. no DOM in
-  `worker/`), then tests. Tests run inside workerd via
+- `pnpm run check` — the CI gate: `vp check` (Oxfmt format check, Oxlint, and
+  a full type check of every file against its own tsconfig, e.g. no DOM in
+  `worker/`), then tests. `pnpm run typecheck` runs only the type check. Tests run inside workerd via
   `@cloudflare/vitest-plugin` with local D1 (migrations applied) and R2;
   `tests/api/` drives the Worker through its real entry point.
 - `pnpm run fix` — format and apply lint autofixes (`vp check --fix`).

@@ -28,8 +28,10 @@ dependency, with CI using the same commands.
   (`src/routeTree.gen.ts`, `worker/worker-configuration.d.ts`, `dist`,
   `.wrangler`, the lockfile) and the tasks-CLI docs (`docs/TASKS.md`,
   `docs/tasks/**`, `docs/progress.md`) are excluded, since tools write them.
-- Scripts: `check` → `vp check && tsc -b && vp test run` (`tsc -b` stays
-  because it checks each tsconfig on its own), `fix` → `vp check --fix`. CI
+- Scripts: `check` → `vp check && vp test run`, `typecheck` →
+  `vp check --no-fmt --no-lint`, `fix` → `vp check --fix`. `tsc -b` is
+  dropped: `vp check` type-checks each file against its own tsconfig (an
+  injected `document` in `worker/` fails it, as it does `tsc -b`). CI
   already calls `pnpm run check` and `pnpm run build`.
 
 ## How to Verify
