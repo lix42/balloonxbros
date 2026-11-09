@@ -1,0 +1,4 @@
+# Copy to .dev.vars for local dev
+ADMIN_PASSWORD=localdev
+SESSION_SECRET=local-session-secret-change-me
+# RESEND_API_KEY=re_...

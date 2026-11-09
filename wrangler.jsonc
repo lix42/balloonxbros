@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "balloonxbros",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  "observability": { "enabled": true },
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "routes": [
+    { "pattern": "balloonxbros.com", "custom_domain": true },
+    { "pattern": "www.balloonxbros.com", "custom_domain": true }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "balloonxbros",
+      // Replace with the id from `wrangler d1 create balloonxbros`
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    { "binding": "FILES", "bucket_name": "balloonxbros-files" }
+  ],
+  "vars": {
+    "EMAIL_FROM": "Balloon x Bros <orders@balloonxbros.com>",
+    "SITE_URL": "https://balloonxbros.com"
+  }
+  // Secrets (wrangler secret put …): ADMIN_PASSWORD, SESSION_SECRET, RESEND_API_KEY
+}
