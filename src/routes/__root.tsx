@@ -8,9 +8,10 @@ import {
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { LoadError, SiteHeader } from "../components/ui";
+import { buttonVariants } from "../components/ui/button";
 import { getMenuFn } from "../server-fns";
 import { StoreProvider } from "../store";
-import appCss from "../styles.css?url";
+import appCss from "../styles/app.css?url";
 
 export const Route = createRootRoute({
   // Load the menu once, during SSR. After that the store refreshes it itself
@@ -80,7 +81,7 @@ function RootError({ error }: ErrorComponentProps) {
   return (
     <>
       <SiteHeader />
-      <main className="page">
+      <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col">
         <LoadError
           message="Something went wrong loading this page. Please try again in a moment."
           retry={() => window.location.reload()}
@@ -92,9 +93,11 @@ function RootError({ error }: ErrorComponentProps) {
 
 function NotFound() {
   return (
-    <main className="page section stack gap-14" style={{ paddingTop: 80, textAlign: "center" }}>
-      <h1 className="h1 sm">This balloon floated away</h1>
-      <Link to="/" className="btn btn-ink">
+    <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col gap-3.5 px-5 pt-20 pb-4 text-center">
+      <h1 className="text-[34px] font-bold leading-[1.05] tracking-[-0.5px]">
+        This balloon floated away
+      </h1>
+      <Link to="/" className={buttonVariants({ variant: "ink", size: "lg" })}>
         Back to home
       </Link>
     </main>

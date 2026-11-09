@@ -1,4 +1,5 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
+import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, lazyPlugins } from "vite-plus";
@@ -22,7 +23,10 @@ export default defineConfig({
     rules: { "vite-plus/prefer-vite-plus-imports": "error" },
     options: { typeAware: true, typeCheck: true },
   },
+  // "@/…" imports (shadcn's convention) resolve through tsconfig paths.
+  resolve: { tsconfigPaths: true },
   plugins: lazyPlugins(() => [
+    tailwindcss(),
     // The Worker (Start's server entry) runs in Vite's SSR environment.
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tanstackStart(),

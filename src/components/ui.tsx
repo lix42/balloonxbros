@@ -1,5 +1,7 @@
-import type { ReactNode } from "react";
+import { cn } from "cn";
+import type { ComponentProps, ReactNode } from "react";
 import { Link, type LinkProps } from "@tanstack/react-router";
+import { buttonVariants } from "./ui/button";
 
 export function Logo({ size = 34 }: { size?: number }) {
   return (
@@ -18,8 +20,8 @@ export function Logo({ size = 34 }: { size?: number }) {
 
 export function Wordmark() {
   return (
-    <span className="wordmark">
-      Balloon <span className="x">×</span> Bros
+    <span className="font-heading text-[22px] font-bold tracking-[-0.2px]">
+      Balloon <span className="text-red">×</span> Bros
     </span>
   );
 }
@@ -91,7 +93,7 @@ export function WrenchIcon() {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      style={{ flexShrink: 0 }}
+      className="shrink-0"
     >
       <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
     </svg>
@@ -120,13 +122,17 @@ export function UploadIcon() {
 
 export function SiteHeader() {
   return (
-    <header className="topbar">
-      <div className="topbar-inner">
-        <Link to="/" className="brand" aria-label="Balloon x Bros home">
+    <header className="border-b border-line bg-surface">
+      <div className="mx-auto flex max-w-[640px] items-center justify-between gap-2 px-5 py-3.5">
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 text-ink no-underline hover:text-ink"
+          aria-label="Balloon x Bros home"
+        >
           <Logo />
           <Wordmark />
         </Link>
-        <Link to="/order" className="pill">
+        <Link to="/order" className={buttonVariants({ variant: "pill" })}>
           Pre-order
         </Link>
       </div>
@@ -144,14 +150,12 @@ export function BackHeader({
   children: ReactNode;
 }) {
   return (
-    <header className="topbar">
-      <div className="topbar-inner back">
-        <Link to={to} className="icon-btn" aria-label={label}>
+    <header className="border-b border-line bg-surface">
+      <div className="mx-auto flex max-w-[640px] items-center justify-start gap-2 py-3.5 pr-5 pl-3">
+        <Link to={to} className={buttonVariants({ variant: "icon" })} aria-label={label}>
           <ArrowLeft />
         </Link>
-        <span className="wordmark" style={{ fontSize: 20 }}>
-          {children}
-        </span>
+        <span className="font-heading text-xl font-bold tracking-[-0.2px]">{children}</span>
       </div>
     </header>
   );
@@ -159,7 +163,7 @@ export function BackHeader({
 
 export function Loading() {
   return (
-    <p className="small" style={{ padding: 40, textAlign: "center" }} role="status">
+    <p className="p-10 text-center text-[13px] text-muted" role="status">
       Loading…
     </p>
   );
@@ -167,11 +171,28 @@ export function Loading() {
 
 export function LoadError({ message, retry }: { message: string; retry: () => void }) {
   return (
-    <div className="section stack gap-10" role="alert">
-      <div className="error">{message}</div>
-      <button type="button" className="btn btn-ink" onClick={retry}>
+    <div className="flex flex-col gap-2.5 px-5 py-4" role="alert">
+      <ErrorBox>{message}</ErrorBox>
+      <button
+        type="button"
+        className={buttonVariants({ variant: "ink", size: "lg" })}
+        onClick={retry}
+      >
         Try again
       </button>
     </div>
+  );
+}
+
+/** Inline error message (form and load errors). */
+export function ErrorBox({ className, ...props }: ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "rounded-lg bg-error-bg px-3.5 py-3 text-sm font-bold text-error-text",
+        className,
+      )}
+      {...props}
+    />
   );
 }

@@ -1,0 +1,96 @@
+/* Tailwind v4 + shadcn (Base UI). The design tokens come from docs/DESIGN.md;
+   the Claude Design canvas is the visual source of truth. shadcn components
+   use the semantic variables below (--primary, --border, --ring, …), which
+   map onto those tokens. There is no dark mode. */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  /* type: Fredoka for headings/wordmark, Nunito for body */
+  --font-sans: Nunito, system-ui, sans-serif;
+  --font-heading: Fredoka, Nunito, system-ui, sans-serif;
+
+  /* design tokens */
+  --color-ground: #f4f7ff;
+  --color-surface: #ffffff;
+  --color-line: #e2e7f5;
+  --color-line-strong: #c9d1ea;
+  --color-ink: #1b1f3b;
+  --color-ink-hover: #2a2f55;
+  --color-ink-2: #454b6b;
+  --color-muted: #545a78;
+  --color-red: #d93a31;
+  --color-red-hover: #c3322a;
+  --color-red-text: #c2332b;
+  --color-blue: #2e6be6;
+  --color-link: #2257c9;
+  --color-link-hover: #163f99;
+  --color-yellow: #f2a900;
+  --color-yellow-tint: #fff3cc;
+  --color-yellow-on-navy: #ffd166;
+  --color-green-text: #1e7a50;
+  --color-error-bg: #fde8e7;
+  --color-error-text: #8f1f19;
+
+  /* shadcn semantic colours → tokens */
+  --color-background: var(--color-ground);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary: var(--color-red);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-ink);
+  --color-secondary-foreground: #ffffff;
+  --color-muted-foreground: var(--color-muted);
+  --color-accent: var(--color-yellow-tint);
+  --color-accent-foreground: var(--color-ink);
+  --color-destructive: var(--color-red);
+  --color-border: var(--color-line);
+  --color-input: var(--color-line-strong);
+  --color-ring: var(--color-blue);
+
+  /* The old CSS set line-height 1.5 on body and everything inherited it;
+     Tailwind's text-* sizes bring their own, so match the old value. */
+  --text-xs--line-height: 1.5;
+  --text-sm--line-height: 1.5;
+  --text-base--line-height: 1.5;
+  --text-lg--line-height: 1.5;
+  --text-xl--line-height: 1.5;
+  --text-2xl--line-height: 1.5;
+
+  /* radii: inputs 12px, tiles 18px, cards 18–22px, pills full */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --radius-3xl: 22px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background font-sans text-base/normal text-foreground;
+  }
+  /* Links keep the browser underline (Tailwind's preflight removes it);
+     buttonVariants turn it off for button-styled links. */
+  a {
+    @apply text-link underline hover:text-link-hover;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-heading leading-[1.1];
+  }
+  :focus-visible {
+    @apply outline-3 outline-offset-2 outline-blue;
+  }
+}

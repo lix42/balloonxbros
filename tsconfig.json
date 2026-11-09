@@ -1,4 +1,6 @@
 {
+  // Only for tools that read aliases from here (shadcn); each project sets its own.
+  "compilerOptions": { "paths": { "@/*": ["./src/*"] } },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

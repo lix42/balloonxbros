@@ -36,6 +36,15 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
   Start's default server entry is the Worker (`wrangler.jsonc` `main`).
   Server-only code uses `env`/`waitUntil` from `cloudflare:workers`; never
   touch `window`/`localStorage` during render.
+- Styling: Tailwind v4 (Vite plugin) with shadcn on Base UI. Theme in
+  `src/styles/app.css`: the `docs/DESIGN.md` tokens as colours (`ground`,
+  `ink`, `red`, `link`, …), Fredoka/Nunito, radii, and shadcn's semantic
+  variables mapped onto them. Site variants of shadcn parts live in
+  `src/components/ui/` (`buttonVariants`: red/ink/pill/link/icon/tab;
+  `Input` 48px/44px; `Checkbox`). Add components with
+  `pnpm dlx shadcn@<version> add <name>`, then restyle to the tokens. Base
+  UI's `Button` defaults to `type="button"`: pass `type="submit"` in forms.
+  No dark mode.
 - Node 24 for all tooling (dev, build, tests' host, wrangler, CI), pinned in
   `.nvmrc`; `engines` + `engineStrict` (pnpm-workspace.yaml) make pnpm refuse
   other versions. The Worker itself runs on workerd, not Node.

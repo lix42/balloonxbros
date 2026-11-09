@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   formatCents,
@@ -8,7 +9,10 @@ import {
 } from "../../shared/types";
 import { ApiError, api } from "../api";
 import { GLYPH_KEYS, ItemArt } from "../components/Glyph";
-import { Logo } from "../components/ui";
+import { ErrorBox, Logo } from "../components/ui";
+import { Button, buttonVariants } from "../components/ui/button";
+import { Checkbox } from "../components/ui/checkbox";
+import { Input, inputVariants } from "../components/ui/input";
 
 type Tab = "orders" | "menu" | "event";
 
@@ -19,6 +23,23 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
   picked_up: "Picked up",
   cancelled: "Cancelled",
 };
+
+const STATUS_CLASS: Record<OrderStatus, string> = {
+  submitted: "bg-[#fff3cc] text-[#6b4d00]",
+  issue: "bg-[#fde8e7] text-[#8f1f19]",
+  verified: "bg-[#e1ebff] text-[#163f99]",
+  picked_up: "bg-[#dff4e8] text-[#1e6b45]",
+  cancelled: "bg-[#eceef4] text-[#545a78]",
+};
+
+const cardClass = "rounded-2xl border border-line bg-surface p-4";
+const fieldClass = "flex min-w-0 flex-col gap-1.5 text-sm font-extrabold";
+const itemFieldClass = "flex min-w-0 flex-col gap-1.5 text-xs font-extrabold";
+const smallClass = "text-[13px] text-muted";
+const selectSmClass = inputVariants({ size: "sm" });
+// Site checkbox: 22px (20px in the item editor), ink when checked.
+const checkboxClass =
+  "size-[22px] rounded-md border-2 border-line-strong bg-white data-checked:border-ink data-checked:bg-ink data-checked:text-white";
 
 export function Admin() {
   const [authed, setAuthed] = useState<boolean | null>(null);
@@ -35,37 +56,35 @@ export function Admin() {
   if (!authed) return <Login onDone={() => setAuthed(true)} />;
 
   return (
-    <div className="admin">
-      <header className="topbar">
-        <div className="topbar-inner">
-          <span className="brand">
+    <div>
+      <header className="border-b border-line bg-surface">
+        <div className="mx-auto flex max-w-[980px] items-center justify-between gap-2 px-5 py-3.5">
+          <span className="flex items-center gap-2.5 text-ink">
             <Logo size={28} />
-            <span className="wordmark" style={{ fontSize: 19 }}>
-              Admin
-            </span>
+            <span className="font-heading text-[19px] font-bold tracking-[-0.2px]">Admin</span>
           </span>
-          <button
+          <Button
             type="button"
-            className="pill"
-            style={{ background: "#fff", cursor: "pointer" }}
+            variant="pill"
+            className="bg-white hover:bg-white"
             onClick={() => api.admin.logout().finally(() => setAuthed(false))}
           >
             Log out
-          </button>
+          </Button>
         </div>
       </header>
-      <main className="page section stack gap-14">
-        <div className="tabs" role="toolbar" aria-label="Sections">
+      <main className="mx-auto flex min-h-screen w-full max-w-[980px] flex-col gap-3.5 px-5 py-4">
+        <div className="flex flex-wrap gap-1.5" role="toolbar" aria-label="Sections">
           {(["orders", "menu", "event"] as Tab[]).map((t) => (
-            <button
+            <Button
               key={t}
               type="button"
-              className="tab"
+              variant="tab"
               aria-pressed={tab === t}
               onClick={() => setTab(t)}
             >
               {t === "orders" ? "Orders" : t === "menu" ? "Balloons" : "Event"}
-            </button>
+            </Button>
           ))}
         </div>
         {tab === "orders" && <Orders onAuthLost={() => setAuthed(false)} />}
@@ -94,14 +113,15 @@ function Login({ onDone }: { onDone: () => void }) {
     }
   };
   return (
-    <main className="page section stack gap-14" style={{ maxWidth: 420, paddingTop: 80 }}>
+    <main className="mx-auto flex min-h-screen w-full max-w-[420px] flex-col gap-3.5 px-5 pt-20 pb-4">
       <Logo size={40} />
-      <h1 className="h1 sm">Balloon x Bros admin</h1>
-      <form className="stack gap-14" onSubmit={submit}>
-        <label className="field">
+      <h1 className="text-[34px] leading-[1.05] font-bold tracking-[-0.5px]">
+        Balloon x Bros admin
+      </h1>
+      <form className="flex flex-col gap-3.5" onSubmit={submit}>
+        <label className={fieldClass}>
           Password
-          <input
-            className="input"
+          <Input
             type="password"
             autoComplete="current-password"
             value={password}
@@ -110,13 +130,13 @@ function Login({ onDone }: { onDone: () => void }) {
           />
         </label>
         {error && (
-          <div className="error" role="alert">
-            {error}
+          <div role="alert">
+            <ErrorBox>{error}</ErrorBox>
           </div>
         )}
-        <button className="btn btn-ink" disabled={busy}>
+        <Button type="submit" variant="ink" size="lg" disabled={busy}>
           {busy ? "Checking…" : "Log in"}
-        </button>
+        </Button>
       </form>
     </main>
   );
@@ -175,32 +195,21 @@ function Orders({ onAuthLost }: { onAuthLost: () => void }) {
     }
   };
 
-  if (error) return <div className="error">{error}</div>;
-  if (!orders) return <p className="small">Loading orders…</p>;
+  if (error) return <ErrorBox>{error}</ErrorBox>;
+  if (!orders) return <p className={smallClass}>Loading orders…</p>;
 
   return (
-    <div className="stack gap-14">
-      <div className="info-tiles">
-        <div className="info-tile">
-          <span className="label">Orders</span>
-          <strong>{totals.count}</strong>
-        </div>
-        <div className="info-tile">
-          <span className="label">Balloons</span>
-          <strong>{totals.balloons}</strong>
-        </div>
-        <div className="info-tile">
-          <span className="label">Raised</span>
-          <strong>{formatCents(totals.cents)}</strong>
-        </div>
+    <div className="flex flex-col gap-3.5">
+      <div className="mt-1.5 grid grid-cols-3 gap-2">
+        <InfoTile label="Orders" value={totals.count} />
+        <InfoTile label="Balloons" value={totals.balloons} />
+        <InfoTile label="Raised" value={formatCents(totals.cents)} />
       </div>
 
       {toMake.length > 0 && (
-        <details className="card">
-          <summary style={{ fontWeight: 800, cursor: "pointer", minHeight: 28 }}>
-            Still to make
-          </summary>
-          <ul style={{ margin: "8px 0 0", paddingLeft: 18 }}>
+        <details className={cardClass}>
+          <summary className="min-h-7 cursor-pointer font-extrabold">Still to make</summary>
+          <ul className="mt-2 list-disc pl-[18px]">
             {toMake.map(([name, n]) => (
               <li key={name}>
                 {n} × {name}
@@ -210,18 +219,17 @@ function Orders({ onAuthLost }: { onAuthLost: () => void }) {
         </details>
       )}
 
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <input
-          className="input sm"
-          style={{ flex: "1 1 200px" }}
+      <div className="flex flex-wrap items-center gap-2">
+        <Input
+          size="sm"
+          className="flex-[1_1_200px]"
           placeholder="Search name, email, phone, code"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           aria-label="Search orders"
         />
         <select
-          className="input sm"
-          style={{ width: "auto" }}
+          className={cn(selectSmClass, "w-auto")}
           value={filter}
           onChange={(e) => setFilter(e.target.value as OrderStatus | "all")}
           aria-label="Filter by status"
@@ -233,15 +241,26 @@ function Orders({ onAuthLost }: { onAuthLost: () => void }) {
             </option>
           ))}
         </select>
-        <button type="button" className="tab" onClick={load}>
+        <Button type="button" variant="tab" onClick={load}>
           Refresh
-        </button>
+        </Button>
       </div>
 
-      {shown.length === 0 && <p className="small">No orders yet.</p>}
+      {shown.length === 0 && <p className={smallClass}>No orders yet.</p>}
       {shown.map((o) => (
         <OrderCard key={o.id} order={o} onUpdate={update} />
       ))}
+    </div>
+  );
+}
+
+function InfoTile({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex flex-col gap-0.5 rounded-xl border border-line bg-surface p-3">
+      <span className="text-[11px] font-extrabold tracking-[0.8px] text-muted uppercase">
+        {label}
+      </span>
+      <strong className="text-sm [overflow-wrap:anywhere]">{value}</strong>
     </div>
   );
 }
@@ -277,45 +296,38 @@ function OrderCard({
             : [{ label: "Restore", status: "submitted" }];
 
   return (
-    <article className="card stack gap-10">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: 8,
-          flexWrap: "wrap",
-          alignItems: "center",
-        }}
-      >
-        <strong style={{ fontSize: 17 }}>{o.name}</strong>
-        <span className={`status ${o.status}`}>{STATUS_LABEL[o.status]}</span>
+    <article className={cn(cardClass, "flex flex-col gap-2.5")}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <strong className="text-[17px]">{o.name}</strong>
+        <span
+          className={cn(
+            "rounded-full px-2.5 py-[3px] text-xs font-extrabold tracking-[0.6px] uppercase",
+            STATUS_CLASS[o.status],
+          )}
+        >
+          {STATUS_LABEL[o.status]}
+        </span>
       </div>
-      <div className="small">
+      <div className={smallClass}>
         {o.id} · {new Date(o.createdAt).toLocaleString()} ·{" "}
         <a href={`mailto:${o.email}`}>{o.email}</a> · <a href={`tel:${o.phone}`}>{o.phone}</a>
         {!o.emailSent && " · email not sent"}
       </div>
-      <ul style={{ margin: 0, paddingLeft: 18 }}>
+      <ul className="m-0 list-disc pl-[18px]">
         {o.lines.map((l) => (
           <li key={l.itemId}>
             {l.qty} × {l.name}
-            {l.note && <span className="small"> — {l.note}</span>}
+            {l.note && <span className={smallClass}> — {l.note}</span>}
           </li>
         ))}
       </ul>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <span style={{ marginRight: "auto" }}>
-          <span className="small">Receipt should show </span>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="mr-auto">
+          <span className={smallClass}>Receipt should show </span>
           <strong>{formatCents(o.totalCents)}</strong>
         </span>
         <a
-          className="tab"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            textDecoration: "none",
-            color: "var(--ink)",
-          }}
+          className={cn(buttonVariants({ variant: "tab" }), "text-ink hover:text-ink")}
           href={o.receiptUrl}
           target="_blank"
           rel="noreferrer"
@@ -323,18 +335,18 @@ function OrderCard({
           View receipt
         </a>
         {next.map((n) => (
-          <button
+          <Button
             key={n.status}
             type="button"
-            className="tab"
+            variant="tab"
             onClick={() => onUpdate(o.id, { status: n.status })}
           >
             {n.label}
-          </button>
+          </Button>
         ))}
       </div>
       {o.status === "issue" && (
-        <div className="card-yellow">
+        <div className="rounded-[16px] bg-yellow-tint px-4 py-3.5 text-sm text-[#3d3420]">
           Contact {o.name.split(" ")[0]} about the receipt:{" "}
           <a
             href={`mailto:${o.email}?subject=${encodeURIComponent(`Your Balloon x Bros pre-order ${o.id}`)}`}
@@ -344,8 +356,8 @@ function OrderCard({
           or <a href={`tel:${o.phone}`}>call {o.phone}</a>. Note what you found below.
         </div>
       )}
-      <input
-        className="input sm"
+      <Input
+        size="sm"
         placeholder="Private note (e.g. receipt amount checked)"
         value={note}
         onChange={(e) => setNote(e.target.value)}
@@ -364,22 +376,21 @@ function Menu() {
   useEffect(() => {
     api.admin.items().then((r) => setItems(r.items), alertError);
   }, []);
-  if (!items) return <p className="small">Loading balloons…</p>;
+  if (!items) return <p className={smallClass}>Loading balloons…</p>;
 
   const save = (id: string, patch: Partial<Item>) =>
     api.admin.updateItem(id, patch).then((r) => setItems(r.items), alertError);
 
   return (
-    <div className="stack gap-14">
-      <p className="small">
+    <div className="flex flex-col gap-3.5">
+      <p className={smallClass}>
         Changes save when you leave a field. Leave stock empty for unlimited (regular menu).
       </p>
       {items.map((i) => (
         <ItemEditor key={i.id} item={i} onSave={save} onItems={setItems} />
       ))}
       <form
-        className="card"
-        style={{ display: "flex", gap: 8, flexWrap: "wrap" }}
+        className={cn(cardClass, "flex flex-wrap gap-2")}
         onSubmit={(e) => {
           e.preventDefault();
           if (!newId.trim()) return;
@@ -389,15 +400,17 @@ function Menu() {
           }, alertError);
         }}
       >
-        <input
-          className="input sm"
-          style={{ flex: "1 1 200px" }}
+        <Input
+          size="sm"
+          className="flex-[1_1_200px]"
           placeholder="New balloon name"
           value={newId}
           onChange={(e) => setNewId(e.target.value)}
           aria-label="New balloon name"
         />
-        <button className="tab">Add balloon</button>
+        <Button type="submit" variant="tab">
+          Add balloon
+        </Button>
       </form>
     </div>
   );
@@ -417,25 +430,28 @@ function ItemEditor({
   const [stock, setStock] = useState(item.stock === null ? "" : String(item.stock));
 
   return (
-    <div className="card item-row">
-      <div className="thumb" style={{ background: item.tint ?? "#E1EBFF", width: 56, height: 56 }}>
+    <div className={cn(cardClass, "grid grid-cols-[56px_minmax(0,1fr)] items-start gap-3")}>
+      <div
+        className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-xl [&_img]:size-full [&_img]:object-cover [&>svg]:h-auto [&>svg]:w-3/4"
+        style={{ background: item.tint ?? "#E1EBFF" }}
+      >
         <ItemArt item={item} />
       </div>
-      <div className="stack gap-10">
-        <div className="item-fields">
-          <label className="field" style={{ fontSize: 12 }}>
+      <div className="flex flex-col gap-2.5">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-2">
+          <label className={itemFieldClass}>
             Name
-            <input
-              className="input sm"
+            <Input
+              size="sm"
               value={name}
               onChange={(e) => setName(e.target.value)}
               onBlur={() => name !== item.name && onSave(item.id, { name })}
             />
           </label>
-          <label className="field" style={{ fontSize: 12 }}>
+          <label className={itemFieldClass}>
             Price ($)
-            <input
-              className="input sm"
+            <Input
+              size="sm"
               inputMode="decimal"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
@@ -446,10 +462,10 @@ function ItemEditor({
               }}
             />
           </label>
-          <label className="field" style={{ fontSize: 12 }}>
+          <label className={itemFieldClass}>
             Stock
-            <input
-              className="input sm"
+            <Input
+              size="sm"
               inputMode="numeric"
               placeholder="unlimited"
               value={stock}
@@ -460,10 +476,10 @@ function ItemEditor({
               }}
             />
           </label>
-          <label className="field" style={{ fontSize: 12 }}>
+          <label className={itemFieldClass}>
             Section
             <select
-              className="input sm"
+              className={selectSmClass}
               value={item.category}
               onChange={(e) => onSave(item.id, { category: e.target.value as Item["category"] })}
             >
@@ -471,10 +487,10 @@ function ItemEditor({
               <option value="limited">Limited edition</option>
             </select>
           </label>
-          <label className="field" style={{ fontSize: 12 }}>
+          <label className={itemFieldClass}>
             Drawing
             <select
-              className="input sm"
+              className={selectSmClass}
               value={item.glyph ?? ""}
               onChange={(e) => onSave(item.id, { glyph: e.target.value })}
             >
@@ -486,36 +502,27 @@ function ItemEditor({
               ))}
             </select>
           </label>
-          <label className="field" style={{ fontSize: 12 }}>
+          <label className={itemFieldClass}>
             Tile color
-            <input
-              className="input sm"
+            <Input
+              size="sm"
               type="color"
+              className="p-1"
               value={item.tint ?? "#E1EBFF"}
               onChange={(e) => onSave(item.id, { tint: e.target.value })}
-              style={{ padding: 4 }}
             />
           </label>
         </div>
-        <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
-          <label
-            style={{
-              display: "flex",
-              gap: 8,
-              alignItems: "center",
-              fontWeight: 700,
-              minHeight: 44,
-            }}
-          >
-            <input
-              type="checkbox"
+        <div className="flex flex-wrap items-center gap-3.5">
+          <label className="flex min-h-11 items-center gap-2 font-bold">
+            <Checkbox
+              className={cn(checkboxClass, "size-5")}
               checked={item.active}
-              onChange={(e) => onSave(item.id, { active: e.target.checked })}
-              style={{ width: 20, height: 20 }}
+              onCheckedChange={(checked) => onSave(item.id, { active: checked })}
             />
             Show on site
           </label>
-          <label className="link-btn" style={{ position: "relative" }}>
+          <label className={cn(buttonVariants({ variant: "link" }), "relative")}>
             {item.photoUrl ? "Replace photo" : "Upload photo"}
             <input
               type="file"
@@ -552,11 +559,11 @@ function EventSettings() {
   useEffect(() => {
     api.admin.settings().then((r) => setS(r.settings), alertError);
   }, []);
-  if (!s) return <p className="small">Loading…</p>;
+  if (!s) return <p className={smallClass}>Loading…</p>;
 
   return (
     <form
-      className="card stack gap-14"
+      className={cn(cardClass, "flex flex-col gap-3.5")}
       onSubmit={(e) => {
         e.preventDefault();
         api.admin.saveSettings(s).then((r) => {
@@ -566,28 +573,23 @@ function EventSettings() {
         }, alertError);
       }}
     >
-      <label
-        style={{ display: "flex", gap: 10, alignItems: "center", fontWeight: 800, minHeight: 44 }}
-      >
-        <input
-          type="checkbox"
+      <label className="flex min-h-11 items-center gap-2.5 font-extrabold">
+        <Checkbox
+          className={checkboxClass}
           checked={s.orders_open === "1"}
-          onChange={(e) => setS({ ...s, orders_open: e.target.checked ? "1" : "0" })}
-          style={{ width: 22, height: 22 }}
+          onCheckedChange={(checked) => setS({ ...s, orders_open: checked ? "1" : "0" })}
         />
         Pre-orders are open
       </label>
       {SETTING_FIELDS.map((f) => (
-        <label key={f.key} className="field">
+        <label key={f.key} className={fieldClass}>
           {f.label}
-          <input
-            className="input"
-            value={s[f.key]}
-            onChange={(e) => setS({ ...s, [f.key]: e.target.value })}
-          />
+          <Input value={s[f.key]} onChange={(e) => setS({ ...s, [f.key]: e.target.value })} />
         </label>
       ))}
-      <button className="btn btn-ink">{saved ? "Saved" : "Save event details"}</button>
+      <Button type="submit" variant="ink" size="lg">
+        {saved ? "Saved" : "Save event details"}
+      </Button>
     </form>
   );
 }

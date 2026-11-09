@@ -1,12 +1,18 @@
 import { useState, type DragEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { cn } from "cn";
 import { formatCents, MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "../../shared/types";
 import { ApiError, api } from "../api";
 import { ItemArt } from "../components/Glyph";
-import { ArrowRight, BackHeader, LoadError, Loading, UploadIcon } from "../components/ui";
+import { ArrowRight, BackHeader, ErrorBox, LoadError, Loading, UploadIcon } from "../components/ui";
+import { buttonVariants } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 import { useStore } from "../store";
 
 export const LAST_ORDER_KEY = "bxb-last-order";
+
+const stepperButton =
+  "size-11 cursor-pointer rounded-full border-none bg-transparent text-[22px] font-bold hover:bg-[#e6ebfa]";
 
 function CartRow({ itemId }: { itemId: string }) {
   const { lines, setQty, setNote } = useStore();
@@ -17,28 +23,35 @@ function CartRow({ itemId }: { itemId: string }) {
   const atMax = item.stock !== null && qty >= item.stock;
 
   return (
-    <li className="card stack gap-10" style={{ padding: 14 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div className="thumb" style={{ background: item.tint ?? "#E1EBFF" }}>
+    <li className="flex flex-col gap-2.5 rounded-2xl border border-line bg-surface p-3.5">
+      <div className="flex items-center gap-3">
+        <div
+          className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-xl [&_img]:size-full [&_img]:object-cover [&>svg]:h-auto [&>svg]:w-3/4"
+          style={{ background: item.tint ?? "#E1EBFF" }}
+        >
           <ItemArt item={item} />
         </div>
-        <div className="stack" style={{ flex: 1, minWidth: 0, gap: 2 }}>
-          <span style={{ fontWeight: 800 }}>{item.name}</span>
-          <span className="small" style={{ fontWeight: 700 }}>
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="font-extrabold">{item.name}</span>
+          <span className="text-[13px] font-bold text-muted">
             {formatCents(item.priceCents)} each{item.stock !== null ? ` · ${item.stock} left` : ""}
           </span>
         </div>
-        <div className="stepper">
+        <div className="flex items-center gap-0.5 rounded-full bg-ground p-0.5">
           <button
             type="button"
+            className={stepperButton}
             onClick={() => setQty(item.id, qty - 1)}
             aria-label={`One less ${item.name}`}
           >
             −
           </button>
-          <span aria-live="polite">{qty}</span>
+          <span className="min-w-5 text-center font-extrabold" aria-live="polite">
+            {qty}
+          </span>
           <button
             type="button"
+            className={stepperButton}
             onClick={() => setQty(item.id, qty + 1)}
             disabled={atMax}
             aria-label={`One more ${item.name}`}
@@ -48,10 +61,11 @@ function CartRow({ itemId }: { itemId: string }) {
         </div>
       </div>
       {noteOpen ? (
-        <label className="field" style={{ fontSize: 13, color: "var(--ink-2)" }}>
+        <label className="flex min-w-0 flex-col gap-1.5 text-[13px] font-extrabold text-ink-2">
           Note for this balloon
-          <input
-            className="input sm"
+          <Input
+            size="sm"
+            className="text-ink-2"
             value={note}
             maxLength={200}
             placeholder="e.g. blue ears, please"
@@ -61,8 +75,7 @@ function CartRow({ itemId }: { itemId: string }) {
       ) : (
         <button
           type="button"
-          className="link-btn"
-          style={{ alignSelf: "flex-start" }}
+          className={cn(buttonVariants({ variant: "link" }), "self-start")}
           onClick={() => setNoteOpen(true)}
         >
           + Add note (color, name…)
@@ -168,13 +181,15 @@ export function Order() {
     return (
       <>
         {header}
-        <main className="page section stack gap-14">
-          <h1 className="h1 sm">Pre-orders are closed</h1>
-          <p className="lede">
+        <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col gap-3.5 px-5 py-4">
+          <h1 className="text-[34px] leading-[1.05] font-bold tracking-[-0.5px]">
+            Pre-orders are closed
+          </h1>
+          <p className="text-base text-ink-2">
             Come see us at {settings.event_place} on {settings.event_date} — we'll twist balloons on
             the spot.
           </p>
-          <Link to="/" className="btn btn-ink">
+          <Link to="/" className={buttonVariants({ variant: "ink", size: "lg" })}>
             Back to home
           </Link>
         </main>
@@ -185,49 +200,50 @@ export function Order() {
   return (
     <>
       {header}
-      <main className="page">
-        <section className="section stack gap-10" style={{ paddingTop: 20 }}>
+      <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col">
+        <section className="flex flex-col gap-2.5 px-5 pt-5 pb-4">
           {count === 0 ? (
-            <div className="card stack gap-10" style={{ textAlign: "center", padding: 24 }}>
-              <span style={{ fontWeight: 800 }}>Your order is empty</span>
-              <Link to="/" className="btn btn-ink">
+            <div className="flex flex-col gap-2.5 rounded-2xl border border-line bg-surface p-6 text-center">
+              <span className="font-extrabold">Your order is empty</span>
+              <Link to="/" className={buttonVariants({ variant: "ink", size: "lg" })}>
                 Pick some balloons
               </Link>
             </div>
           ) : (
-            <ul className="stack gap-10" style={{ margin: 0, padding: 0, listStyle: "none" }}>
+            <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
               {lines.map((l) => (
                 <CartRow key={l.item.id} itemId={l.item.id} />
               ))}
             </ul>
           )}
           {count > 0 && (
-            <Link to="/" className="link-btn">
+            <Link to="/" className={cn(buttonVariants({ variant: "link" }), "justify-start")}>
               + Add more balloons
             </Link>
           )}
         </section>
 
-        <section className="section" style={{ paddingTop: 6 }}>
-          <div className="card-navy stack gap-14" style={{ borderRadius: 20, padding: 18 }}>
-            <div
-              style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}
-            >
-              <span style={{ fontWeight: 700, color: "#C9D1EA" }}>
+        <section className="px-5 pt-1.5 pb-4">
+          <div className="flex flex-col gap-3.5 rounded-[20px] bg-ink p-[18px] text-white [&_a]:text-white">
+            <div className="flex items-baseline justify-between">
+              <span className="font-bold text-[#c9d1ea]">
                 {count} balloon{count === 1 ? "" : "s"}
               </span>
-              <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 26 }}>
+              <span className="font-heading text-[26px] font-semibold">
                 {formatCents(totalCents)}
               </span>
             </div>
-            <p style={{ fontSize: 15 }}>
+            <p className="text-[15px]">
               Please follow the steps to donate <strong>{formatCents(totalCents)}</strong> to the
               school, then drop your receipt below.
             </p>
             <Link
               to="/donate"
-              className="link-btn"
-              style={{ color: "var(--yellow-on-navy)", fontSize: 15 }}
+              className={cn(
+                buttonVariants({ variant: "link" }),
+                // ! beats the card's [&_a]:text-white and the hover colour, as the old inline style did
+                "justify-start text-[15px] text-yellow-on-navy!",
+              )}
             >
               Show me the donation steps <ArrowRight size={16} />
             </Link>
@@ -235,16 +251,14 @@ export function Order() {
         </section>
 
         <form
-          className="section stack gap-14"
-          style={{ paddingBottom: 40 }}
+          className="flex flex-col gap-3.5 px-5 pt-4 pb-10"
           onSubmit={submit}
           noValidate={false}
         >
-          <h2 className="h2">Your details</h2>
-          <label className="field">
+          <h2 className="text-[22px] font-semibold">Your details</h2>
+          <label className="flex min-w-0 flex-col gap-1.5 text-sm font-extrabold">
             Name
-            <input
-              className="input"
+            <Input
               required
               maxLength={80}
               autoComplete="name"
@@ -253,11 +267,10 @@ export function Order() {
               onChange={(e) => setName(e.target.value)}
             />
           </label>
-          <div className="grid-2">
-            <label className="field">
+          <div className="grid grid-cols-2 gap-2.5">
+            <label className="flex min-w-0 flex-col gap-1.5 text-sm font-extrabold">
               Email
-              <input
-                className="input"
+              <Input
                 required
                 type="email"
                 maxLength={254}
@@ -268,10 +281,9 @@ export function Order() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </label>
-            <label className="field">
+            <label className="flex min-w-0 flex-col gap-1.5 text-sm font-extrabold">
               Phone
-              <input
-                className="input"
+              <Input
                 required
                 type="tel"
                 maxLength={30}
@@ -283,12 +295,15 @@ export function Order() {
             </label>
           </div>
 
-          <div className="stack gap-6">
-            <span style={{ fontSize: 14, fontWeight: 800 }} id="receipt-label">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-extrabold" id="receipt-label">
               Donation receipt
             </span>
             <label
-              className={`dropzone${drag ? " drag" : ""}`}
+              className={cn(
+                "relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-[#7f8bb3] bg-white px-[18px] py-[26px] text-center focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-blue",
+                drag && "border-blue bg-[#eef3ff]",
+              )}
               onDragOver={(e) => {
                 e.preventDefault();
                 setDrag(true);
@@ -299,23 +314,22 @@ export function Order() {
               <UploadIcon />
               {receipt ? (
                 <>
-                  <span
-                    style={{ fontWeight: 800, color: "var(--green-text)", wordBreak: "break-all" }}
-                  >
-                    {receipt.name}
-                  </span>
-                  <span className="small" style={{ fontWeight: 700, color: "var(--link)" }}>
+                  <span className="font-extrabold break-all text-green-text">{receipt.name}</span>
+                  <span className="text-[13px] font-bold text-link">
                     Tap to choose a different file
                   </span>
                 </>
               ) : (
                 <>
-                  <span style={{ fontWeight: 800 }}>Drop your receipt here</span>
-                  <span className="small">or tap to choose: screenshot, photo or PDF</span>
+                  <span className="font-extrabold">Drop your receipt here</span>
+                  <span className="text-[13px] text-muted">
+                    or tap to choose: screenshot, photo or PDF
+                  </span>
                 </>
               )}
               <input
                 type="file"
+                className="absolute inset-0 cursor-pointer opacity-0"
                 accept="image/*,.pdf,application/pdf"
                 aria-labelledby="receipt-label"
                 onChange={(e) => pickFile(e.target.files?.[0])}
@@ -323,27 +337,27 @@ export function Order() {
             </label>
           </div>
 
-          <div className="card-yellow">
+          <div className="rounded-[16px] bg-yellow-tint px-4 py-3.5 text-sm text-[#3d3420]">
             <strong>Before you submit:</strong> check that your receipt shows{" "}
             <strong>{settings.school_name}</strong> and the amount{" "}
             <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if
             something doesn't match, we'll contact you by email or phone.
           </div>
 
-          <p className="small">
+          <p className="text-[13px] text-muted">
             Pick up your balloons at the Balloon x Bros table on {settings.event_date}. Give your
             name and we'll have them ready.
           </p>
 
           {error && (
-            <div className="error" role="alert">
-              {error}
+            <div role="alert">
+              <ErrorBox>{error}</ErrorBox>
             </div>
           )}
 
           <button
             type="submit"
-            className="btn btn-red btn-block"
+            className={buttonVariants({ variant: "red", size: "lg", block: true })}
             disabled={submitting || count === 0}
           >
             {submitting ? "Sending…" : "Submit pre-order"}

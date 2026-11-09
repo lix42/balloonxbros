@@ -1,8 +1,20 @@
 import { Link } from "@tanstack/react-router";
+import { cn } from "cn";
 import { formatCents, type Item } from "../../shared/types";
 import { ItemArt } from "../components/Glyph";
 import { ArrowRight, LoadError, MegaphoneIcon, SiteHeader, WrenchIcon } from "../components/ui";
+import { buttonVariants } from "../components/ui/button";
 import { useStore } from "../store";
+
+const badge =
+  "absolute top-2 inline-flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px] text-[12px] font-extrabold";
+const label = "font-extrabold tracking-[0.8px] text-muted uppercase";
+const stepItem = "flex flex-col gap-1.5 text-[13px] leading-[1.35] font-bold";
+const stepNum =
+  "inline-flex size-7 shrink-0 items-center justify-center rounded-full text-[14px] font-extrabold text-white";
+const infoTile = "flex flex-col gap-0.5 rounded-xl border border-line bg-surface p-3";
+const infoValue = "text-[14px] [overflow-wrap:anywhere]";
+const menuGrid = "grid grid-cols-3 gap-2.5 min-[560px]:grid-cols-4 min-[560px]:gap-3.5";
 
 function Tile({ item }: { item: Item }) {
   const { cart, add } = useStore();
@@ -13,18 +25,29 @@ function Tile({ item }: { item: Item }) {
   const tint = item.tint ?? "#E1EBFF";
 
   return (
-    <div className={`tile${soldOut ? " soldout" : ""}`}>
-      <div className="tile-art" style={{ background: tint }}>
+    <div className="flex flex-col gap-1.5">
+      <div
+        className={cn(
+          "relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl [&_img]:size-full [&_img]:object-cover [&>svg]:h-auto [&>svg]:w-[64%]",
+          soldOut && "bg-[#c9cee0] [&_img]:opacity-35 [&_svg]:opacity-35",
+        )}
+        style={soldOut ? undefined : { background: tint }}
+      >
         <ItemArt item={item} />
         {limited && (
-          <span className={`badge ${soldOut ? "" : "yellow"}`}>
+          <span
+            className={cn(
+              badge,
+              "right-2",
+              soldOut ? "bg-ink text-white" : "bg-yellow-on-navy text-ink",
+            )}
+          >
             {soldOut ? "Sold out" : `${item.stock} left`}
           </span>
         )}
         {inCart > 0 && (
           <span
-            className="badge"
-            style={limited ? { left: 8, right: "auto" } : undefined}
+            className={cn(badge, "bg-ink text-white", limited ? "left-2" : "right-2")}
             aria-label={`${inCart} in your order`}
           >
             {inCart}
@@ -32,7 +55,7 @@ function Tile({ item }: { item: Item }) {
         )}
         <button
           type="button"
-          className="tile-add"
+          className="absolute bottom-1.5 left-1.5 size-11 cursor-pointer rounded-lg border-none bg-white text-2xl leading-none font-bold text-ink shadow-[0_1px_2px_rgba(27,31,59,0.18)] active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-45"
           onClick={() => add(item.id)}
           disabled={soldOut || atMax}
           aria-label={soldOut ? `${item.name} is sold out` : `Add ${item.name}`}
@@ -40,8 +63,10 @@ function Tile({ item }: { item: Item }) {
           +
         </button>
       </div>
-      <span className="tile-name">{item.name}</span>
-      <span className="tile-price">{formatCents(item.priceCents)}</span>
+      <span className="text-[14px] leading-[1.2] font-extrabold">{item.name}</span>
+      <span className={cn("text-[13px] font-bold text-muted", soldOut && "line-through")}>
+        {formatCents(item.priceCents)}
+      </span>
     </div>
   );
 }
@@ -63,38 +88,39 @@ export function Home() {
   return (
     <>
       <SiteHeader />
-      <main className="page">
-        <section className="section stack gap-14" style={{ paddingTop: 28 }}>
-          <p className="eyebrow">Fundraiser for {settings.school_name}</p>
-          <h1 className="h1">Twisted balloons, made by kids, for our school.</h1>
-          <p className="lede">
+      <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col">
+        <section className="flex flex-col gap-3.5 px-5 pt-7 pb-4">
+          <p className="text-[13px] font-extrabold tracking-[1.2px] text-red-text uppercase">
+            Fundraiser for {settings.school_name}
+          </p>
+          <h1 className="text-[40px] leading-[1.05] font-bold tracking-[-0.5px]">
+            Twisted balloons, made by kids, for our school.
+          </h1>
+          <p className="text-base text-ink-2">
             Pre-order your favorites and pick them up ready-made, or come by and we'll twist one for
             you on the spot.
           </p>
-          <div className="info-tiles">
-            <div className="info-tile">
-              <span className="label">When</span>
-              <strong>{settings.event_date}</strong>
+          <div className="mt-1.5 grid grid-cols-3 gap-2">
+            <div className={infoTile}>
+              <span className={cn(label, "text-[11px]")}>When</span>
+              <strong className={infoValue}>{settings.event_date}</strong>
             </div>
-            <div className="info-tile">
-              <span className="label">Time</span>
-              <strong>{settings.event_time}</strong>
+            <div className={infoTile}>
+              <span className={cn(label, "text-[11px]")}>Time</span>
+              <strong className={infoValue}>{settings.event_time}</strong>
             </div>
-            <div className="info-tile">
-              <span className="label">Where</span>
-              <strong>{settings.event_place}</strong>
+            <div className={infoTile}>
+              <span className={cn(label, "text-[11px]")}>Where</span>
+              <strong className={infoValue}>{settings.event_place}</strong>
             </div>
           </div>
         </section>
 
-        <section className="section">
-          <div className="card-navy stack gap-10">
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <section className="px-5 py-4">
+          <div className="flex flex-col gap-2.5 rounded-3xl bg-ink p-5 text-white [&_a]:text-white">
+            <div className="flex items-center gap-2">
               <MegaphoneIcon />
-              <span
-                className="label"
-                style={{ color: "var(--yellow-on-navy)", fontSize: 12, letterSpacing: 1.2 }}
-              >
+              <span className="text-[12px] font-extrabold tracking-[1.2px] text-yellow-on-navy uppercase">
                 Announcement
               </span>
             </div>
@@ -108,44 +134,42 @@ export function Home() {
                 Pre-orders are closed. Come see us at the event — we'll twist balloons on the spot!
               </p>
             )}
-            <Link to="/donate" className="link-btn" style={{ color: "#fff", fontSize: 15 }}>
+            <Link
+              to="/donate"
+              className={cn(
+                buttonVariants({ variant: "link" }),
+                "text-[15px] text-white hover:text-white",
+              )}
+            >
               See the donation steps <ArrowRight size={16} />
             </Link>
           </div>
         </section>
 
-        <section className="section stack gap-10">
-          <h2 className="h2">How pre-ordering works</h2>
-          <ol className="steps-3">
-            <li>
-              <span className="num" style={{ background: "var(--red)" }}>
-                1
-              </span>
+        <section className="flex flex-col gap-2.5 px-5 py-4">
+          <h2 className="text-[22px] font-semibold">How pre-ordering works</h2>
+          <ol className="m-0 grid list-none grid-cols-3 gap-2 p-0">
+            <li className={stepItem}>
+              <span className={cn(stepNum, "bg-red")}>1</span>
               Pick your balloons
             </li>
-            <li>
-              <span className="num" style={{ background: "var(--blue)" }}>
-                2
-              </span>
+            <li className={stepItem}>
+              <span className={cn(stepNum, "bg-blue")}>2</span>
               Donate to the school &amp; upload the receipt
             </li>
-            <li>
-              <span className="num" style={{ background: "var(--ink)" }}>
-                3
-              </span>
+            <li className={stepItem}>
+              <span className={cn(stepNum, "bg-ink")}>3</span>
               Pick them up at the event
             </li>
           </ol>
         </section>
 
-        <section className="section stack gap-14" style={{ paddingTop: 22 }}>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-            <h2 className="h2">The balloon menu</h2>
-            <span className="small" style={{ fontWeight: 700 }}>
-              Tap + to add
-            </span>
+        <section className="flex flex-col gap-3.5 px-5 pt-[22px] pb-4">
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-[22px] font-semibold">The balloon menu</h2>
+            <span className="text-[13px] font-bold text-muted">Tap + to add</span>
           </div>
-          <div className="menu-grid">
+          <div className={menuGrid}>
             {menu.map((i) => (
               <Tile key={i.id} item={i} />
             ))}
@@ -153,16 +177,12 @@ export function Home() {
         </section>
 
         {limited.length > 0 && (
-          <section className="section stack gap-14" style={{ paddingTop: 22 }}>
-            <div
-              style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}
-            >
-              <h2 className="h2">Limited edition</h2>
-              <span className="small" style={{ fontWeight: 700 }}>
-                Only a few made
-              </span>
+          <section className="flex flex-col gap-3.5 px-5 pt-[22px] pb-4">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-[22px] font-semibold">Limited edition</h2>
+              <span className="text-[13px] font-bold text-muted">Only a few made</span>
             </div>
-            <div className="menu-grid">
+            <div className={menuGrid}>
               {limited.map((i) => (
                 <Tile key={i.id} item={i} />
               ))}
@@ -170,14 +190,12 @@ export function Home() {
           </section>
         )}
 
-        <section className="section" style={{ paddingTop: 22 }}>
-          <div className="custom-card">
+        <section className="px-5 pt-[22px] pb-4">
+          <div className="flex items-start gap-3.5 rounded-[20px] border-2 border-dashed border-[#9aa6cc] bg-surface p-[18px]">
             <WrenchIcon />
-            <div className="stack" style={{ gap: 4 }}>
-              <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 18 }}>
-                Want something custom?
-              </span>
-              <span style={{ fontSize: 14, color: "var(--ink-2)" }}>
+            <div className="flex flex-col gap-1">
+              <span className="font-heading text-[18px] font-semibold">Want something custom?</span>
+              <span className="text-[14px] text-ink-2">
                 Skip the pre-order and visit our table. We'll twist balloons on the spot while you
                 wait, as long as supplies last.
               </span>
@@ -185,22 +203,25 @@ export function Home() {
           </div>
         </section>
 
-        <footer className="section small" style={{ paddingBottom: 28 }}>
+        <footer className="px-5 pt-4 pb-7 text-[13px] text-muted">
           Balloon x Bros is a student fundraiser. Questions? Email{" "}
-          <a href={`mailto:${settings.contact_email}`}>{settings.contact_email}</a>
+          <a href={`mailto:${settings.contact_email}`} className="underline">
+            {settings.contact_email}
+          </a>
         </footer>
 
         {open && (
-          <div className="order-bar">
-            <div className="stack" style={{ flex: 1 }}>
-              <span className="label" style={{ fontSize: 12 }}>
-                Your order
-              </span>
-              <span style={{ fontWeight: 800 }} aria-live="polite">
+          <div className="sticky bottom-0 mt-auto flex items-center gap-3 border-t border-line bg-surface px-5 pt-3.5 pb-[calc(18px+env(safe-area-inset-bottom))]">
+            <div className="flex flex-1 flex-col">
+              <span className={cn(label, "text-[12px]")}>Your order</span>
+              <span className="font-extrabold" aria-live="polite">
                 {count === 0 ? "Nothing yet" : `${count} balloon${count === 1 ? "" : "s"}`}
               </span>
             </div>
-            <Link to="/order" className="btn btn-red">
+            <Link
+              to="/order"
+              className={cn(buttonVariants({ variant: "red", size: "md" }), "px-7")}
+            >
               Order <ArrowRight />
             </Link>
           </div>

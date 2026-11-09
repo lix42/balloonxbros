@@ -61,6 +61,8 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 
 ## Visual tokens
 
+Implemented as the Tailwind theme in `src/styles/app.css`.
+
 | Token      | Value                                                     | Use                                       |
 | ---------- | --------------------------------------------------------- | ----------------------------------------- |
 | ground     | `#F4F7FF`                                                 | page background                           |

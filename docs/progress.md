@@ -74,10 +74,12 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## tailwind-shadcn
 
-**Status:** not started
+**Status:** done
 **Updated:** 2026-11-08
 
 - 2026-11-08: filed. Goal: Tailwind v4, shadcn on Base UI, DESIGN.md tokens as theme; restyle pages
+- 2026-11-08: Implemented. Tailwind 4.3.5 + shadcn 4.23.0 (base-nova, Base UI 1.9.0). Theme tokens in src/styles/app.css; shared Button/Input/Checkbox restyled; pages converted in parallel (Home/Donate/Done, Order, Admin) from a class→utility map. Gotchas found by pixel-diffing against baseline screenshots of the old site at 390px: Tailwind text-* sizes set their own line-height (old inherited 1.5) → theme line-heights 1.5; preflight removes link underlines and list bullets → base a underline, list-disc; a ul nested in an ol defaults to circle bullets; preflight recolours placeholders → #757575; buttonVariants base had justify-center/whitespace-nowrap the old .link-btn/.btn lacked; Base UI Button defaults type=button (submit buttons need type=submit). Result: every screen pixel-identical except the admin checkboxes (shadcn Checkbox, intended). Lighthouse a11y 100 on Home and Order. Flows re-tested: order submit, admin login via Enter, checkbox save both ways.
+- 2026-11-08: Done (#11). Review: bugs and security clean; docs fixes (spec Dialog/cn wording, dark: tokens dropped from Checkbox, Admin class constants camelCase). Pixel diff vs old site identical except the admin checkboxes; Lighthouse a11y 100 (Home, Order).
 
 ## vite-plus
 
