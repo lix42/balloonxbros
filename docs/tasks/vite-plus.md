@@ -1,8 +1,9 @@
 ---
 title: Migrate to Vite+
-status: doing
+status: done
 deps: [pnpm, tanstack-start]
 summary: vp migrate; scripts and CI on vp check/test/build
+done: "2026-11-08 #9"
 ---
 # Migrate to Vite+
 
@@ -28,16 +29,18 @@ dependency, with CI using the same commands.
   (`src/routeTree.gen.ts`, `worker/worker-configuration.d.ts`, `dist`,
   `.wrangler`, the lockfile) and the tasks-CLI docs (`docs/TASKS.md`,
   `docs/tasks/**`, `docs/progress.md`) are excluded, since tools write them.
-- Scripts: `check` → `vp check && vp test run`, `typecheck` →
-  `vp check --no-fmt --no-lint`, `fix` → `vp check --fix`. `tsc -b` is
-  dropped: `vp check` type-checks each file against its own tsconfig (an
-  injected `document` in `worker/` fails it, as it does `tsc -b`). CI
+- Scripts: `check` → `vp check && tsc -b && vp test run`, `typecheck` →
+  `tsc -b`, `fix` → `vp check --fix`. `vp check` does type-check (an injected
+  `document` in `worker/` fails it), but it checks a file under only one
+  tsconfig: `shared/` sits in the app, worker and tests projects and is
+  checked only with the DOM lib, so `document` in `shared/` passes `vp check`
+  and fails `tsc -b`. The Worker bundles `shared/`, so `tsc -b` stays. CI
   already calls `pnpm run check` and `pnpm run build`.
 
 ## How to Verify
 
-- `pnpm install`, then `vp check`, `vp test`, `vp build` pass; `vp dev` serves
-  the site with local D1/R2.
+- `pnpm install`, then `vp check`, `vp test run`, `vp build` pass;
+  `vp dev` serves the site with local D1/R2.
 - CI green on the PR; production deploy after merge works (smoke-load Home,
   submit nothing).
 - `grep -rn '"vite"\|from "vite"' package.json vite.config.ts` shows only what
