@@ -14,5 +14,5 @@
     "noUnusedParameters": true,
     "types": ["vite/client"]
   },
-  "include": ["src", "shared"]
+  "include": ["src", "shared", "worker/worker-configuration.d.ts", "worker/env.d.ts"]
 }

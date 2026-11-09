@@ -1,9 +1,9 @@
 import { useState, type DragEvent, type FormEvent } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { formatCents, MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "../../shared/types";
 import { ApiError, api } from "../api";
 import { ItemArt } from "../components/Glyph";
 import { ArrowRight, BackHeader, LoadError, Loading, UploadIcon } from "../components/ui";
-import { Link, navigate } from "../router";
 import { useStore } from "../store";
 
 export const LAST_ORDER_KEY = "bxb-last-order";
@@ -56,7 +56,7 @@ function CartRow({ itemId }: { itemId: string }) {
 
 export function Order() {
   const store = useStore();
-  const { settings, items, loadError, reload, lines, count, totalCents, clearCart } = store;
+  const { settings, loadError, reload, lines, count, totalCents, clearCart, cartReady } = store;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -64,10 +64,12 @@ export function Order() {
   const [drag, setDrag] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
 
-  const header = <BackHeader href="/" label="Back to the balloon menu">Your pre-order</BackHeader>;
+  const header = <BackHeader to="/" label="Back to the balloon menu">Your pre-order</BackHeader>;
   if (loadError) return <>{header}<LoadError message={loadError} retry={reload} /></>;
-  if (!settings || !items) return <>{header}<Loading /></>;
+  // Wait for the saved cart so the page doesn't flash "your order is empty".
+  if (!cartReady) return <>{header}<Loading /></>;
 
   const pickFile = (f: File | undefined | null) => {
     if (!f) return;
@@ -95,8 +97,9 @@ export function Order() {
     if (!receipt) return setError("Please attach your donation receipt.");
     setError(null);
     setSubmitting(true);
+    let res: Awaited<ReturnType<typeof api.submitOrder>>;
     try {
-      const res = await api.submitOrder(
+      res = await api.submitOrder(
         {
           name,
           email,
@@ -105,16 +108,26 @@ export function Order() {
         },
         receipt,
       );
-      sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(res));
-      clearCart();
-      reload();
-      navigate(`/order/${res.order.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       if (err instanceof ApiError && err.status === 409) reload(); // stock changed
-    } finally {
       setSubmitting(false);
+      return;
     }
+    // The order went through: nothing below may report it as a failure.
+    try {
+      sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(res));
+    } catch {
+      /* private mode: the confirmation page falls back to the generic text */
+    }
+    // Clear the cart once we've left this page, so it never flashes "empty".
+    navigate({ to: "/order/$code", params: { code: res.order.id } })
+      .catch((err: unknown) => console.error("navigate", err))
+      .finally(() => {
+        clearCart();
+        reload();
+        setSubmitting(false);
+      });
   };
 
   if (settings.orders_open !== "1") {
@@ -124,7 +137,7 @@ export function Order() {
         <main className="page section stack gap-14">
           <h1 className="h1 sm">Pre-orders are closed</h1>
           <p className="lede">Come see us at {settings.event_place} on {settings.event_date} — we'll twist balloons on the spot.</p>
-          <Link href="/" className="btn btn-ink">Back to home</Link>
+          <Link to="/" className="btn btn-ink">Back to home</Link>
         </main>
       </>
     );
@@ -138,7 +151,7 @@ export function Order() {
           {count === 0 ? (
             <div className="card stack gap-10" style={{ textAlign: "center", padding: 24 }}>
               <span style={{ fontWeight: 800 }}>Your order is empty</span>
-              <Link href="/" className="btn btn-ink">Pick some balloons</Link>
+              <Link to="/" className="btn btn-ink">Pick some balloons</Link>
             </div>
           ) : (
             <ul className="stack gap-10" style={{ margin: 0, padding: 0, listStyle: "none" }}>
@@ -146,7 +159,7 @@ export function Order() {
             </ul>
           )}
           {count > 0 && (
-            <Link href="/" className="link-btn">+ Add more balloons</Link>
+            <Link to="/" className="link-btn">+ Add more balloons</Link>
           )}
         </section>
 
@@ -160,7 +173,7 @@ export function Order() {
               Please follow the steps to donate <strong>{formatCents(totalCents)}</strong> to the school, then drop your
               receipt below.
             </p>
-            <Link href="/donate" className="link-btn" style={{ color: "var(--yellow-on-navy)", fontSize: 15 }}>
+            <Link to="/donate" className="link-btn" style={{ color: "var(--yellow-on-navy)", fontSize: 15 }}>
               Show me the donation steps <ArrowRight size={16} />
             </Link>
           </div>

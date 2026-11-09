@@ -11,6 +11,9 @@ export default defineConfig(async () => ({
   plugins: [
     cloudflareTest({
       wrangler: { configPath: here("wrangler.jsonc") },
+      // The API handler itself: src/server.ts needs Start's Vite plugin to
+      // build, and it only forwards /api/* to this module anyway.
+      main: here("worker/index.ts"),
       miniflare: {
         bindings: {
           ADMIN_PASSWORD: "test-password",

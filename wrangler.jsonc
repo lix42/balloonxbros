@@ -1,13 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "balloonxbros",
-  "main": "worker/index.ts",
+  // TanStack Start renders pages; src/server.ts hands /api/* to worker/index.ts.
+  // The Cloudflare Vite plugin adds the built client assets at build time.
+  "main": "src/server.ts",
   "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
-  "assets": {
-    "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
-  },
   "routes": [
     { "pattern": "balloonxbros.com", "custom_domain": true },
     { "pattern": "www.balloonxbros.com", "custom_domain": true }

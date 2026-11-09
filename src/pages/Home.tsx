@@ -1,7 +1,7 @@
+import { Link } from "@tanstack/react-router";
 import { formatCents, type Item } from "../../shared/types";
 import { ItemArt } from "../components/Glyph";
-import { ArrowRight, LoadError, Loading, MegaphoneIcon, SiteHeader, WrenchIcon } from "../components/ui";
-import { Link } from "../router";
+import { ArrowRight, LoadError, MegaphoneIcon, SiteHeader, WrenchIcon } from "../components/ui";
 import { useStore } from "../store";
 
 function Tile({ item }: { item: Item }) {
@@ -43,7 +43,6 @@ function Tile({ item }: { item: Item }) {
 export function Home() {
   const { items, settings, loadError, reload, count } = useStore();
   if (loadError) return <><SiteHeader /><LoadError message={loadError} retry={reload} /></>;
-  if (!items || !settings) return <><SiteHeader /><Loading /></>;
 
   const menu = items.filter((i) => i.category === "menu");
   const limited = items.filter((i) => i.category === "limited");
@@ -82,7 +81,7 @@ export function Home() {
             ) : (
               <p>Pre-orders are closed. Come see us at the event — we'll twist balloons on the spot!</p>
             )}
-            <Link href="/donate" className="link-btn" style={{ color: "#fff", fontSize: 15 }}>
+            <Link to="/donate" className="link-btn" style={{ color: "#fff", fontSize: 15 }}>
               See the donation steps <ArrowRight size={16} />
             </Link>
           </div>
@@ -145,7 +144,7 @@ export function Home() {
                 {count === 0 ? "Nothing yet" : `${count} balloon${count === 1 ? "" : "s"}`}
               </span>
             </div>
-            <Link href="/order" className="btn btn-red">
+            <Link to="/order" className="btn btn-red">
               Order <ArrowRight />
             </Link>
           </div>

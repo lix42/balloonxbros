@@ -24,7 +24,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   } catch {
     throw new ApiError(0, "Couldn't reach the server. Check your connection and try again.");
   }
-  const body = await res.json().catch(() => ({}));
+  const body = (await res.json().catch(() => ({}))) as { error?: string };
   if (!res.ok) throw new ApiError(res.status, body.error ?? `Request failed (${res.status}).`);
   return body as T;
 }
