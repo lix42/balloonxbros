@@ -56,7 +56,7 @@ A student fundraiser selling twist balloons for the school, in about two weeks
      "Back to home".
 5. **Admin** `/admin` (not in the canvas; added for operations)
    - Password login. Orders list with receipt preview, status
-     (submitted → verified → picked up / cancelled). Edit menu items
+     (new → verified → picked up; new → receipt issue → verified; cancelled). Edit menu items
      (price, stock, active, photo) and event settings.
 
 ## Visual tokens
@@ -79,10 +79,15 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 - Touch targets ≥ 44px; primary buttons 52–56px tall.
 - Icons: inline stroke SVG, no emoji.
 
-## Open questions (fill in before launch)
+## Decisions
 
-- School name, event date/time/place, pre-order cutoff, what the money funds.
-- Real menu: names, prices, limited-edition items and quantities.
-- School donation page URL; contact email.
-- Email sender domain for confirmations (Resend).
-- Pickup rules: pick up by name only, or show order number?
+- School: Kirkland Middle School (KIMS).
+- Pickup: by name only (order code is for reference).
+- Receipts: the order form reminds buyers to check the school and amount;
+  admins verify each receipt by hand and can mark an order "Receipt issue",
+  then contact the buyer by email or phone.
+
+## Still placeholder
+
+See `docs/PLACEHOLDERS.md`: event date/time/place, cutoff, purpose, donation
+URL, contact email, menu, prices, limited stock, photos.

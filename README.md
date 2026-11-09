@@ -23,10 +23,11 @@ npm run check                         # typecheck + tests
 
 ## First deploy (one time)
 
+The D1 database `balloonxbros` (id already in `wrangler.jsonc`) and the R2
+bucket `balloonxbros-files` exist. What's left:
+
 ```sh
 npx wrangler login
-npx wrangler d1 create balloonxbros            # copy the id into wrangler.jsonc
-npx wrangler r2 bucket create balloonxbros-files
 npm run db:migrate:remote
 npx wrangler secret put ADMIN_PASSWORD
 npx wrangler secret put SESSION_SECRET         # any long random string: openssl rand -hex 32
@@ -54,6 +55,6 @@ shows "email not sent".
 
 ## Before launch
 
-Fill in from `/admin`: school name, date/time/place, cutoff, what the money is
-for, the school's donation page URL, contact email, real balloon names, prices,
-limited-edition stock, and photos. The seeded values are placeholders.
+Event details, menu and photos are placeholders — see
+[`docs/PLACEHOLDERS.md`](docs/PLACEHOLDERS.md) for the full list and how to
+replace them in a PR (or edit them live from `/admin`).
