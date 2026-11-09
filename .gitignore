@@ -4,3 +4,7 @@ dist/
 .dev.vars
 *.log
 .DS_Store
+
+# Claude Code local state
+.claude/*.local.json
+.claude/worktrees/*
