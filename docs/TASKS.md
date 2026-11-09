@@ -84,7 +84,7 @@ graph TD
 
 **Legend:** `[ ]` todo · `[~]` doing · `[x]` done · `[-]` closed. Each task file's frontmatter is the source of truth; query with `tasks ready`, `tasks show <id>`.
 
-- [ ] [API route tests in the Workers runtime](tasks/api-tests.md) — route-level tests on local D1/R2 via @cloudflare/vitest-plugin; safety net for server-functions
+- [~] [API route tests in the Workers runtime](tasks/api-tests.md) — route-level tests on local D1/R2 via @cloudflare/vitest-plugin; safety net for server-functions
 - [ ] [Balloon photos](tasks/balloon-photos.md) — square photos in public/balloons/, photo_key set by migration · **waits on** `menu-content`
 - [ ] [Contact inbox for hello@](tasks/contact-inbox.md) — Cloudflare Email Routing forwards hello@balloonxbros.com to Li
 - [ ] [Real event details](tasks/event-details.md) — migration with date, time, place, cutoff, purpose, donation URL

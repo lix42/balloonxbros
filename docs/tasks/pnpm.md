@@ -20,7 +20,8 @@ locally and in CI.
   explicitly rather than hoisting. pnpm 10 skips dependency build scripts by
   default; allow the ones that need them (e.g. `workerd`, `esbuild`) via
   `pnpm.onlyBuiltDependencies`.
-- CI (`.github/workflows/deploy.yml`): `pnpm/action-setup`, `cache: pnpm`,
+- CI (`.github/workflows/deploy.yml`): `pnpm/action-setup`, `cache: pnpm`
+  (keep `node-version-file: .nvmrc`),
   `pnpm install --frozen-lockfile`, `pnpm run …`, `pnpm exec wrangler …`.
 - Update the `npm run …` commands in `CLAUDE.md` and `docs/`.
 

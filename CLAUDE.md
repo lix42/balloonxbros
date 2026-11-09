@@ -30,6 +30,9 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
 ## Stack
 
 - React 19 + Vite + TypeScript SPA in `src/`, served as Workers static assets.
+- Node 24 for all tooling (dev, build, tests' host, wrangler, CI), pinned in
+  `.nvmrc`; `engines` + `engine-strict` make npm refuse other versions. The
+  Worker itself runs on workerd, not Node.
 - Cloudflare Worker API in `worker/` (`/api/*`), via `@cloudflare/vite-plugin`.
 - D1 (`DB`) for items, orders, settings — schema in `migrations/`.
 - R2 (`FILES`) for receipt uploads (`receipts/`) and item photos (`photos/`).
@@ -41,7 +44,9 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
 ## Commands
 
 - `npm run dev` — Vite + local Worker/D1/R2 (run `npm run db:migrate:local` first)
-- `npm run check` — typecheck + tests
+- `npm run check` — typecheck + tests. Tests run inside workerd via
+  `@cloudflare/vitest-plugin` with local D1 (migrations applied) and R2;
+  `tests/api/` drives the Worker through its real entry point.
 - `npm run build` / `npm run deploy`
 
 ## Conventions

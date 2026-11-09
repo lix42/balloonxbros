@@ -1,6 +1,6 @@
 ---
 title: API route tests in the Workers runtime
-status: todo
+status: doing
 deps: []
 summary: route-level tests on local D1/R2 via @cloudflare/vitest-plugin; safety net for server-functions
 ---
