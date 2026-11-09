@@ -14,6 +14,8 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as OrderIndexRouteImport } from './routes/order.index'
 import { Route as OrderCodeRouteImport } from './routes/order.$code'
+import { Route as ApiFilesSplatRouteImport } from './routes/api/files.$'
+import { Route as ApiAdminOrdersIdReceiptRouteImport } from './routes/api/admin/orders.$id.receipt'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +42,16 @@ const OrderCodeRoute = OrderCodeRouteImport.update({
   path: '/order/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiFilesSplatRoute = ApiFilesSplatRouteImport.update({
+  id: '/api/files/$',
+  path: '/api/files/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminOrdersIdReceiptRoute = ApiAdminOrdersIdReceiptRouteImport.update({
+  id: '/api/admin/orders/$id/receipt',
+  path: '/api/admin/orders/$id/receipt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +59,8 @@ export interface FileRoutesByFullPath {
   '/donate': typeof DonateRoute
   '/order/$code': typeof OrderCodeRoute
   '/order/': typeof OrderIndexRoute
+  '/api/files/$': typeof ApiFilesSplatRoute
+  '/api/admin/orders/$id/receipt': typeof ApiAdminOrdersIdReceiptRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +68,8 @@ export interface FileRoutesByTo {
   '/donate': typeof DonateRoute
   '/order/$code': typeof OrderCodeRoute
   '/order': typeof OrderIndexRoute
+  '/api/files/$': typeof ApiFilesSplatRoute
+  '/api/admin/orders/$id/receipt': typeof ApiAdminOrdersIdReceiptRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +78,37 @@ export interface FileRoutesById {
   '/donate': typeof DonateRoute
   '/order/$code': typeof OrderCodeRoute
   '/order/': typeof OrderIndexRoute
+  '/api/files/$': typeof ApiFilesSplatRoute
+  '/api/admin/orders/$id/receipt': typeof ApiAdminOrdersIdReceiptRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/donate' | '/order/$code' | '/order/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/donate'
+    | '/order/$code'
+    | '/order/'
+    | '/api/files/$'
+    | '/api/admin/orders/$id/receipt'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/donate' | '/order/$code' | '/order'
-  id: '__root__' | '/' | '/admin' | '/donate' | '/order/$code' | '/order/'
+  to:
+    | '/'
+    | '/admin'
+    | '/donate'
+    | '/order/$code'
+    | '/order'
+    | '/api/files/$'
+    | '/api/admin/orders/$id/receipt'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/donate'
+    | '/order/$code'
+    | '/order/'
+    | '/api/files/$'
+    | '/api/admin/orders/$id/receipt'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +117,8 @@ export interface RootRouteChildren {
   DonateRoute: typeof DonateRoute
   OrderCodeRoute: typeof OrderCodeRoute
   OrderIndexRoute: typeof OrderIndexRoute
+  ApiFilesSplatRoute: typeof ApiFilesSplatRoute
+  ApiAdminOrdersIdReceiptRoute: typeof ApiAdminOrdersIdReceiptRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +158,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/files/$': {
+      id: '/api/files/$'
+      path: '/api/files/$'
+      fullPath: '/api/files/$'
+      preLoaderRoute: typeof ApiFilesSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/orders/$id/receipt': {
+      id: '/api/admin/orders/$id/receipt'
+      path: '/api/admin/orders/$id/receipt'
+      fullPath: '/api/admin/orders/$id/receipt'
+      preLoaderRoute: typeof ApiAdminOrdersIdReceiptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +181,8 @@ const rootRouteChildren: RootRouteChildren = {
   DonateRoute: DonateRoute,
   OrderCodeRoute: OrderCodeRoute,
   OrderIndexRoute: OrderIndexRoute,
+  ApiFilesSplatRoute: ApiFilesSplatRoute,
+  ApiAdminOrdersIdReceiptRoute: ApiAdminOrdersIdReceiptRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

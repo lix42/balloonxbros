@@ -1,44 +1,41 @@
 import { env } from "cloudflare:workers";
 import { beforeEach, describe, expect, it } from "vite-plus/test";
-import type { MenuResponse, PublicOrder, Settings } from "../../shared/types";
+import { createOrder, getMenu, getPhoto } from "../../worker/service";
 import {
-  BASE,
+  background,
   count,
-  errorOf,
-  eventually,
   fileKeys,
+  orderForm,
   receiptFile,
+  rejection,
   reset,
-  self,
   stockOf,
-  submitOrder,
 } from "./helpers";
 
 beforeEach(reset);
 
-describe("GET /api/menu", () => {
+const submit = (form: FormData, bg = background()) => createOrder(env, form, bg);
+
+describe("getMenu", () => {
   it("lists active items in sort order with the settings", async () => {
-    const res = await self.fetch(`${BASE}/api/menu`);
-    expect(res.status).toBe(200);
-    expect(res.headers.get("Cache-Control")).toBe("no-store");
-    const body = await res.json<MenuResponse>();
-    expect(body.items.map((i) => i.id)).toEqual(["dog", "sword", "star", "gone"]);
-    expect(body.settings.school_name).toBe("Kirkland Middle School (KIMS)");
-    expect(body.settings.orders_open).toBe("1");
+    const menu = await getMenu(env);
+    expect(menu.items.map((i) => i.id)).toEqual(["dog", "sword", "star", "gone"]);
+    expect(menu.settings.school_name).toBe("Kirkland Middle School (KIMS)");
+    expect(menu.settings.orders_open).toBe("1");
   });
 });
 
-describe("POST /api/orders", () => {
+describe("createOrder", () => {
   it("creates the order, prices it from the database and takes limited stock", async () => {
-    const res = await submitOrder({
-      lines: [
-        { itemId: "dog", qty: 2, note: "blue please" },
-        { itemId: "star", qty: 1 },
-        { itemId: "dog", qty: 1 },
-      ],
-    });
-    expect(res.status).toBe(201);
-    const { order } = await res.json<{ order: PublicOrder; settings: Settings }>();
+    const { order } = await submit(
+      orderForm({
+        lines: [
+          { itemId: "dog", qty: 2, note: "blue please" },
+          { itemId: "star", qty: 1 },
+          { itemId: "dog", qty: 1 },
+        ],
+      }),
+    );
     expect(order.id).toMatch(/^BXB-[2-9A-HJKMNP-Z]{5}$/);
     expect(order.status).toBe("submitted");
     expect(order.totalCents).toBe(3 * 500 + 1500);
@@ -65,29 +62,27 @@ describe("POST /api/orders", () => {
 
   it("refuses orders while pre-orders are closed", async () => {
     await env.DB.prepare("UPDATE settings SET value = '0' WHERE key = 'orders_open'").run();
-    const res = await submitOrder({ lines: [{ itemId: "dog", qty: 1 }] });
-    expect(res.status).toBe(409);
-    expect(await errorOf(res)).toMatch(/closed/);
+    const err = await rejection(submit(orderForm({ lines: [{ itemId: "dog", qty: 1 }] })));
+    expect(err.status).toBe(409);
+    expect(err.message).toMatch(/closed/);
     expect(await count("orders")).toBe(0);
   });
 
   it("refuses inactive and unknown items", async () => {
     for (const itemId of ["retired", "nope"]) {
-      const res = await submitOrder({ lines: [{ itemId, qty: 1 }] });
-      expect(res.status).toBe(409);
-      expect(await errorOf(res)).toMatch(/no longer available/);
+      const err = await rejection(submit(orderForm({ lines: [{ itemId, qty: 1 }] })));
+      expect(err.status).toBe(409);
+      expect(err.message).toMatch(/no longer available/);
     }
     expect(await count("orders")).toBe(0);
   });
 
   it("refuses more than the stock left, naming the item", async () => {
-    let res = await submitOrder({ lines: [{ itemId: "star", qty: 4 }] });
-    expect(res.status).toBe(409);
-    expect(await errorOf(res)).toBe("Sorry, only 3 Gold Star left.");
+    let err = await rejection(submit(orderForm({ lines: [{ itemId: "star", qty: 4 }] })));
+    expect(err).toEqual({ status: 409, message: "Sorry, only 3 Gold Star left." });
 
-    res = await submitOrder({ lines: [{ itemId: "gone", qty: 1 }] });
-    expect(res.status).toBe(409);
-    expect(await errorOf(res)).toBe("Sorry, Sold Out Star just sold out.");
+    err = await rejection(submit(orderForm({ lines: [{ itemId: "gone", qty: 1 }] })));
+    expect(err).toEqual({ status: 409, message: "Sorry, Sold Out Star just sold out." });
     expect(await stockOf("star")).toBe(3);
     expect(await count("orders")).toBe(0);
   });
@@ -97,49 +92,55 @@ describe("POST /api/orders", () => {
     await env.DB.prepare(
       "CREATE TRIGGER steal_stock BEFORE INSERT ON orders BEGIN UPDATE items SET stock = 0 WHERE id = 'star'; END",
     ).run();
-    const res = await submitOrder({
-      lines: [
-        { itemId: "dog", qty: 1 },
-        { itemId: "star", qty: 1 },
-      ],
-    });
-    expect(res.status).toBe(409);
-    expect(await errorOf(res)).toMatch(/just sold out/);
+    const bg = background();
+    const err = await rejection(
+      submit(
+        orderForm({
+          lines: [
+            { itemId: "dog", qty: 1 },
+            { itemId: "star", qty: 1 },
+          ],
+        }),
+        bg,
+      ),
+    );
+    expect(err.status).toBe(409);
+    expect(err.message).toMatch(/just sold out/);
     expect(await count("orders")).toBe(0);
     expect(await count("order_items")).toBe(0);
-    expect(await eventually(async () => (await fileKeys("receipts/")).length === 0)).toBe(true);
+    await bg.settled(); // the receipt is deleted in the background
+    expect(await fileKeys("receipts/")).toEqual([]);
   });
 
   it("requires a receipt that is an image or PDF", async () => {
-    let res = await submitOrder({ lines: [{ itemId: "dog", qty: 1 }] }, null);
-    expect(res.status).toBe(400);
-    expect(await errorOf(res)).toMatch(/attach your donation receipt/);
+    let err = await rejection(submit(orderForm({ lines: [{ itemId: "dog", qty: 1 }] }, null)));
+    expect(err.status).toBe(400);
+    expect(err.message).toMatch(/attach your donation receipt/);
 
-    res = await submitOrder({ lines: [{ itemId: "dog", qty: 1 }] }, receiptFile("text/html"));
-    expect(res.status).toBe(400);
-    expect(await errorOf(res)).toMatch(/image .* or a PDF/);
+    err = await rejection(
+      submit(orderForm({ lines: [{ itemId: "dog", qty: 1 }] }, receiptFile("text/html"))),
+    );
+    expect(err.status).toBe(400);
+    expect(err.message).toMatch(/image .* or a PDF/);
     expect(await count("orders")).toBe(0);
     expect(await fileKeys()).toEqual([]);
   });
 
   it("rejects malformed submissions", async () => {
-    let res = await self.fetch(`${BASE}/api/orders`, { method: "POST", body: "not a form" });
-    expect(res.status).toBe(400);
-
     const form = new FormData();
     form.set("order", "{not json");
     form.set("receipt", receiptFile());
-    res = await self.fetch(`${BASE}/api/orders`, { method: "POST", body: form });
-    expect(res.status).toBe(400);
-    expect(await errorOf(res)).toBe("Invalid order.");
+    expect(await rejection(submit(form))).toEqual({ status: 400, message: "Invalid order." });
 
-    res = await submitOrder({ email: "nope", lines: [{ itemId: "dog", qty: 1 }] });
-    expect(res.status).toBe(400);
-    expect(await errorOf(res)).toMatch(/valid email/);
+    const err = await rejection(
+      submit(orderForm({ email: "nope", lines: [{ itemId: "dog", qty: 1 }] })),
+    );
+    expect(err.status).toBe(400);
+    expect(err.message).toMatch(/valid email/);
   });
 });
 
-describe("GET /api/files", () => {
+describe("getPhoto", () => {
   it("serves item photos but never receipts", async () => {
     await env.FILES.put("photos/dog-1.png", new Uint8Array([1, 2, 3]), {
       httpMetadata: { contentType: "image/png" },
@@ -148,18 +149,16 @@ describe("GET /api/files", () => {
       httpMetadata: { contentType: "image/png" },
     });
 
-    const photo = await self.fetch(`${BASE}/api/files/photos/dog-1.png`);
-    expect(photo.status).toBe(200);
-    expect(photo.headers.get("Content-Type")).toBe("image/png");
+    const photo = await getPhoto(env, "photos/dog-1.png");
+    expect(photo.httpMetadata?.contentType).toBe("image/png");
     expect(new Uint8Array(await photo.arrayBuffer())).toEqual(new Uint8Array([1, 2, 3]));
 
-    expect((await self.fetch(`${BASE}/api/files/receipts/BXB-AAAAA.png`)).status).toBe(404);
-    expect((await self.fetch(`${BASE}/api/files/photos/missing.png`)).status).toBe(404);
-  });
-
-  it("answers unknown API paths with a JSON 404", async () => {
-    const res = await self.fetch(`${BASE}/api/nope`);
-    expect(res.status).toBe(404);
-    expect(await errorOf(res)).toBe("Not found.");
+    for (const key of [
+      "receipts/BXB-AAAAA.png",
+      "photos/../receipts/BXB-AAAAA.png",
+      "photos/missing.png",
+    ]) {
+      expect((await rejection(getPhoto(env, key))).status).toBe(404);
+    }
   });
 });

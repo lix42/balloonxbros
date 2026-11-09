@@ -1,4 +1,5 @@
-// Admin session: a cookie holding "<expiry>.<hmac(expiry)>".
+// Admin session: a cookie holding "<expiry>.<hmac(expiry)>". Path=/ because
+// admin calls go to server functions (/_serverFn/…) as well as /api/admin/….
 
 const COOKIE = "bxb_admin";
 const TTL_SECONDS = 60 * 60 * 24 * 7;
@@ -31,11 +32,17 @@ export async function safeEqual(secret: string, a: string, b: string): Promise<b
 export async function makeSessionCookie(secret: string, now = Date.now()): Promise<string> {
   const exp = Math.floor(now / 1000) + TTL_SECONDS;
   const value = `${exp}.${await hmac(secret, `admin:${exp}`)}`;
-  return `${COOKIE}=${value}; Path=/api/admin; HttpOnly; Secure; SameSite=Strict; Max-Age=${TTL_SECONDS}`;
+  return `${COOKIE}=${value}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${TTL_SECONDS}`;
 }
 
-export function clearSessionCookie(): string {
-  return `${COOKIE}=; Path=/api/admin; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
+/** Set-Cookie values that end the session: the current cookie and the one
+ *  issued before the move to Path=/ (Path=/api/admin), which browsers keep
+ *  as a separate cookie and would otherwise still send to /api/admin/…. */
+export function clearSessionCookies(): string[] {
+  return [
+    `${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`,
+    `${COOKIE}=; Path=/api/admin; HttpOnly; Secure; SameSite=Strict; Max-Age=0`,
+  ];
 }
 
 export async function isAdmin(req: Request, secret: string, now = Date.now()): Promise<boolean> {
