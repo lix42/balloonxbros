@@ -9,7 +9,11 @@ the balloons up at the event.
   edit balloons/prices/stock/photos, edit event details, open/close pre-orders
 - **Stack:** React + Vite + TypeScript, Cloudflare Workers + D1 + R2, Resend email
 
-Design spec: [`docs/DESIGN.md`](docs/DESIGN.md).
+Design: [Claude Design canvas](https://claude.ai/artifact/XxCQyYroyUzx8EyymEZv5b)
+· spec and tokens in [`docs/DESIGN.md`](docs/DESIGN.md)
+· placeholders in [`docs/PLACEHOLDERS.md`](docs/PLACEHOLDERS.md).
+
+Live at https://balloonxbros.com.
 
 ## Local development
 
@@ -21,10 +25,10 @@ npm run dev                           # http://localhost:5173, admin at /admin
 npm run check                         # typecheck + tests
 ```
 
-## First deploy (one time)
+## First deploy (done 2026-11-08, kept for reference)
 
 The D1 database `balloonxbros` (id already in `wrangler.jsonc`) and the R2
-bucket `balloonxbros-files` exist. What's left:
+bucket `balloonxbros-files` exist. Steps that were run:
 
 ```sh
 npx wrangler login
