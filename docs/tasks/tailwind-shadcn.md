@@ -1,8 +1,9 @@
 ---
 title: Tailwind + shadcn (Base UI)
-status: todo
+status: done
 deps: [tanstack-start]
 summary: Tailwind v4, shadcn on Base UI, DESIGN.md tokens as theme; restyle pages
+done: "2026-11-08 #11"
 ---
 # Tailwind + shadcn (Base UI)
 
@@ -14,21 +15,29 @@ Claude Design canvas.
 
 ## Design
 
-- Tailwind v4 via its Vite plugin; CSS entry imported from `__root.tsx`.
-- `shadcn init --base base-ui` (check current CLI flags in the docs), with
-  `cssVariables: true`, since that can't be changed later.
-- Map the DESIGN.md tokens onto the theme: `background` = ground `#F4F7FF`,
-  `card` = surface, `border` = line, `foreground` = ink, `muted-foreground`
-  = muted, `primary` = red, plus blue/yellow/tile tints as extra tokens; radii
-  (cards 18–22px, inputs 12px, pills full); Fredoka/Nunito as the heading/body
-  fonts.
-- Use shadcn components where they fit: Button, Input, Textarea, Label, Card,
-  Badge, Checkbox, Select (admin status), Dialog (admin receipt preview).
-  Bespoke pieces (menu tiles, stepper, receipt dropzone, Glyph illustrations)
-  stay custom components styled with Tailwind.
-- Keep touch targets ≥ 44px and primary buttons 52–56px tall. Inline SVG icons,
-  no emoji (shadcn's lucide icons are fine).
-- Delete `src/styles.css` when nothing uses it.
+- Tailwind v4 via `@tailwindcss/vite` (inside `lazyPlugins` in
+  `vite.config.ts`); CSS entry `src/styles/app.css`, linked from
+  `__root.tsx`.
+- `shadcn init --base base --template start -p nova` (components.json,
+  `cssVariables: true`). The `@/` alias (tsconfig paths +
+  `resolve.tsconfigPaths`) and `src/lib/utils.ts` exist for the shadcn CLI;
+  the code imports relatively and takes `cn` straight from the `cn` npm
+  package (the class merger shadcn's components use). The Geist font the
+  init adds is dropped.
+- Theme: the DESIGN.md tokens as Tailwind colours, Fredoka/Nunito, radii
+  12–22px, and shadcn's semantic variables (`primary` = red, `border` = line,
+  `input` = line-strong, `ring` = blue, …) mapped onto them. Text sizes keep
+  the old inherited line-height 1.5. No dark mode.
+- shadcn parts restyled to the site: Button (`red`, `ink`, `pill`, `link`,
+  `icon`, `tab` variants; 56px/52px sizes), Input (48px/44px), Checkbox
+  (admin's two checkboxes). Dialog, Select and Label were tried and removed:
+  the receipt opens in a new tab, and the native `<select>`s keep their
+  label wiring and mobile pickers.
+- Custom pieces (menu tiles, stepper, dropzone, illustrations) stay custom,
+  in Tailwind utilities. `src/styles.css` is deleted.
+- Verification is a pixel diff against screenshots of the old site at 390px
+  (which already matched the canvas): identical everywhere except the admin
+  checkboxes.
 
 ## How to Verify
 
@@ -36,6 +45,6 @@ Claude Design canvas.
   donate, Pre-order form, Order received): same layout, colors, type and
   spacing. Admin is usable on a phone.
 - Keyboard and screen-reader pass on the order form and admin (focus rings
-  visible, labels attached, Dialog traps focus).
+  visible, labels attached).
 - Lighthouse mobile accessibility ≥ 95 on Home and Order.
 - Check and build pass; CSS bundle size sensible.

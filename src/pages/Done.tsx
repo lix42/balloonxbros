@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { cn } from "cn";
 import type { PublicOrder, Settings } from "../../shared/types";
+import { buttonVariants } from "../components/ui/button";
 import { useStore } from "../store";
 import { LAST_ORDER_KEY } from "./Order";
+
+const kv = "flex justify-between gap-3 text-[15px]";
+const kvKey = "font-bold text-muted";
+const kvValue = "text-right font-extrabold";
 
 function readLast(code: string): { order: PublicOrder; settings: Settings } | null {
   try {
@@ -24,8 +30,8 @@ export function Done({ code }: { code: string }) {
   const order = last?.order;
 
   return (
-    <main className="page section stack" style={{ gap: 22, paddingTop: 56, paddingBottom: 32 }}>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+    <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col gap-[22px] px-5 pt-14 pb-8">
+      <div className="flex justify-center">
         <svg width="150" height="170" viewBox="0 0 150 170" aria-hidden="true">
           <path
             d="M48 78 Q60 120 75 166 M102 74 Q90 120 75 166 M75 70 L75 166"
@@ -47,46 +53,51 @@ export function Done({ code }: { code: string }) {
         </svg>
       </div>
 
-      <div className="stack gap-10" style={{ textAlign: "center" }}>
-        <h1 className="h1 sm">Order received!</h1>
-        <p className="lede">
+      <div className="flex flex-col gap-2.5 text-center">
+        <h1 className="text-[34px] leading-[1.05] font-bold tracking-[-0.5px]">Order received!</h1>
+        <p className="text-base text-ink-2">
           Thank you for supporting {settings.school_name}. We'll check your receipt and email you a
           confirmation.
         </p>
       </div>
 
-      <div className="card stack gap-14" style={{ borderRadius: 20, padding: 18 }}>
-        <div className="kv">
-          <span>Order</span>
-          <span>{code}</span>
+      <div className="flex flex-col gap-3.5 rounded-[20px] border border-line bg-surface p-[18px]">
+        <div className={kv}>
+          <span className={kvKey}>Order</span>
+          <span className={kvValue}>{code}</span>
         </div>
         {order && (
-          <div className="kv">
-            <span>Balloons</span>
-            <span>{order.lines.map((l) => `${l.qty} × ${l.name}`).join(" · ")}</span>
+          <div className={kv}>
+            <span className={kvKey}>Balloons</span>
+            <span className={kvValue}>
+              {order.lines.map((l) => `${l.qty} × ${l.name}`).join(" · ")}
+            </span>
           </div>
         )}
         {settings && (
           <>
-            <div className="kv">
-              <span>Pick up</span>
-              <span>
+            <div className={kv}>
+              <span className={kvKey}>Pick up</span>
+              <span className={kvValue}>
                 {settings.event_date}, {settings.event_time}
               </span>
             </div>
-            <div className="kv">
-              <span>Where</span>
-              <span>{settings.event_place}</span>
+            <div className={kv}>
+              <span className={kvKey}>Where</span>
+              <span className={kvValue}>{settings.event_place}</span>
             </div>
           </>
         )}
       </div>
 
-      <div className="card-yellow">
+      <div className="rounded-[16px] bg-yellow-tint px-4 py-3.5 text-[14px] text-[#3d3420]">
         Bring a friend! We'll also be twisting balloons on the spot at the event.
       </div>
 
-      <Link to="/" className="btn btn-ink btn-block" style={{ marginTop: "auto" }}>
+      <Link
+        to="/"
+        className={cn(buttonVariants({ variant: "ink", size: "lg", block: true }), "mt-auto")}
+      >
         Back to home
       </Link>
     </main>
