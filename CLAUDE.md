@@ -1,8 +1,31 @@
 # Balloon x Bros
 
-Pre-order site for a kid-run twist-balloon school fundraiser. Spec and design
-tokens: `docs/DESIGN.md`. Open product questions are listed at its end; ask the
-owner (Li) rather than guessing real-world facts (prices, dates, school info).
+Pre-order site for a kid-run twist-balloon school fundraiser for Kirkland
+Middle School (KIMS). Spec and design tokens: `docs/DESIGN.md`. Placeholders
+still to fill: `docs/PLACEHOLDERS.md`. Ask the owner (Li) rather than guessing
+real-world facts (prices, dates, menu, school info).
+
+## Design source
+
+Visual design lives in a Claude Design canvas (screens: Home, How to donate,
+Pre-order form, Order received; 390px mobile artboards):
+https://claude.ai/artifact/XxCQyYroyUzx8EyymEZv5b
+(artifact slug `faa719d3-85b6-45f1-b9fa-abe40f2600ce`; artboards are
+`project/*.dc.html`). The built UI in `src/` follows it; `docs/DESIGN.md`
+records tokens and decisions. If the canvas and code disagree, ask Li which wins.
+
+## Status (as of 2026-11-08)
+
+- Live at https://balloonxbros.com (Worker `balloonxbros`, custom domains
+  balloonxbros.com + www). Admin at `/admin`.
+- Cloudflare: D1 `balloonxbros` (id in `wrangler.jsonc`), R2 `balloonxbros-files`.
+  Secrets set: `ADMIN_PASSWORD`, `SESSION_SECRET`. Not yet: `RESEND_API_KEY`.
+- Migration `0001_init.sql` is applied in production — never edit it; add
+  `0002_*.sql` and up. CI (`.github/workflows/deploy.yml`) applies migrations
+  and deploys on push to `main` using repo secrets `CLOUDFLARE_API_TOKEN` /
+  `CLOUDFLARE_ACCOUNT_ID`.
+- Next: content PRs (event details, real menu/prices/stock, photos in
+  `public/balloons/`), then Resend domain verification.
 
 ## Stack
 
@@ -11,7 +34,7 @@ owner (Li) rather than guessing real-world facts (prices, dates, school info).
 - D1 (`DB`) for items, orders, settings — schema in `migrations/`.
 - R2 (`FILES`) for receipt uploads (`receipts/`) and item photos (`photos/`).
 - Seed data in `migrations/0001_init.sql` is placeholder (names in [BRACKETS],
-  prices) — real values get set from /admin.
+  prices) — replace via a new migration (see `docs/PLACEHOLDERS.md`) or /admin.
 - Resend for customer confirmation email (skipped when `RESEND_API_KEY` unset).
 - Domain: balloonxbros.com (registered on Cloudflare).
 
