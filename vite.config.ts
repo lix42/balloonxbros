@@ -23,7 +23,7 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
   },
   plugins: lazyPlugins(() => [
-    // The Worker (src/server.ts) runs in Vite's SSR environment.
+    // The Worker (Start's server entry) runs in Vite's SSR environment.
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tanstackStart(),
     // React's plugin must come after Start's.

@@ -1,9 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "balloonxbros",
-  // TanStack Start renders pages; src/server.ts hands /api/* to worker/index.ts.
-  // The Cloudflare Vite plugin adds the built client assets at build time.
-  "main": "src/server.ts",
+  // TanStack Start serves everything: pages, server functions (src/server-fns.ts)
+  // and the file routes under src/routes/api/. The Cloudflare Vite plugin adds
+  // the built client assets at build time.
+  "main": "@tanstack/react-start/server-entry",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },

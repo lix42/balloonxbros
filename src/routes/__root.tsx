@@ -8,14 +8,19 @@ import {
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { LoadError, SiteHeader } from "../components/ui";
-import { getMenu } from "../menu";
+import { getMenuFn } from "../server-fns";
 import { StoreProvider } from "../store";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
   // Load the menu once, during SSR. After that the store refreshes it itself
   // (after an order, or on a stock conflict), so navigations don't refetch.
-  loader: () => getMenu(),
+  loader: async () => {
+    const menu = await getMenuFn();
+    // The cause is already in the Worker log; keep it out of the page.
+    if (!menu.ok) throw new Error("Menu unavailable.");
+    return menu.data;
+  },
   shouldReload: false,
   head: () => ({
     meta: [

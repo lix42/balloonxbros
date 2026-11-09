@@ -1,11 +1,9 @@
-// Shared fixtures for the API tests: every request goes through the Worker's
-// own entry point, as deployed, against local D1 and R2.
-import { env, exports } from "cloudflare:workers";
-
-/** The Worker's default export, as deployed. */
-export const self = (exports as unknown as { default: Fetcher }).default;
-
-export const BASE = "https://balloonxbros.test";
+// Shared fixtures for the API tests: they call worker/service.ts directly
+// (the same functions the server functions and file routes call) against
+// local D1 and R2.
+import { env } from "cloudflare:workers";
+import { adminLogin, requireAdmin, type AdminAuth, type Background } from "../../worker/service";
+import { HttpError } from "../../worker/validate";
 
 export const ITEMS = {
   dog: {
@@ -88,12 +86,33 @@ export function receiptFile(type = "image/png", bytes = 64): File {
   return new File([new Uint8Array(bytes).fill(7)], "receipt.png", { type });
 }
 
-/** POST /api/orders the way the order form does: JSON order + receipt file. */
-export function submitOrder(order: OrderPayload, receipt: File | null = receiptFile()) {
+/** The order form's FormData: JSON order + receipt file. */
+export function orderForm(order: OrderPayload, receipt: File | null = receiptFile()): FormData {
   const form = new FormData();
   form.set("order", JSON.stringify({ ...buyer, ...order }));
   if (receipt) form.set("receipt", receipt);
-  return self.fetch(`${BASE}/api/orders`, { method: "POST", body: form });
+  return form;
+}
+
+/** Collects the work a service hands to waitUntil, so a test can await it. */
+export function background(): Background & { settled: () => Promise<unknown> } {
+  const pending: Promise<unknown>[] = [];
+  return Object.assign((work: Promise<unknown>) => void pending.push(work), {
+    settled: () => Promise.allSettled(pending),
+  });
+}
+
+/** Runs a service call and returns its HttpError (status + message), failing if it succeeds. */
+export async function rejection(
+  work: Promise<unknown>,
+): Promise<{ status: number; message: string }> {
+  try {
+    await work;
+  } catch (err) {
+    if (err instanceof HttpError) return { status: err.status, message: err.message };
+    throw err;
+  }
+  throw new Error("expected an HttpError");
 }
 
 export async function stockOf(id: string): Promise<number | null> {
@@ -112,37 +131,16 @@ export async function fileKeys(prefix?: string): Promise<string[]> {
   return (await env.FILES.list({ prefix })).objects.map((o) => o.key);
 }
 
-/** Polls until `check` passes, for work the Worker hands to ctx.waitUntil. */
-export async function eventually(check: () => Promise<boolean>, ms = 1000): Promise<boolean> {
-  const end = Date.now() + ms;
-  while (Date.now() < end) {
-    if (await check()) return true;
-    await new Promise((r) => setTimeout(r, 20));
-  }
-  return check();
+export function adminRequest(cookie: string): Request {
+  return new Request("https://balloonxbros.test/api/admin/orders", { headers: { Cookie: cookie } });
 }
 
-/** Logs in and returns a Cookie header value for admin requests. */
+/** Logs in with the test password and returns the Cookie header value. */
 export async function adminCookie(): Promise<string> {
-  const res = await self.fetch(`${BASE}/api/admin/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ password: "test-password" }),
-  });
-  if (res.status !== 200) throw new Error(`login failed: ${res.status}`);
-  return (res.headers.get("Set-Cookie") ?? "").split(";")[0]!;
+  return (await adminLogin(env, "test-password"))[0]!.split(";")[0]!;
 }
 
-export function admin(cookie: string, path: string, init: RequestInit & { json?: unknown } = {}) {
-  const { json, ...rest } = init;
-  const headers = new Headers(rest.headers);
-  headers.set("Cookie", cookie);
-  if (json !== undefined) headers.set("Content-Type", "application/json");
-  return self.fetch(`${BASE}${path}`, {
-    ...rest,
-    headers,
-    body: json !== undefined ? JSON.stringify(json) : rest.body,
-  });
+/** A valid admin session, as the server functions get it from the request. */
+export async function adminAuth(): Promise<AdminAuth> {
+  return requireAdmin(env, adminRequest(await adminCookie()));
 }
-
-export const errorOf = async (res: Response) => ((await res.json()) as { error: string }).error;

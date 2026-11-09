@@ -65,10 +65,12 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## server-functions
 
-**Status:** not started
+**Status:** done
 **Updated:** 2026-11-08
 
 - 2026-11-08: filed. Goal: move worker/ routes to Start server functions and server routes
+- 2026-11-08: Implemented. worker/index.ts (HTTP router) → worker/service.ts (plain functions: env + input → data, or HttpError). src/server-fns.ts wraps each as a createServerFn returning Result {ok,data}|{ok:false,status,error} so statuses (409 stock reload) survive; src/api.ts keeps its interface and unwraps to ApiError, so pages are unchanged. In Start 1.169 the method is .validator(), not .inputValidator(). File routes keep their URLs: /api/files/$ (photos only) and /api/admin/orders/$id/receipt. Admin functions take an AdminAuth brand only requireAdmin creates. Cookie Path=/ (server fns live at /_serverFn). Email via waitUntil from cloudflare:workers. src/server.ts and src/menu.ts deleted; wrangler main = Start default entry; test pool main = tests/worker.ts stub. Tests ported to call the service (25: per-route 401 tests → one requireAdmin test). Verified: check (0 warnings now), build, no server code in client bundle, dev browser pass (order + stock, admin wrong/right password, receipt, verify, settings, photo upload served, price edit, logout → 401), preview replay of an admin server fn without/forged cookie → {ok:false,401}; Start's CSRF returns 403 for cross-site-looking calls. Gotcha: a stale vite preview on :5198 from an earlier task made a new preview fail --strictPort and serve 500s; kill by port, not by pattern.
+- 2026-11-08: Done (#10). Review fixes: logout and login also expire the pre-deploy Path=/api/admin cookie (otherwise it outlived logout and still opened receipts); input shape checks run inside respond() as HttpError(400); respond() sets Cache-Control: no-store (also on SSR HTML, fine: live stock); call() logs and keeps the cause, and says 'check your connection' only for fetch's TypeError; run/call moved to dependency-free src/result.ts and file headers to src/file-response.ts, both unit-tested (31 tests). Known: a tab open across the deploy calls the removed /api URLs until reloaded. Admins log in again once. Note for tailwind-shadcn: pages are unchanged by this task; src/api.ts kept its interface.
 
 ## tailwind-shadcn
 
