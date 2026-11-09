@@ -49,7 +49,8 @@ export const api = {
   },
 
   admin: {
-    login: (password: string) => request<{ ok: true }>("/api/admin/login", jsonInit("POST", { password })),
+    login: (password: string) =>
+      request<{ ok: true }>("/api/admin/login", jsonInit("POST", { password })),
     logout: () => request<{ ok: true }>("/api/admin/logout", { method: "POST" }),
     me: () => request<{ ok: true }>("/api/admin/me"),
     orders: () => request<{ orders: AdminOrder[] }>("/api/admin/orders"),
@@ -63,7 +64,10 @@ export const api = {
     uploadPhoto: (id: string, file: File) => {
       const form = new FormData();
       form.set("photo", file);
-      return request<{ items: Item[] }>(`/api/admin/items/${id}/photo`, { method: "POST", body: form });
+      return request<{ items: Item[] }>(`/api/admin/items/${id}/photo`, {
+        method: "POST",
+        body: form,
+      });
     },
     settings: () => request<{ settings: Settings }>("/api/admin/settings"),
     saveSettings: (s: Partial<Settings>) =>

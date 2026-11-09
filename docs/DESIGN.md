@@ -61,18 +61,18 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 
 ## Visual tokens
 
-| Token | Value | Use |
-|---|---|---|
-| ground | `#F4F7FF` | page background |
-| surface | `#FFFFFF` | cards, header |
-| line | `#E2E7F5` | card borders |
-| ink | `#1B1F3B` | text, dark cards |
-| ink-2 | `#454B6B` | body copy |
-| muted | `#545A78` | labels |
-| red | `#D93A31` | primary CTA (eyebrow text `#C2332B`) |
-| blue | `#2E6BE6` | accent; links `#2257C9` / hover `#163F99` |
-| yellow | `#F2A900`, tint `#FFF3CC`, on-navy `#FFD166` | highlights |
-| tile tints | `#FFE3E1 #E1EBFF #FFF3CC #FFE1EE #EDE3FF #FFE9D6 #DDF4EF` | per item |
+| Token      | Value                                                     | Use                                       |
+| ---------- | --------------------------------------------------------- | ----------------------------------------- |
+| ground     | `#F4F7FF`                                                 | page background                           |
+| surface    | `#FFFFFF`                                                 | cards, header                             |
+| line       | `#E2E7F5`                                                 | card borders                              |
+| ink        | `#1B1F3B`                                                 | text, dark cards                          |
+| ink-2      | `#454B6B`                                                 | body copy                                 |
+| muted      | `#545A78`                                                 | labels                                    |
+| red        | `#D93A31`                                                 | primary CTA (eyebrow text `#C2332B`)      |
+| blue       | `#2E6BE6`                                                 | accent; links `#2257C9` / hover `#163F99` |
+| yellow     | `#F2A900`, tint `#FFF3CC`, on-navy `#FFD166`              | highlights                                |
+| tile tints | `#FFE3E1 #E1EBFF #FFF3CC #FFE1EE #EDE3FF #FFE9D6 #DDF4EF` | per item                                  |
 
 - Type: **Fredoka** 600/700 for headings and wordmark, **Nunito** 400–800 for body.
 - Radii: cards 18–22px, tiles 18px, pills 999px, inputs 12px.

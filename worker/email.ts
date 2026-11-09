@@ -1,7 +1,6 @@
 import { formatCents, type PublicOrder, type Settings } from "../shared/types";
 
-const esc = (s: string) =>
-  s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 export function confirmationEmail(order: PublicOrder, s: Settings, siteUrl: string) {
   const rows = order.lines

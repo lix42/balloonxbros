@@ -27,11 +27,23 @@ export function Done({ code }: { code: string }) {
     <main className="page section stack" style={{ gap: 22, paddingTop: 56, paddingBottom: 32 }}>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <svg width="150" height="170" viewBox="0 0 150 170" aria-hidden="true">
-          <path d="M48 78 Q60 120 75 166 M102 74 Q90 120 75 166 M75 70 L75 166" stroke="#1B1F3B" strokeWidth="2" fill="none" />
+          <path
+            d="M48 78 Q60 120 75 166 M102 74 Q90 120 75 166 M75 70 L75 166"
+            stroke="#1B1F3B"
+            strokeWidth="2"
+            fill="none"
+          />
           <ellipse cx="46" cy="52" rx="28" ry="33" fill="#D93A31" />
           <ellipse cx="104" cy="48" rx="28" ry="33" fill="#2E6BE6" />
           <ellipse cx="75" cy="38" rx="28" ry="33" fill="#F2A900" />
-          <path d="M62 38 l9 9 l17 -18" stroke="#1B1F3B" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <path
+            d="M62 38 l9 9 l17 -18"
+            stroke="#1B1F3B"
+            strokeWidth="5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
         </svg>
       </div>
 
@@ -44,7 +56,10 @@ export function Done({ code }: { code: string }) {
       </div>
 
       <div className="card stack gap-14" style={{ borderRadius: 20, padding: 18 }}>
-        <div className="kv"><span>Order</span><span>{code}</span></div>
+        <div className="kv">
+          <span>Order</span>
+          <span>{code}</span>
+        </div>
         {order && (
           <div className="kv">
             <span>Balloons</span>
@@ -53,13 +68,23 @@ export function Done({ code }: { code: string }) {
         )}
         {settings && (
           <>
-            <div className="kv"><span>Pick up</span><span>{settings.event_date}, {settings.event_time}</span></div>
-            <div className="kv"><span>Where</span><span>{settings.event_place}</span></div>
+            <div className="kv">
+              <span>Pick up</span>
+              <span>
+                {settings.event_date}, {settings.event_time}
+              </span>
+            </div>
+            <div className="kv">
+              <span>Where</span>
+              <span>{settings.event_place}</span>
+            </div>
           </>
         )}
       </div>
 
-      <div className="card-yellow">Bring a friend! We'll also be twisting balloons on the spot at the event.</div>
+      <div className="card-yellow">
+        Bring a friend! We'll also be twisting balloons on the spot at the event.
+      </div>
 
       <Link to="/" className="btn btn-ink btn-block" style={{ marginTop: "auto" }}>
         Back to home

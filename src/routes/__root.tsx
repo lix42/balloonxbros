@@ -1,4 +1,11 @@
-import { HeadContent, Link, Outlet, Scripts, createRootRoute, type ErrorComponentProps } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Link,
+  Outlet,
+  Scripts,
+  createRootRoute,
+  type ErrorComponentProps,
+} from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { LoadError, SiteHeader } from "../components/ui";
 import { getMenu } from "../menu";
@@ -15,7 +22,10 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#F4F7FF" },
-      { name: "description", content: "Pre-order twisted balloons made by kids to raise money for our school." },
+      {
+        name: "description",
+        content: "Pre-order twisted balloons made by kids to raise money for our school.",
+      },
       { title: "Balloon x Bros — balloons for our school" },
     ],
     links: [
@@ -79,7 +89,9 @@ function NotFound() {
   return (
     <main className="page section stack gap-14" style={{ paddingTop: 80, textAlign: "center" }}>
       <h1 className="h1 sm">This balloon floated away</h1>
-      <Link to="/" className="btn btn-ink">Back to home</Link>
+      <Link to="/" className="btn btn-ink">
+        Back to home
+      </Link>
     </main>
   );
 }
