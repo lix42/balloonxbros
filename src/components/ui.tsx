@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link } from "../router";
+import { Link, type LinkProps } from "@tanstack/react-router";
 
 export function Logo({ size = 34 }: { size?: number }) {
   return (
@@ -66,11 +66,11 @@ export function SiteHeader() {
   return (
     <header className="topbar">
       <div className="topbar-inner">
-        <Link href="/" className="brand" aria-label="Balloon x Bros home">
+        <Link to="/" className="brand" aria-label="Balloon x Bros home">
           <Logo />
           <Wordmark />
         </Link>
-        <Link href="/order" className="pill">
+        <Link to="/order" className="pill">
           Pre-order
         </Link>
       </div>
@@ -78,11 +78,11 @@ export function SiteHeader() {
   );
 }
 
-export function BackHeader({ href, label, children }: { href: string; label: string; children: ReactNode }) {
+export function BackHeader({ to, label, children }: { to: LinkProps["to"]; label: string; children: ReactNode }) {
   return (
     <header className="topbar">
       <div className="topbar-inner back">
-        <Link href={href} className="icon-btn" aria-label={label}>
+        <Link to={to} className="icon-btn" aria-label={label}>
           <ArrowLeft />
         </Link>
         <span className="wordmark" style={{ fontSize: 20 }}>

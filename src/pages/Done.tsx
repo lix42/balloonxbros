@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import type { PublicOrder, Settings } from "../../shared/types";
-import { Link } from "../router";
 import { useStore } from "../store";
 import { LAST_ORDER_KEY } from "./Order";
 
@@ -15,7 +16,10 @@ function readLast(code: string): { order: PublicOrder; settings: Settings } | nu
 
 export function Done({ code }: { code: string }) {
   const { settings: liveSettings } = useStore();
-  const last = readLast(code);
+  // sessionStorage exists only in the browser: render the generic page on the
+  // server, then fill in this order's details once mounted.
+  const [last, setLast] = useState<ReturnType<typeof readLast>>(null);
+  useEffect(() => setLast(readLast(code)), [code]);
   const settings = last?.settings ?? liveSettings;
   const order = last?.order;
 
@@ -34,7 +38,7 @@ export function Done({ code }: { code: string }) {
       <div className="stack gap-10" style={{ textAlign: "center" }}>
         <h1 className="h1 sm">Order received!</h1>
         <p className="lede">
-          Thank you for supporting {settings?.school_name ?? "our school"}. We'll check your receipt and email you a
+          Thank you for supporting {settings.school_name}. We'll check your receipt and email you a
           confirmation.
         </p>
       </div>
@@ -57,7 +61,7 @@ export function Done({ code }: { code: string }) {
 
       <div className="card-yellow">Bring a friend! We'll also be twisting balloons on the spot at the event.</div>
 
-      <Link href="/" className="btn btn-ink btn-block" style={{ marginTop: "auto" }}>
+      <Link to="/" className="btn btn-ink btn-block" style={{ marginTop: "auto" }}>
         Back to home
       </Link>
     </main>

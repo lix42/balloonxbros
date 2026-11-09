@@ -10,7 +10,7 @@ summary: move worker/ routes to Start server functions and server routes
 
 The API in `worker/` becomes TanStack Start server functions and server
 routes, so pages call typed functions instead of `fetch('/api/…')`, and the
-temporary `/api/$` catch-all from `tanstack-start` is gone.
+`/api/*` forwarding in `src/server.ts` from `tanstack-start` is gone.
 
 ## Design
 
@@ -32,10 +32,15 @@ temporary `/api/$` catch-all from `tanstack-start` is gone.
 - `HttpError` messages must still reach the UI (e.g. "Sorry, only 2 Crown
   left.").
 - Move `tests/` with the code; keep the pure-function tests unchanged.
+  Note: `vitest.config.ts` points the Workers test pool at `worker/index.ts`
+  (`main` override) because `src/server.ts` needs Start's Vite plugin to
+  build. Keep the logic in plain functions under `worker/` that the server
+  functions call, and port the `tests/api/` scenarios onto those functions.
 
 ## How to Verify
 
-- No `fetch('/api` left in `src/`; `src/routes/api/$.ts` deleted.
+- No `fetch('/api` left in `src/`; `src/server.ts` no longer forwards `/api/*`
+  (or is back to Start's default entry).
 - Tests pass, plus new ones for order submission validation and the admin
   auth middleware (rejects missing/forged cookie).
 - Manual pass: order with receipt; oversell of a limited item shows the

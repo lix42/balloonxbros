@@ -1,12 +1,11 @@
+import { Link } from "@tanstack/react-router";
 import { formatCents } from "../../shared/types";
-import { ArrowRight, BackHeader, LoadError, Loading } from "../components/ui";
-import { Link } from "../router";
+import { ArrowRight, BackHeader, LoadError } from "../components/ui";
 import { useStore } from "../store";
 
 export function Donate() {
   const { settings, loadError, reload, totalCents, count } = useStore();
-  if (loadError) return <><BackHeader href="/" label="Back to home"><>Balloon <span className="x">×</span> Bros</></BackHeader><LoadError message={loadError} retry={reload} /></>;
-  if (!settings) return <Loading />;
+  if (loadError) return <><BackHeader to="/" label="Back to home"><>Balloon <span className="x">×</span> Bros</></BackHeader><LoadError message={loadError} retry={reload} /></>;
 
   const amount = count > 0 ? formatCents(totalCents) : "your order total";
 
@@ -27,7 +26,7 @@ export function Donate() {
 
   return (
     <>
-      <BackHeader href="/" label="Back to home"><>Balloon <span className="x">×</span> Bros</></BackHeader>
+      <BackHeader to="/" label="Back to home"><>Balloon <span className="x">×</span> Bros</></BackHeader>
       <main className="page">
         <section className="section stack gap-10" style={{ paddingTop: 26 }}>
           <p className="eyebrow">Paying for your order</p>
@@ -63,10 +62,10 @@ export function Donate() {
         </ol>
 
         <section className="section stack gap-10" style={{ paddingBottom: 36 }}>
-          <Link href="/order" className="btn btn-red btn-block">
+          <Link to="/order" className="btn btn-red btn-block">
             I've donated: upload my receipt <ArrowRight />
           </Link>
-          <Link href="/" className="link-btn" style={{ justifyContent: "center", fontSize: 15 }}>
+          <Link to="/" className="link-btn" style={{ justifyContent: "center", fontSize: 15 }}>
             Back to the balloon menu
           </Link>
         </section>
