@@ -42,6 +42,10 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
 - Domain: balloonxbros.com (registered on Cloudflare).
 - pnpm, version pinned in `packageManager` (Corepack or a plain `pnpm` picks it
   up). Dependency install scripts are off except those in `allowBuilds`.
+  pnpm 12's `minimumReleaseAge` policy rejects lockfile entries published
+  less than a day ago. It failed CI's frozen install even though the local
+  install passed. Pick the newest version older than a day rather than
+  relaxing the policy.
 
 ## Commands
 
