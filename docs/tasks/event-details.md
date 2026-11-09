@@ -27,8 +27,8 @@ Remove the filled rows from `docs/PLACEHOLDERS.md`.
 
 ## How to Verify
 
-- `npm run db:migrate:local && npm run dev`: Home info tiles, announcement
+- `pnpm run db:migrate:local && pnpm run dev`: Home info tiles, announcement
   card, `/donate` step 1 link, and the order-received page show the new values
   and read naturally in their sentences.
-- `npm run check` passes.
+- `pnpm run check` passes.
 - After deploy: the same pages on https://balloonxbros.com.

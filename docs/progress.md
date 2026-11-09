@@ -46,10 +46,12 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## pnpm
 
-**Status:** not started
+**Status:** done
 **Updated:** 2026-11-08
 
 - 2026-11-08: filed. Goal: pnpm lockfile, packageManager, CI, docs
+- 2026-11-08: pnpm 12.18.0 via packageManager, following the nc repo: CI uses 'corepack enable pnpm' (no pnpm/action-setup, no setup-node cache, since setup-node's pnpm cache needs pnpm on PATH first). pnpm import kept the npm-resolved versions. Settings live in pnpm-workspace.yaml (pnpm 12 ignores non-auth .npmrc): engineStrict replaces .npmrc engine-strict (verified: --config.node-version=22.18.0 is refused), allowBuilds allows only esbuild + workerd. Gotcha: under 'corepack pnpm', nested 'pnpm run' resolves to whatever pnpm is on PATH and fails ERR_PNPM_BAD_PM_VERSION if it differs; a plain pnpm self-switches to the pinned version. Docs, README and task specs now say pnpm.
+- 2026-11-08: Done (#7). Landed as the updated spec describes. Verified: pnpm run check (tsc -b + 36 workerd tests) and build pass locally; review simulated CI in a clean Corepack env on Node 24.22.2 (frozen install, check, build, pnpm exec wrangler all OK); security review found the lockfile sources unchanged (all registry.npmjs.org, sha512) and install scripts narrower than under npm. Finished task specs (api-tests.md) and this log keep their npm wording as history. Note for vite-plus and later: Node 24 is the last line that ships Corepack, so moving past Node 24 means replacing 'corepack enable pnpm' in CI.
 
 ## tanstack-start
 

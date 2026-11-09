@@ -43,4 +43,4 @@ here; that's `server-functions`.
   order, edit an item. No hydration warnings in the console.
 - Deep links (`/order/<code>`, `/admin`) load directly; unknown paths show a
   not-found page.
-- `npm run check` (or its pnpm equivalent) and `build` pass; CI green.
+- `pnpm run check` and `build` pass; CI green.

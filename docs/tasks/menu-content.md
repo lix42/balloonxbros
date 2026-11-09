@@ -35,4 +35,4 @@ Remove the filled rows from `docs/PLACEHOLDERS.md`.
   out and can't be added.
 - Add items to the cart and submit an order locally: line prices and the total
   match; limited stock drops by the ordered quantity.
-- `npm run check` passes.
+- `pnpm run check` passes.
