@@ -47,6 +47,11 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
   prices) — replace via a new migration (see `docs/PLACEHOLDERS.md`) or /admin.
 - Resend for customer confirmation email (skipped when `RESEND_API_KEY` unset).
 - Domain: balloonxbros.com (registered on Cloudflare).
+- Vite+ (`vite-plus`, the `vp` CLI) wraps Vite, Vitest, Oxlint and Oxfmt;
+  config lives in `vite.config.ts` (`fmt`, `lint` blocks). `vite`/`vitest` are
+  pinned through the `catalog` and `overrides` in `pnpm-workspace.yaml`
+  (`vite` is Vite+'s core build); bump them with `vite-plus`. Generated files
+  and the tasks-CLI docs are excluded from formatting there.
 - pnpm, version pinned in `packageManager` (Corepack or a plain `pnpm` picks it
   up). Dependency install scripts are off except those in `allowBuilds`.
   pnpm 12's `minimumReleaseAge` policy rejects lockfile entries published
@@ -56,10 +61,14 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
 
 ## Commands
 
-- `pnpm run dev` — Vite + local Worker/D1/R2 (run `pnpm run db:migrate:local` first)
-- `pnpm run check` — typecheck + tests. Tests run inside workerd via
+- `pnpm run dev` — Vite+ dev server + local Worker/D1/R2 (run
+  `pnpm run db:migrate:local` first)
+- `pnpm run check` — the CI gate: `vp check` (Oxfmt format check, Oxlint,
+  type-aware type check), `tsc -b` (each tsconfig on its own, e.g. no DOM in
+  `worker/`), then tests. Tests run inside workerd via
   `@cloudflare/vitest-plugin` with local D1 (migrations applied) and R2;
   `tests/api/` drives the Worker through its real entry point.
+- `pnpm run fix` — format and apply lint autofixes (`vp check --fix`).
 - `pnpm run build` / `pnpm run deploy`
 
 ## Conventions

@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vite-plus/test";
 import type { AdminOrder, Item, PublicOrder, Settings } from "../../shared/types";
 import { admin, adminCookie, BASE, errorOf, reset, self, stockOf, submitOrder } from "./helpers";
 
@@ -19,7 +19,9 @@ describe("admin login", () => {
       body: JSON.stringify({ password: "test-password" }),
     });
     expect(ok.status).toBe(200);
-    expect(ok.headers.get("Set-Cookie")).toMatch(/^bxb_admin=.+; Path=\/api\/admin; HttpOnly; Secure; SameSite=Strict/);
+    expect(ok.headers.get("Set-Cookie")).toMatch(
+      /^bxb_admin=.+; Path=\/api\/admin; HttpOnly; Secure; SameSite=Strict/,
+    );
 
     const bad = await self.fetch(`${BASE}/api/admin/login`, {
       method: "POST",
@@ -61,8 +63,12 @@ describe("admin routes without a valid session", () => {
   it("leaves data alone when an unauthenticated write is refused", async () => {
     await admin("", "/api/admin/items/dog", { method: "PATCH", json: { priceCents: 1 } });
     await admin("", "/api/admin/settings", { method: "PUT", json: { orders_open: "0" } });
-    expect((await env.DB.prepare("SELECT price_cents FROM items WHERE id = 'dog'").first())?.price_cents).toBe(500);
-    expect((await env.DB.prepare("SELECT value FROM settings WHERE key = 'orders_open'").first())?.value).toBe("1");
+    expect(
+      (await env.DB.prepare("SELECT price_cents FROM items WHERE id = 'dog'").first())?.price_cents,
+    ).toBe(500);
+    expect(
+      (await env.DB.prepare("SELECT value FROM settings WHERE key = 'orders_open'").first())?.value,
+    ).toBe("1");
   });
 });
 
@@ -93,40 +99,63 @@ describe("admin orders", () => {
   });
 
   it("returns limited stock on cancel and takes it again on un-cancel", async () => {
-    const order = await placeOrder([{ itemId: "star", qty: 2 }, { itemId: "dog", qty: 1 }]);
+    const order = await placeOrder([
+      { itemId: "star", qty: 2 },
+      { itemId: "dog", qty: 1 },
+    ]);
     const cookie = await adminCookie();
     expect(await stockOf("star")).toBe(1);
 
-    let res = await admin(cookie, `/api/admin/orders/${order.id}`, { method: "PATCH", json: { status: "cancelled" } });
+    let res = await admin(cookie, `/api/admin/orders/${order.id}`, {
+      method: "PATCH",
+      json: { status: "cancelled" },
+    });
     expect(res.status).toBe(200);
     expect((await res.json<{ order: AdminOrder }>()).order.status).toBe("cancelled");
     expect(await stockOf("star")).toBe(3);
     expect(await stockOf("dog")).toBeNull();
 
     // Cancelling twice must not return the stock twice.
-    await admin(cookie, `/api/admin/orders/${order.id}`, { method: "PATCH", json: { status: "cancelled" } });
+    await admin(cookie, `/api/admin/orders/${order.id}`, {
+      method: "PATCH",
+      json: { status: "cancelled" },
+    });
     expect(await stockOf("star")).toBe(3);
 
-    res = await admin(cookie, `/api/admin/orders/${order.id}`, { method: "PATCH", json: { status: "verified" } });
+    res = await admin(cookie, `/api/admin/orders/${order.id}`, {
+      method: "PATCH",
+      json: { status: "verified" },
+    });
     expect(res.status).toBe(200);
     expect(await stockOf("star")).toBe(1);
 
     // Moving between non-cancelled statuses leaves stock alone.
-    await admin(cookie, `/api/admin/orders/${order.id}`, { method: "PATCH", json: { status: "picked_up" } });
+    await admin(cookie, `/api/admin/orders/${order.id}`, {
+      method: "PATCH",
+      json: { status: "picked_up" },
+    });
     expect(await stockOf("star")).toBe(1);
   });
 
   it("refuses to un-cancel when the stock has gone to someone else", async () => {
     const order = await placeOrder([{ itemId: "star", qty: 3 }]);
     const cookie = await adminCookie();
-    await admin(cookie, `/api/admin/orders/${order.id}`, { method: "PATCH", json: { status: "cancelled" } });
+    await admin(cookie, `/api/admin/orders/${order.id}`, {
+      method: "PATCH",
+      json: { status: "cancelled" },
+    });
     await placeOrder([{ itemId: "star", qty: 2 }]);
 
-    const res = await admin(cookie, `/api/admin/orders/${order.id}`, { method: "PATCH", json: { status: "submitted" } });
+    const res = await admin(cookie, `/api/admin/orders/${order.id}`, {
+      method: "PATCH",
+      json: { status: "submitted" },
+    });
     expect(res.status).toBe(409);
     expect(await errorOf(res)).toMatch(/Not enough limited-edition stock/);
     expect(await stockOf("star")).toBe(1);
-    const row = await env.DB.prepare("SELECT status FROM orders WHERE id = ?").bind(order.id).first<{ status: string }>();
+    const row = await env.DB.prepare("SELECT status FROM orders WHERE id = ?")
+      .bind(order.id)
+      .first<{ status: string }>();
     expect(row?.status).toBe("cancelled");
   });
 
@@ -138,11 +167,20 @@ describe("admin orders", () => {
       method: "PATCH",
       json: { status: "issue", adminNote: "Receipt shows $4" },
     });
-    expect((await res.json<{ order: AdminOrder }>()).order).toMatchObject({ status: "issue", adminNote: "Receipt shows $4" });
+    expect((await res.json<{ order: AdminOrder }>()).order).toMatchObject({
+      status: "issue",
+      adminNote: "Receipt shows $4",
+    });
 
-    res = await admin(cookie, `/api/admin/orders/${order.id}`, { method: "PATCH", json: { status: "lost" } });
+    res = await admin(cookie, `/api/admin/orders/${order.id}`, {
+      method: "PATCH",
+      json: { status: "lost" },
+    });
     expect(res.status).toBe(400);
-    res = await admin(cookie, "/api/admin/orders/BXB-ZZZZZ", { method: "PATCH", json: { status: "verified" } });
+    res = await admin(cookie, "/api/admin/orders/BXB-ZZZZZ", {
+      method: "PATCH",
+      json: { status: "verified" },
+    });
     expect(res.status).toBe(404);
   });
 });
@@ -152,7 +190,13 @@ describe("admin items", () => {
     const cookie = await adminCookie();
     const res = await admin(cookie, "/api/admin/items", {
       method: "POST",
-      json: { id: "  Rainbow Unicorn! ", name: "Unicorn", category: "limited", priceCents: 2000, stock: 4 },
+      json: {
+        id: "  Rainbow Unicorn! ",
+        name: "Unicorn",
+        category: "limited",
+        priceCents: 2000,
+        stock: 4,
+      },
     });
     expect(res.status).toBe(201);
     const { items } = await res.json<{ items: Item[] }>();
@@ -190,7 +234,9 @@ describe("admin items", () => {
 
     const bad = new FormData();
     bad.set("photo", new File(["<svg/>"], "x.svg", { type: "image/svg+xml" }));
-    expect((await admin(cookie, "/api/admin/items/dog/photo", { method: "POST", body: bad })).status).toBe(400);
+    expect(
+      (await admin(cookie, "/api/admin/items/dog/photo", { method: "POST", body: bad })).status,
+    ).toBe(400);
   });
 });
 
@@ -199,10 +245,20 @@ describe("admin settings", () => {
     const cookie = await adminCookie();
     const res = await admin(cookie, "/api/admin/settings", {
       method: "PUT",
-      json: { event_date: "Sat, Nov 21", orders_open: "0", purpose: "x".repeat(600), evil: "1", event_time: 5 },
+      json: {
+        event_date: "Sat, Nov 21",
+        orders_open: "0",
+        purpose: "x".repeat(600),
+        evil: "1",
+        event_time: 5,
+      },
     });
     const { settings } = await res.json<{ settings: Settings }>();
-    expect(settings).toMatchObject({ event_date: "Sat, Nov 21", orders_open: "0", event_time: "[TIME]" });
+    expect(settings).toMatchObject({
+      event_date: "Sat, Nov 21",
+      orders_open: "0",
+      event_time: "[TIME]",
+    });
     expect(settings.purpose).toHaveLength(500);
     expect(await env.DB.prepare("SELECT 1 FROM settings WHERE key = 'evil'").first()).toBeNull();
 

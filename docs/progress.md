@@ -79,7 +79,7 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## vite-plus
 
-**Status:** not started
+**Status:** in progress
 **Updated:** 2026-11-08
 
 - 2026-11-08: filed. Goal: vp migrate; scripts and CI on vp check/test/build

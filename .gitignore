@@ -8,3 +8,4 @@ dist/
 # Claude Code local state
 .claude/*.local.json
 .claude/worktrees/*
+.vitest/
