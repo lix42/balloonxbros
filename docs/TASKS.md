@@ -87,12 +87,12 @@ graph TD
 - [ ] [Balloon photos](tasks/balloon-photos.md) — square photos in public/balloons/, photo_key set by migration · **waits on** `menu-content`
 - [ ] [Contact inbox for hello@](tasks/contact-inbox.md) — Cloudflare Email Routing forwards hello@balloonxbros.com to Li
 - [ ] [Real event details](tasks/event-details.md) — migration with date, time, place, cutoff, purpose, donation URL
-- [ ] [Production launch check](tasks/launch-check.md) — end-to-end test order on prod, clean up, reopen pre-orders · **waits on** `event-details`, `menu-content`, `balloon-photos`, `contact-inbox`, `resend-email`, `server-functions`, `tailwind-shadcn`, `vite-plus`
+- [ ] [Production launch check](tasks/launch-check.md) — end-to-end test order on prod, clean up, reopen pre-orders · **waits on** `event-details`, `menu-content`, `balloon-photos`, `contact-inbox`, `resend-email`, `server-functions`, `tailwind-shadcn`
 - [ ] [Real menu, prices and stock](tasks/menu-content.md) — migration with real items, prices, limited stock; hide unused seed items
 - [ ] [Resend confirmation email](tasks/resend-email.md) — verify domain in Resend, set RESEND_API_KEY, confirm delivery
 - [ ] [API as server functions](tasks/server-functions.md) — move worker/ routes to Start server functions and server routes
 - [ ] [Tailwind + shadcn (Base UI)](tasks/tailwind-shadcn.md) — Tailwind v4, shadcn on Base UI, DESIGN.md tokens as theme; restyle pages
-- [ ] [Migrate to Vite+](tasks/vite-plus.md) — vp migrate; scripts and CI on vp check/test/build
 - [x] [API route tests in the Workers runtime](tasks/api-tests.md) — route-level tests on local D1/R2 via @cloudflare/vitest-plugin; safety net for server-functions
 - [x] [Switch to pnpm](tasks/pnpm.md) — pnpm lockfile, packageManager, CI, docs
 - [x] [Migrate to TanStack Start (SSR)](tasks/tanstack-start.md) — file routes + SSR on Workers; /api/* still served by the existing handler
+- [x] [Migrate to Vite+](tasks/vite-plus.md) — vp migrate; scripts and CI on vp check/test/build

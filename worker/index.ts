@@ -107,7 +107,10 @@ async function createOrder(req: Request, env: Env, ctx: ExecutionContext): Promi
   const lines = input.lines.map((l) => {
     const item = items.get(l.itemId);
     if (!item || item.active !== 1) {
-      throw new HttpError(409, "One of your balloons is no longer available. Please review your order.");
+      throw new HttpError(
+        409,
+        "One of your balloons is no longer available. Please review your order.",
+      );
     }
     if (item.stock !== null && item.stock < l.qty) {
       throw new HttpError(
@@ -117,7 +120,12 @@ async function createOrder(req: Request, env: Env, ctx: ExecutionContext): Promi
           : `Sorry, only ${item.stock} ${item.name} left.`,
       );
     }
-    return { ...l, name: item.name, unitPriceCents: item.price_cents, limited: item.stock !== null };
+    return {
+      ...l,
+      name: item.name,
+      unitPriceCents: item.price_cents,
+      limited: item.stock !== null,
+    };
   });
   const totalCents = lines.reduce((sum, l) => sum + l.qty * l.unitPriceCents, 0);
 
@@ -142,10 +150,9 @@ async function createOrder(req: Request, env: Env, ctx: ExecutionContext): Promi
     ...lines
       .filter((l) => l.limited)
       .map((l) =>
-        env.DB.prepare("UPDATE items SET stock = stock - ? WHERE id = ? AND stock IS NOT NULL").bind(
-          l.qty,
-          l.itemId,
-        ),
+        env.DB.prepare(
+          "UPDATE items SET stock = stock - ? WHERE id = ? AND stock IS NOT NULL",
+        ).bind(l.qty, l.itemId),
       ),
   ];
   try {
@@ -181,7 +188,8 @@ async function createOrder(req: Request, env: Env, ctx: ExecutionContext): Promi
         settings.contact_email,
         confirmationEmail(order, settings, env.SITE_URL),
       );
-      if (sent) await env.DB.prepare("UPDATE orders SET email_sent = 1 WHERE id = ?").bind(id).run();
+      if (sent)
+        await env.DB.prepare("UPDATE orders SET email_sent = 1 WHERE id = ?").bind(id).run();
     })().catch((e) => console.error("email", e)),
   );
 
@@ -275,7 +283,9 @@ async function handleAdmin(req: Request, env: Env, url: URL): Promise<Response> 
     const fields = itemFields(await readJson(req));
     const keys = Object.keys(fields) as (keyof typeof fields)[];
     if (keys.length) {
-      await env.DB.prepare(`UPDATE items SET ${keys.map((k) => `${k} = ?`).join(", ")} WHERE id = ?`)
+      await env.DB.prepare(
+        `UPDATE items SET ${keys.map((k) => `${k} = ?`).join(", ")} WHERE id = ?`,
+      )
         .bind(...keys.map((k) => fields[k] ?? null), itemMatch[1])
         .run();
     }
@@ -292,7 +302,9 @@ async function handleAdmin(req: Request, env: Env, url: URL): Promise<Response> 
     if (file.size > 5 * 1024 * 1024) throw new HttpError(400, "Photo must be under 5 MB.");
     const key = `photos/${photoMatch[1]}-${Date.now()}${extForType(file.type)}`;
     await env.FILES.put(key, file.stream(), { httpMetadata: { contentType: file.type } });
-    await env.DB.prepare("UPDATE items SET photo_key = ? WHERE id = ?").bind(key, photoMatch[1]).run();
+    await env.DB.prepare("UPDATE items SET photo_key = ? WHERE id = ?")
+      .bind(key, photoMatch[1])
+      .run();
     return json({ items: await listItems(env.DB, true) });
   }
 
@@ -330,7 +342,8 @@ function itemFields(body: Record<string, unknown>) {
     f.price_cents = body.priceCents as number;
   }
   if (body.stock === null) f.stock = null;
-  else if (Number.isInteger(body.stock) && (body.stock as number) >= 0) f.stock = body.stock as number;
+  else if (Number.isInteger(body.stock) && (body.stock as number) >= 0)
+    f.stock = body.stock as number;
   if (typeof body.glyph === "string") f.glyph = body.glyph.slice(0, 30) || null;
   if (typeof body.tint === "string" && /^#[0-9a-fA-F]{6}$/.test(body.tint)) f.tint = body.tint;
   if (typeof body.active === "boolean") f.active = body.active ? 1 : 0;
@@ -352,10 +365,9 @@ async function updateOrder(env: Env, id: string, body: Record<string, unknown>):
       if (delta) {
         for (const l of order.lines) {
           stmts.push(
-            env.DB.prepare("UPDATE items SET stock = stock + ? WHERE id = ? AND stock IS NOT NULL").bind(
-              delta * l.qty,
-              l.itemId,
-            ),
+            env.DB.prepare(
+              "UPDATE items SET stock = stock + ? WHERE id = ? AND stock IS NOT NULL",
+            ).bind(delta * l.qty, l.itemId),
           );
         }
       }
@@ -382,4 +394,3 @@ async function updateOrder(env: Env, id: string, body: Record<string, unknown>):
   }
   return json({ order: await getOrder(env.DB, id) });
 }
-

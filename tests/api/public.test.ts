@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vite-plus/test";
 import type { MenuResponse, PublicOrder, Settings } from "../../shared/types";
 import {
   BASE,
@@ -49,10 +49,16 @@ describe("POST /api/orders", () => {
 
     expect(await stockOf("star")).toBe(2);
     expect(await stockOf("dog")).toBeNull();
-    const row = await env.DB.prepare("SELECT email, receipt_key, receipt_type FROM orders WHERE id = ?")
+    const row = await env.DB.prepare(
+      "SELECT email, receipt_key, receipt_type FROM orders WHERE id = ?",
+    )
       .bind(order.id)
       .first<{ email: string; receipt_key: string; receipt_type: string }>();
-    expect(row).toEqual({ email: "ada@example.com", receipt_key: `receipts/${order.id}.png`, receipt_type: "image/png" });
+    expect(row).toEqual({
+      email: "ada@example.com",
+      receipt_key: `receipts/${order.id}.png`,
+      receipt_type: "image/png",
+    });
     expect(await fileKeys("receipts/")).toEqual([`receipts/${order.id}.png`]);
     expect(await count("order_items")).toBe(2);
   });
@@ -91,7 +97,12 @@ describe("POST /api/orders", () => {
     await env.DB.prepare(
       "CREATE TRIGGER steal_stock BEFORE INSERT ON orders BEGIN UPDATE items SET stock = 0 WHERE id = 'star'; END",
     ).run();
-    const res = await submitOrder({ lines: [{ itemId: "dog", qty: 1 }, { itemId: "star", qty: 1 }] });
+    const res = await submitOrder({
+      lines: [
+        { itemId: "dog", qty: 1 },
+        { itemId: "star", qty: 1 },
+      ],
+    });
     expect(res.status).toBe(409);
     expect(await errorOf(res)).toMatch(/just sold out/);
     expect(await count("orders")).toBe(0);
@@ -130,8 +141,12 @@ describe("POST /api/orders", () => {
 
 describe("GET /api/files", () => {
   it("serves item photos but never receipts", async () => {
-    await env.FILES.put("photos/dog-1.png", new Uint8Array([1, 2, 3]), { httpMetadata: { contentType: "image/png" } });
-    await env.FILES.put("receipts/BXB-AAAAA.png", new Uint8Array([4]), { httpMetadata: { contentType: "image/png" } });
+    await env.FILES.put("photos/dog-1.png", new Uint8Array([1, 2, 3]), {
+      httpMetadata: { contentType: "image/png" },
+    });
+    await env.FILES.put("receipts/BXB-AAAAA.png", new Uint8Array([4]), {
+      httpMetadata: { contentType: "image/png" },
+    });
 
     const photo = await self.fetch(`${BASE}/api/files/photos/dog-1.png`);
     expect(photo.status).toBe(200);

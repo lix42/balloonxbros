@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { isAdmin, makeSessionCookie } from "../worker/auth";
 
-const reqWith = (cookie: string) => new Request("https://x/api/admin/me", { headers: { Cookie: cookie } });
+const reqWith = (cookie: string) =>
+  new Request("https://x/api/admin/me", { headers: { Cookie: cookie } });
 const value = (setCookie: string) => setCookie.split(";")[0];
 
 describe("admin session", () => {

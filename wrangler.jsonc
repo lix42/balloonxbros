@@ -9,22 +9,20 @@
   "observability": { "enabled": true },
   "routes": [
     { "pattern": "balloonxbros.com", "custom_domain": true },
-    { "pattern": "www.balloonxbros.com", "custom_domain": true }
+    { "pattern": "www.balloonxbros.com", "custom_domain": true },
   ],
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "balloonxbros",
       "database_id": "6dea8689-d00a-458f-ba16-154865f13f84",
-      "migrations_dir": "migrations"
-    }
+      "migrations_dir": "migrations",
+    },
   ],
-  "r2_buckets": [
-    { "binding": "FILES", "bucket_name": "balloonxbros-files" }
-  ],
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "balloonxbros-files" }],
   "vars": {
     "EMAIL_FROM": "Balloon x Bros <orders@balloonxbros.com>",
-    "SITE_URL": "https://balloonxbros.com"
-  }
+    "SITE_URL": "https://balloonxbros.com",
+  },
   // Secrets (wrangler secret put …): ADMIN_PASSWORD, SESSION_SECRET, RESEND_API_KEY
 }

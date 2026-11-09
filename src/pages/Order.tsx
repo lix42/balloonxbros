@@ -29,9 +29,22 @@ function CartRow({ itemId }: { itemId: string }) {
           </span>
         </div>
         <div className="stepper">
-          <button type="button" onClick={() => setQty(item.id, qty - 1)} aria-label={`One less ${item.name}`}>−</button>
+          <button
+            type="button"
+            onClick={() => setQty(item.id, qty - 1)}
+            aria-label={`One less ${item.name}`}
+          >
+            −
+          </button>
           <span aria-live="polite">{qty}</span>
-          <button type="button" onClick={() => setQty(item.id, qty + 1)} disabled={atMax} aria-label={`One more ${item.name}`}>+</button>
+          <button
+            type="button"
+            onClick={() => setQty(item.id, qty + 1)}
+            disabled={atMax}
+            aria-label={`One more ${item.name}`}
+          >
+            +
+          </button>
         </div>
       </div>
       {noteOpen ? (
@@ -46,7 +59,12 @@ function CartRow({ itemId }: { itemId: string }) {
           />
         </label>
       ) : (
-        <button type="button" className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setNoteOpen(true)}>
+        <button
+          type="button"
+          className="link-btn"
+          style={{ alignSelf: "flex-start" }}
+          onClick={() => setNoteOpen(true)}
+        >
           + Add note (color, name…)
         </button>
       )}
@@ -66,10 +84,26 @@ export function Order() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const header = <BackHeader to="/" label="Back to the balloon menu">Your pre-order</BackHeader>;
-  if (loadError) return <>{header}<LoadError message={loadError} retry={reload} /></>;
+  const header = (
+    <BackHeader to="/" label="Back to the balloon menu">
+      Your pre-order
+    </BackHeader>
+  );
+  if (loadError)
+    return (
+      <>
+        {header}
+        <LoadError message={loadError} retry={reload} />
+      </>
+    );
   // Wait for the saved cart so the page doesn't flash "your order is empty".
-  if (!cartReady) return <>{header}<Loading /></>;
+  if (!cartReady)
+    return (
+      <>
+        {header}
+        <Loading />
+      </>
+    );
 
   const pickFile = (f: File | undefined | null) => {
     if (!f) return;
@@ -136,8 +170,13 @@ export function Order() {
         {header}
         <main className="page section stack gap-14">
           <h1 className="h1 sm">Pre-orders are closed</h1>
-          <p className="lede">Come see us at {settings.event_place} on {settings.event_date} — we'll twist balloons on the spot.</p>
-          <Link to="/" className="btn btn-ink">Back to home</Link>
+          <p className="lede">
+            Come see us at {settings.event_place} on {settings.event_date} — we'll twist balloons on
+            the spot.
+          </p>
+          <Link to="/" className="btn btn-ink">
+            Back to home
+          </Link>
         </main>
       </>
     );
@@ -151,53 +190,103 @@ export function Order() {
           {count === 0 ? (
             <div className="card stack gap-10" style={{ textAlign: "center", padding: 24 }}>
               <span style={{ fontWeight: 800 }}>Your order is empty</span>
-              <Link to="/" className="btn btn-ink">Pick some balloons</Link>
+              <Link to="/" className="btn btn-ink">
+                Pick some balloons
+              </Link>
             </div>
           ) : (
             <ul className="stack gap-10" style={{ margin: 0, padding: 0, listStyle: "none" }}>
-              {lines.map((l) => <CartRow key={l.item.id} itemId={l.item.id} />)}
+              {lines.map((l) => (
+                <CartRow key={l.item.id} itemId={l.item.id} />
+              ))}
             </ul>
           )}
           {count > 0 && (
-            <Link to="/" className="link-btn">+ Add more balloons</Link>
+            <Link to="/" className="link-btn">
+              + Add more balloons
+            </Link>
           )}
         </section>
 
         <section className="section" style={{ paddingTop: 6 }}>
           <div className="card-navy stack gap-14" style={{ borderRadius: 20, padding: 18 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-              <span style={{ fontWeight: 700, color: "#C9D1EA" }}>{count} balloon{count === 1 ? "" : "s"}</span>
-              <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 26 }}>{formatCents(totalCents)}</span>
+            <div
+              style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}
+            >
+              <span style={{ fontWeight: 700, color: "#C9D1EA" }}>
+                {count} balloon{count === 1 ? "" : "s"}
+              </span>
+              <span style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 26 }}>
+                {formatCents(totalCents)}
+              </span>
             </div>
             <p style={{ fontSize: 15 }}>
-              Please follow the steps to donate <strong>{formatCents(totalCents)}</strong> to the school, then drop your
-              receipt below.
+              Please follow the steps to donate <strong>{formatCents(totalCents)}</strong> to the
+              school, then drop your receipt below.
             </p>
-            <Link to="/donate" className="link-btn" style={{ color: "var(--yellow-on-navy)", fontSize: 15 }}>
+            <Link
+              to="/donate"
+              className="link-btn"
+              style={{ color: "var(--yellow-on-navy)", fontSize: 15 }}
+            >
               Show me the donation steps <ArrowRight size={16} />
             </Link>
           </div>
         </section>
 
-        <form className="section stack gap-14" style={{ paddingBottom: 40 }} onSubmit={submit} noValidate={false}>
+        <form
+          className="section stack gap-14"
+          style={{ paddingBottom: 40 }}
+          onSubmit={submit}
+          noValidate={false}
+        >
           <h2 className="h2">Your details</h2>
           <label className="field">
             Name
-            <input className="input" required maxLength={80} autoComplete="name" placeholder="Who's picking up?" value={name} onChange={(e) => setName(e.target.value)} />
+            <input
+              className="input"
+              required
+              maxLength={80}
+              autoComplete="name"
+              placeholder="Who's picking up?"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </label>
           <div className="grid-2">
             <label className="field">
               Email
-              <input className="input" required type="email" maxLength={254} autoComplete="email" inputMode="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input
+                className="input"
+                required
+                type="email"
+                maxLength={254}
+                autoComplete="email"
+                inputMode="email"
+                placeholder="you@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </label>
             <label className="field">
               Phone
-              <input className="input" required type="tel" maxLength={30} autoComplete="tel" placeholder="(555) 555-0100" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <input
+                className="input"
+                required
+                type="tel"
+                maxLength={30}
+                autoComplete="tel"
+                placeholder="(555) 555-0100"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
             </label>
           </div>
 
           <div className="stack gap-6">
-            <span style={{ fontSize: 14, fontWeight: 800 }} id="receipt-label">Donation receipt</span>
+            <span style={{ fontSize: 14, fontWeight: 800 }} id="receipt-label">
+              Donation receipt
+            </span>
             <label
               className={`dropzone${drag ? " drag" : ""}`}
               onDragOver={(e) => {
@@ -210,8 +299,14 @@ export function Order() {
               <UploadIcon />
               {receipt ? (
                 <>
-                  <span style={{ fontWeight: 800, color: "var(--green-text)", wordBreak: "break-all" }}>{receipt.name}</span>
-                  <span className="small" style={{ fontWeight: 700, color: "var(--link)" }}>Tap to choose a different file</span>
+                  <span
+                    style={{ fontWeight: 800, color: "var(--green-text)", wordBreak: "break-all" }}
+                  >
+                    {receipt.name}
+                  </span>
+                  <span className="small" style={{ fontWeight: 700, color: "var(--link)" }}>
+                    Tap to choose a different file
+                  </span>
                 </>
               ) : (
                 <>
@@ -229,19 +324,28 @@ export function Order() {
           </div>
 
           <div className="card-yellow">
-            <strong>Before you submit:</strong> check that your receipt shows <strong>{settings.school_name}</strong> and
-            the amount <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if something doesn't
-            match, we'll contact you by email or phone.
+            <strong>Before you submit:</strong> check that your receipt shows{" "}
+            <strong>{settings.school_name}</strong> and the amount{" "}
+            <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if
+            something doesn't match, we'll contact you by email or phone.
           </div>
 
           <p className="small">
-            Pick up your balloons at the Balloon x Bros table on {settings.event_date}. Give your name and we'll have
-            them ready.
+            Pick up your balloons at the Balloon x Bros table on {settings.event_date}. Give your
+            name and we'll have them ready.
           </p>
 
-          {error && <div className="error" role="alert">{error}</div>}
+          {error && (
+            <div className="error" role="alert">
+              {error}
+            </div>
+          )}
 
-          <button type="submit" className="btn btn-red btn-block" disabled={submitting || count === 0}>
+          <button
+            type="submit"
+            className="btn btn-red btn-block"
+            disabled={submitting || count === 0}
+          >
             {submitting ? "Sending…" : "Submit pre-order"}
           </button>
         </form>

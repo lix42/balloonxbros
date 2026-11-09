@@ -1,6 +1,14 @@
 // App-wide state: the menu/settings (server-rendered first, refreshed from the
 // API) and the cart (saved in localStorage, so it is read only after hydration).
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import type { Item, MenuResponse, Settings } from "../shared/types";
 import { api } from "./api";
 
@@ -41,7 +49,13 @@ function loadCart(): Cart {
   }
 }
 
-export function StoreProvider({ initialMenu, children }: { initialMenu: MenuResponse; children: ReactNode }) {
+export function StoreProvider({
+  initialMenu,
+  children,
+}: {
+  initialMenu: MenuResponse;
+  children: ReactNode;
+}) {
   const [items, setItems] = useState<Item[]>(initialMenu.items);
   const [settings, setSettings] = useState<Settings>(initialMenu.settings);
   const [loadError, setLoadError] = useState<string | null>(null);

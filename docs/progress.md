@@ -79,10 +79,13 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## vite-plus
 
-**Status:** not started
+**Status:** done
 **Updated:** 2026-11-08
 
 - 2026-11-08: filed. Goal: vp migrate; scripts and CI on vp check/test/build
+- 2026-11-08: Implemented with vite-plus 1.5.0 (newest older than a day): vp migrate --no-interactive --no-agent --no-editor --no-hooks. It pinned vite (to @voidzero-dev/vite-plus-core) and vitest via a pnpm catalog/overrides, rewrote vite/vitest imports to vite-plus, wrapped plugins in lazyPlugins, and moved scripts to vp. Adopted Oxfmt + Oxlint (type-aware with typeCheck); generated files and the tasks-CLI docs are excluded from fmt (formatting them would fight the CLI and break tasks check). Verified vp check really type-checks: injected type errors in src/, worker/, tests/ and vite.config.ts all fail it, and so does document used in worker/ (it honours each tsconfig), so tsc -b was dropped (Li asked to confirm). check = vp check && vp test run; typecheck = vp check --no-fmt --no-lint; fix = vp check --fix. Format pass is its own commit. 5 lint warnings remain in worker/index.ts (no-base-to-string on String(x ?? ""), no-misused-spread on headers): not errors, left as is. Verified: check, build, vp dev SSR + /api, CI=true frozen install passes the release-age policy.
+- 2026-11-08: Review correction: dropping tsc -b was wrong. vp check (tsgolint) checks each file under one tsconfig only; shared/ is in the app, worker and tests tsconfigs and is checked only under the app one (DOM lib). document in shared/ passes vp check but fails tsc -b, and the Worker bundles shared/. Restored: check = vp check && tsc -b && vp test run; typecheck = tsc -b. Docs fixed (CLAUDE.md, spec).
+- 2026-11-08: Done (#9). Final gate: check = vp check && tsc -b && vp test run. Format pass verified behaviour-neutral (client assets byte-identical; only punctuation tokens changed). Note for tailwind-shadcn: add Tailwind's Vite plugin inside lazyPlugins in vite.config.ts; run pnpm run fix after adding files (Oxfmt is in the gate).
 
 ## api-tests
 

@@ -18,7 +18,15 @@ const GLYPHS: Record<string, ReactElement> = {
       <rect x="52" y="22" width="9" height="20" rx="4.5" fill="#D93A31" />
       <ellipse cx="62" cy="20" rx="9" ry="6" fill="#D93A31" />
       <ellipse cx="55" cy="13" rx="4" ry="8" fill="#B52E26" />
-      <rect x="12" y="28" width="12" height="7" rx="3.5" fill="#D93A31" transform="rotate(-30 18 31)" />
+      <rect
+        x="12"
+        y="28"
+        width="12"
+        height="7"
+        rx="3.5"
+        fill="#D93A31"
+        transform="rotate(-30 18 31)"
+      />
     </>
   ),
   sword: (
@@ -41,16 +49,35 @@ const GLYPHS: Record<string, ReactElement> = {
   ),
   heart: (
     <>
-      <path d="M40 52 C22 40 18 28 26 20 C32 14 38 17 40 23 C42 17 48 14 54 20 C62 28 58 40 40 52 Z" fill="#E0457B" />
+      <path
+        d="M40 52 C22 40 18 28 26 20 C32 14 38 17 40 23 C42 17 48 14 54 20 C62 28 58 40 40 52 Z"
+        fill="#E0457B"
+      />
       <rect x="37" y="50" width="6" height="26" rx="3" fill="#B8325F" />
     </>
   ),
   crown: (
     <>
       <rect x="14" y="50" width="52" height="10" rx="5" fill="#7A4FD6" />
-      <rect x="12" y="26" width="9" height="28" rx="4.5" fill="#7A4FD6" transform="rotate(-12 16 40)" />
+      <rect
+        x="12"
+        y="26"
+        width="9"
+        height="28"
+        rx="4.5"
+        fill="#7A4FD6"
+        transform="rotate(-12 16 40)"
+      />
       <rect x="35.5" y="18" width="9" height="34" rx="4.5" fill="#7A4FD6" />
-      <rect x="59" y="26" width="9" height="28" rx="4.5" fill="#7A4FD6" transform="rotate(12 64 40)" />
+      <rect
+        x="59"
+        y="26"
+        width="9"
+        height="28"
+        rx="4.5"
+        fill="#7A4FD6"
+        transform="rotate(12 64 40)"
+      />
       <circle cx="40" cy="15" r="5" fill="#F2A900" />
       <circle cx="15" cy="24" r="4.5" fill="#F2A900" />
       <circle cx="65" cy="24" r="4.5" fill="#F2A900" />
@@ -67,7 +94,12 @@ const GLYPHS: Record<string, ReactElement> = {
   ),
   bouquet: (
     <>
-      <path d="M26 34 Q34 54 40 74 M54 32 Q46 54 40 74 M40 30 L40 74" stroke="#1B1F3B" strokeWidth="1.6" fill="none" />
+      <path
+        d="M26 34 Q34 54 40 74 M54 32 Q46 54 40 74 M40 30 L40 74"
+        stroke="#1B1F3B"
+        strokeWidth="1.6"
+        fill="none"
+      />
       <ellipse cx="26" cy="22" rx="11" ry="13" fill="#D93A31" />
       <ellipse cx="54" cy="20" rx="11" ry="13" fill="#2E6BE6" />
       <ellipse cx="40" cy="16" rx="11" ry="13" fill="#F2A900" />

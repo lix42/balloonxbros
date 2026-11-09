@@ -6,30 +6,30 @@ receipts are checked by hand in admin.
 
 ## Event details (`settings` table)
 
-| Key | Placeholder | Shown on |
-|---|---|---|
-| `event_date` | `[DATE]` | Home info tiles, order form pickup note, confirmation page + email |
-| `event_time` | `[TIME]` | Home, confirmation page + email |
-| `event_place` | `[PLACE]` | Home, confirmation page + email, "pre-orders closed" page |
-| `cutoff` | `[CUTOFF DATE]` | Home announcement |
-| `purpose` | `[WHAT THE MONEY IS FOR]` | Home announcement |
-| `donation_url` | `https://example.org/donate` | How to donate, step 1 |
-| `contact_email` | `hello@balloonxbros.com` | Footer; reply-to on confirmation email |
+| Key             | Placeholder                  | Shown on                                                           |
+| --------------- | ---------------------------- | ------------------------------------------------------------------ |
+| `event_date`    | `[DATE]`                     | Home info tiles, order form pickup note, confirmation page + email |
+| `event_time`    | `[TIME]`                     | Home, confirmation page + email                                    |
+| `event_place`   | `[PLACE]`                    | Home, confirmation page + email, "pre-orders closed" page          |
+| `cutoff`        | `[CUTOFF DATE]`              | Home announcement                                                  |
+| `purpose`       | `[WHAT THE MONEY IS FOR]`    | Home announcement                                                  |
+| `donation_url`  | `https://example.org/donate` | How to donate, step 1                                              |
+| `contact_email` | `hello@balloonxbros.com`     | Footer; reply-to on confirmation email                             |
 
 ## Menu (`items` table)
 
-| id | Name | Price | Stock | Image |
-|---|---|---|---|---|
-| `dog` | Balloon Dog | $5 | unlimited | drawn icon |
-| `sword` | Sword | $5 | unlimited | drawn icon |
-| `flower` | Flower | $5 | unlimited | drawn icon |
-| `heart` | Heart Wand | $5 | unlimited | drawn icon |
-| `crown` | Crown | $5 | unlimited | drawn icon |
-| `butterfly` | Butterfly | $5 | unlimited | drawn icon |
-| `bouquet` | Bouquet | $8 | unlimited | drawn icon |
-| `star-gold` | [LIMITED ITEM 1] | $15 | 5 | drawn star |
-| `star-pink` | [LIMITED ITEM 2] | $15 | 5 | drawn star |
-| `star-blue` | [LIMITED ITEM 3] | $15 | 0 (sold out) | drawn star |
+| id          | Name             | Price | Stock        | Image      |
+| ----------- | ---------------- | ----- | ------------ | ---------- |
+| `dog`       | Balloon Dog      | $5    | unlimited    | drawn icon |
+| `sword`     | Sword            | $5    | unlimited    | drawn icon |
+| `flower`    | Flower           | $5    | unlimited    | drawn icon |
+| `heart`     | Heart Wand       | $5    | unlimited    | drawn icon |
+| `crown`     | Crown            | $5    | unlimited    | drawn icon |
+| `butterfly` | Butterfly        | $5    | unlimited    | drawn icon |
+| `bouquet`   | Bouquet          | $8    | unlimited    | drawn icon |
+| `star-gold` | [LIMITED ITEM 1] | $15   | 5            | drawn star |
+| `star-pink` | [LIMITED ITEM 2] | $15   | 5            | drawn star |
+| `star-blue` | [LIMITED ITEM 3] | $15   | 0 (sold out) | drawn star |
 
 ## Other
 

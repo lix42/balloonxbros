@@ -8,11 +8,40 @@ export const self = (exports as unknown as { default: Fetcher }).default;
 export const BASE = "https://balloonxbros.test";
 
 export const ITEMS = {
-  dog: { id: "dog", name: "Balloon Dog", category: "menu", price_cents: 500, stock: null, sort: 10 },
+  dog: {
+    id: "dog",
+    name: "Balloon Dog",
+    category: "menu",
+    price_cents: 500,
+    stock: null,
+    sort: 10,
+  },
   sword: { id: "sword", name: "Sword", category: "menu", price_cents: 700, stock: null, sort: 20 },
-  star: { id: "star", name: "Gold Star", category: "limited", price_cents: 1500, stock: 3, sort: 30 },
-  gone: { id: "gone", name: "Sold Out Star", category: "limited", price_cents: 1500, stock: 0, sort: 40 },
-  retired: { id: "retired", name: "Retired", category: "menu", price_cents: 500, stock: null, sort: 50, active: 0 },
+  star: {
+    id: "star",
+    name: "Gold Star",
+    category: "limited",
+    price_cents: 1500,
+    stock: 3,
+    sort: 30,
+  },
+  gone: {
+    id: "gone",
+    name: "Sold Out Star",
+    category: "limited",
+    price_cents: 1500,
+    stock: 0,
+    sort: 40,
+  },
+  retired: {
+    id: "retired",
+    name: "Retired",
+    category: "menu",
+    price_cents: 500,
+    stock: null,
+    sort: 50,
+    active: 0,
+  },
 } as const;
 
 /** Clears orders and files, and installs known items and settings. */
@@ -31,7 +60,15 @@ export async function reset(): Promise<void> {
     Object.values(ITEMS).map((i) =>
       env.DB.prepare(
         "INSERT INTO items (id, name, category, price_cents, stock, tint, active, sort) VALUES (?, ?, ?, ?, ?, '#E1EBFF', ?, ?)",
-      ).bind(i.id, i.name, i.category, i.price_cents, i.stock, "active" in i ? i.active : 1, i.sort),
+      ).bind(
+        i.id,
+        i.name,
+        i.category,
+        i.price_cents,
+        i.stock,
+        "active" in i ? i.active : 1,
+        i.sort,
+      ),
     ),
   );
   const listed = await env.FILES.list();
@@ -60,7 +97,9 @@ export function submitOrder(order: OrderPayload, receipt: File | null = receiptF
 }
 
 export async function stockOf(id: string): Promise<number | null> {
-  const row = await env.DB.prepare("SELECT stock FROM items WHERE id = ?").bind(id).first<{ stock: number | null }>();
+  const row = await env.DB.prepare("SELECT stock FROM items WHERE id = ?")
+    .bind(id)
+    .first<{ stock: number | null }>();
   return row ? row.stock : null;
 }
 

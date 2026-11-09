@@ -22,7 +22,8 @@ pnpm install
 cp .dev.vars.example .dev.vars        # local admin password = localdev
 pnpm run db:migrate:local
 pnpm run dev                          # http://localhost:5173, admin at /admin
-pnpm run check                        # typecheck + tests
+pnpm run check                        # format, lint, types, tests
+pnpm run fix                          # format + lint autofixes
 ```
 
 ## First deploy (done 2026-11-08, kept for reference)

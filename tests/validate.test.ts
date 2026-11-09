@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { checkReceipt, newOrderCode, parseOrderInput } from "../worker/validate";
 
 const base = { name: "Ana", email: "Ana@Example.com", phone: "(206) 555-0100" };
@@ -20,10 +20,18 @@ describe("parseOrderInput", () => {
   it("rejects empty orders, bad emails and bad quantities", () => {
     expect(() => parseOrderInput({ ...base, lines: [] })).toThrow(/empty/);
     expect(() => parseOrderInput({ ...base, lines: [{ itemId: "dog", qty: 0 }] })).toThrow(/empty/);
-    expect(() => parseOrderInput({ ...base, email: "nope", lines: [{ itemId: "dog", qty: 1 }] })).toThrow(/email/);
-    expect(() => parseOrderInput({ ...base, lines: [{ itemId: "dog", qty: 1.5 }] })).toThrow(/quantity/);
-    expect(() => parseOrderInput({ ...base, lines: [{ itemId: "DROP TABLE", qty: 1 }] })).toThrow(/item/);
-    expect(() => parseOrderInput({ ...base, phone: "12", lines: [{ itemId: "dog", qty: 1 }] })).toThrow(/phone/);
+    expect(() =>
+      parseOrderInput({ ...base, email: "nope", lines: [{ itemId: "dog", qty: 1 }] }),
+    ).toThrow(/email/);
+    expect(() => parseOrderInput({ ...base, lines: [{ itemId: "dog", qty: 1.5 }] })).toThrow(
+      /quantity/,
+    );
+    expect(() => parseOrderInput({ ...base, lines: [{ itemId: "DROP TABLE", qty: 1 }] })).toThrow(
+      /item/,
+    );
+    expect(() =>
+      parseOrderInput({ ...base, phone: "12", lines: [{ itemId: "dog", qty: 1 }] }),
+    ).toThrow(/phone/);
   });
 });
 
