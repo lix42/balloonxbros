@@ -11,27 +11,53 @@
   --font-sans: Nunito, system-ui, sans-serif;
   --font-heading: Fredoka, Nunito, system-ui, sans-serif;
 
-  /* design tokens */
+  /* Design tokens (docs/DESIGN.md). Each hue has only the steps below:
+     Tailwind's own red/yellow/blue/green steps are switched off so a page
+     can't reach for an off-palette shade. Page code uses these names, never
+     hex; only artwork (logo, balloon drawings, item tile tints) keeps hex. */
+  --color-red-*: initial;
+  --color-yellow-*: initial;
+  --color-blue-*: initial;
+  --color-green-*: initial;
+
+  /* neutrals */
   --color-ground: #f4f7ff;
   --color-surface: #ffffff;
   --color-line: #e2e7f5;
   --color-line-strong: #c9d1ea;
+  --color-line-dashed: #7f8bb3;
+  --color-faint: #676d8c;
+  --color-muted: #545a78;
+  --color-ink-2: #454b6b;
   --color-ink: #1b1f3b;
   --color-ink-hover: #2a2f55;
-  --color-ink-2: #454b6b;
-  --color-muted: #545a78;
-  --color-red: #d93a31;
-  --color-red-hover: #c3322a;
-  --color-red-text: #c2332b;
-  --color-blue: #2e6be6;
-  --color-link: #2257c9;
-  --color-link-hover: #163f99;
-  --color-yellow: #f2a900;
-  --color-yellow-tint: #fff3cc;
-  --color-yellow-on-navy: #ffd166;
-  --color-green-text: #1e7a50;
-  --color-error-bg: #fde8e7;
-  --color-error-text: #8f1f19;
+
+  /* accent (green): links, focus, icons, chosen/done states */
+  --color-accent-50: #f0faf5;
+  --color-accent-100: #e3f5ec;
+  --color-accent-500: #2e9e6b;
+  --color-accent-700: #1e7a50;
+  --color-accent-800: #155c3c;
+
+  /* red: the main call to action and errors */
+  --color-red-100: #fde8e7;
+  --color-red-500: #d93a31;
+  --color-red-600: #c3322a;
+  --color-red-900: #8f1f19;
+
+  /* yellow: notes and highlights */
+  --color-yellow-100: #fff3cc;
+  --color-yellow-300: #ffd166;
+  --color-yellow-500: #f2a900;
+  --color-yellow-900: #3d3420;
+
+  /* blue: the admin "Verified" badge (the logo's blue is artwork) */
+  --color-blue-100: #e1ebff;
+  --color-blue-800: #163f99;
+
+  /* roles */
+  --color-link: var(--color-accent-700);
+  --color-link-hover: var(--color-accent-800);
 
   /* shadcn semantic colours → tokens */
   --color-background: var(--color-ground);
@@ -40,17 +66,17 @@
   --color-card-foreground: var(--color-ink);
   --color-popover: var(--color-surface);
   --color-popover-foreground: var(--color-ink);
-  --color-primary: var(--color-red);
+  --color-primary: var(--color-red-500);
   --color-primary-foreground: #ffffff;
   --color-secondary: var(--color-ink);
   --color-secondary-foreground: #ffffff;
   --color-muted-foreground: var(--color-muted);
-  --color-accent: var(--color-yellow-tint);
-  --color-accent-foreground: var(--color-ink);
-  --color-destructive: var(--color-red);
+  --color-accent: var(--color-accent-100);
+  --color-accent-foreground: var(--color-accent-700);
+  --color-destructive: var(--color-red-500);
   --color-border: var(--color-line);
   --color-input: var(--color-line-strong);
-  --color-ring: var(--color-blue);
+  --color-ring: var(--color-accent-500);
 
   /* The old CSS set line-height 1.5 on body and everything inherited it;
      Tailwind's text-* sizes bring their own, so match the old value. */
@@ -91,6 +117,6 @@
     @apply font-heading leading-[1.1];
   }
   :focus-visible {
-    @apply outline-3 outline-offset-2 outline-blue;
+    @apply outline-3 outline-offset-2 outline-ring;
   }
 }

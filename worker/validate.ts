@@ -1,3 +1,4 @@
+import { parseUsPhone } from "../shared/phone";
 import {
   MAX_RECEIPT_BYTES,
   RECEIPT_TYPES,
@@ -37,10 +38,8 @@ export function parseOrderInput(raw: unknown): OrderInput {
   const name = str(o.name, "name", 80);
   const email = str(o.email, "email", 254).toLowerCase();
   if (!EMAIL_RE.test(email)) throw new HttpError(400, "Please enter a valid email.");
-  const phone = str(o.phone, "phone number", 30);
-  if (phone.replace(/\D/g, "").length < 7) {
-    throw new HttpError(400, "Please enter a valid phone number.");
-  }
+  const phone = parseUsPhone(str(o.phone, "phone number", 30));
+  if (!phone) throw new HttpError(400, "Please enter a 10-digit phone number.");
 
   if (!Array.isArray(o.lines) || o.lines.length === 0) {
     throw new HttpError(400, "Your order is empty.");

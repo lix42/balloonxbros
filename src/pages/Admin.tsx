@@ -26,11 +26,11 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
 };
 
 const STATUS_CLASS: Record<OrderStatus, string> = {
-  submitted: "bg-[#fff3cc] text-[#6b4d00]",
-  issue: "bg-[#fde8e7] text-[#8f1f19]",
-  verified: "bg-[#e1ebff] text-[#163f99]",
-  picked_up: "bg-[#dff4e8] text-[#1e6b45]",
-  cancelled: "bg-[#eceef4] text-[#545a78]",
+  submitted: "bg-yellow-100 text-yellow-900",
+  issue: "bg-red-100 text-red-900",
+  verified: "bg-blue-100 text-blue-800",
+  picked_up: "bg-accent-100 text-accent-700",
+  cancelled: "bg-line text-muted",
 };
 
 const cardClass = "rounded-2xl border border-line bg-surface p-4";
@@ -347,7 +347,7 @@ function OrderCard({
         ))}
       </div>
       {o.status === "issue" && (
-        <div className="rounded-[16px] bg-yellow-tint px-4 py-3.5 text-sm text-[#3d3420]">
+        <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-sm text-yellow-900">
           Contact {o.name.split(" ")[0]} about the receipt:{" "}
           <a
             href={`mailto:${o.email}?subject=${encodeURIComponent(`Your Balloon x Bros pre-order ${o.id}`)}`}

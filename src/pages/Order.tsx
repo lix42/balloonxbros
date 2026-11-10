@@ -1,10 +1,19 @@
 import { useEffect, useState, type DragEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { cn } from "cn";
+import { formatUsPhone } from "../../shared/phone";
 import { formatCents, MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "../../shared/types";
 import { ApiError, api } from "../api";
 import { ItemArt } from "../components/Glyph";
-import { ArrowRight, BackHeader, ErrorBox, LoadError, Loading, UploadIcon } from "../components/ui";
+import {
+  ArrowRight,
+  BackHeader,
+  CheckCircleIcon,
+  ErrorBox,
+  LoadError,
+  Loading,
+  UploadIcon,
+} from "../components/ui";
 import { buttonVariants } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { CONTACT_LIMITS } from "../lib/contact-draft";
@@ -15,7 +24,7 @@ import { useStore } from "../store";
 export const LAST_ORDER_KEY = "bxb-last-order";
 
 const stepperButton =
-  "size-11 cursor-pointer rounded-full border-none bg-transparent text-[22px] font-bold hover:bg-[#e6ebfa]";
+  "size-11 cursor-pointer rounded-full border-none bg-transparent text-[22px] font-bold hover:bg-accent-100";
 
 function CartRow({ itemId }: { itemId: string }) {
   const { lines, setQty, setNote } = useStore();
@@ -108,7 +117,7 @@ export function Order() {
     const saved = loadContact();
     setName(saved.name);
     setEmail(saved.email);
-    setPhone(saved.phone);
+    setPhone(formatUsPhone(saved.phone));
     setContactLoaded(true);
   }, []);
   useEffect(() => {
@@ -245,7 +254,7 @@ export function Order() {
         <section className="px-5 pt-1.5 pb-4">
           <div className="flex flex-col gap-3.5 rounded-[20px] bg-ink p-[18px] text-white [&_a]:text-white">
             <div className="flex items-baseline justify-between">
-              <span className="font-bold text-[#c9d1ea]">
+              <span className="font-bold text-line-strong">
                 {count} balloon{count === 1 ? "" : "s"}
               </span>
               <span className="font-heading text-[26px] font-semibold">
@@ -261,7 +270,7 @@ export function Order() {
               className={cn(
                 buttonVariants({ variant: "link" }),
                 // ! beats the card's [&_a]:text-white and the hover colour, as the old inline style did
-                "justify-start text-[15px] text-yellow-on-navy!",
+                "justify-start text-[15px] text-yellow-300!",
               )}
             >
               Show me the donation steps <ArrowRight size={16} />
@@ -307,9 +316,12 @@ export function Order() {
                 type="tel"
                 maxLength={CONTACT_LIMITS.phone}
                 autoComplete="tel"
+                inputMode="tel"
+                pattern="\(\d{3}\) \d{3}-\d{4}"
+                title="A 10-digit phone number, like (425) 555-0100"
                 placeholder="(555) 555-0100"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(formatUsPhone(e.target.value))}
               />
             </label>
           </div>
@@ -320,8 +332,12 @@ export function Order() {
             </span>
             <label
               className={cn(
-                "relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-[#7f8bb3] bg-white px-[18px] py-[26px] text-center focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-blue",
-                drag && "border-blue bg-[#eef3ff]",
+                "relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 px-[18px] py-[26px] text-center focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-ring",
+                drag
+                  ? "border-dashed border-accent-500 bg-accent-50"
+                  : receipt
+                    ? "border-solid border-accent-700 bg-accent-100"
+                    : "border-dashed border-line-dashed bg-white",
               )}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -330,16 +346,18 @@ export function Order() {
               onDragLeave={() => setDrag(false)}
               onDrop={onDrop}
             >
-              <UploadIcon />
               {receipt ? (
                 <>
-                  <span className="font-extrabold break-all text-green-text">{receipt.name}</span>
+                  <CheckCircleIcon />
+                  <span className="font-extrabold text-accent-700">Receipt attached</span>
+                  <span className="text-sm break-all text-ink-2">{receipt.name}</span>
                   <span className="text-[13px] font-bold text-link">
                     Tap to choose a different file
                   </span>
                 </>
               ) : (
                 <>
+                  <UploadIcon />
                   <span className="font-extrabold">Drop your receipt here</span>
                   <span className="text-[13px] text-muted">
                     or tap to choose: a screenshot or PDF of the receipt page or email
@@ -356,7 +374,7 @@ export function Order() {
             </label>
           </div>
 
-          <div className="rounded-[16px] bg-yellow-tint px-4 py-3.5 text-sm text-[#3d3420]">
+          <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-sm text-yellow-900">
             <strong>Before you submit:</strong> check that your receipt shows{" "}
             <strong>{SCHOOL_SITE.fund}</strong>, <strong>{SCHOOL_SITE.student}</strong> and the
             amount <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if

@@ -46,9 +46,11 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
   Server-only code uses `env`/`waitUntil` from `cloudflare:workers`; never
   touch `window`/`localStorage` during render.
 - Styling: Tailwind v4 (Vite plugin) with shadcn on Base UI. Theme in
-  `src/styles/app.css`: the `docs/DESIGN.md` tokens as colours (`ground`,
-  `ink`, `red`, `link`, …), Fredoka/Nunito, radii, and shadcn's semantic
-  variables mapped onto them. Site variants of shadcn parts live in
+  `src/styles/app.css`: the `docs/DESIGN.md` tokens as colours (neutrals
+  `ground`, `ink`, …; stepped hues `accent-500`, `red-500`, `yellow-100`, …;
+  green `accent` is the interactive colour), Fredoka/Nunito, radii, and
+  shadcn's semantic variables mapped onto them. No hex in page code except
+  artwork. Site variants of shadcn parts live in
   `src/components/ui/` (`buttonVariants`: red/ink/pill/link/icon/tab;
   `Input` 48px/44px; `Checkbox`). Add components with
   `pnpm dlx shadcn@<version> add <name>`, then restyle to the tokens. Base

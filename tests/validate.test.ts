@@ -29,9 +29,20 @@ describe("parseOrderInput", () => {
     expect(() => parseOrderInput({ ...base, lines: [{ itemId: "DROP TABLE", qty: 1 }] })).toThrow(
       /item/,
     );
-    expect(() =>
-      parseOrderInput({ ...base, phone: "12", lines: [{ itemId: "dog", qty: 1 }] }),
-    ).toThrow(/phone/);
+    for (const phone of ["12", "425-555-010", "425-555-01000", "+44 20 7946 0958"]) {
+      expect(() => parseOrderInput({ ...base, phone, lines: [{ itemId: "dog", qty: 1 }] })).toThrow(
+        /phone/,
+      );
+    }
+  });
+
+  it("stores the phone as (xxx) xxx-xxxx", () => {
+    const o = parseOrderInput({
+      ...base,
+      phone: "+1 425.555.0100",
+      lines: [{ itemId: "dog", qty: 1 }],
+    });
+    expect(o.phone).toBe("(425) 555-0100");
   });
 });
 
