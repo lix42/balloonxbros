@@ -27,10 +27,12 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## resend-email
 
-**Status:** not started
-**Updated:** 2026-11-08
+**Status:** done
+**Updated:** 2026-11-09
 
 - 2026-11-08: filed. Goal: verify domain in Resend, set RESEND_API_KEY, confirm delivery
+- 2026-11-09: Started. Resend shows balloonxbros.com Verified (Li); records already in DNS: send. CNAME to send.forge.rmta.net, resend._domainkey TXT (CNAME-style setup, not the MX/SPF TXT the spec describes). RESEND_API_KEY set by Li (secret list confirms). No _dmarc record yet.
+- 2026-11-09: Verified on prod 2026-11-09: Li opened orders_open briefly, placed a test order to a Gmail address, closed it again and cancelled the order. The confirmation arrived in the Inbox (not spam), items and total correct, reply-to hello@balloonxbros.com. wrangler tail (allowed via a user-settings rule for 'pnpm exec wrangler tail') showed every request Ok, no 'resend failed'. DMARC skipped by decision (no _dmarc record). Not tested: Fastmail recipients, who may hit the same new-domain block as hello@ forwarding. Note for launch-check: the pickup line still shows [BRACKET] placeholders until event-details lands.
 
 ## balloon-photos
 

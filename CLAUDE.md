@@ -19,7 +19,7 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
 - Live at https://balloonxbros.com (Worker `balloonxbros`, custom domains
   balloonxbros.com + www). Admin at `/admin`.
 - Cloudflare: D1 `balloonxbros` (id in `wrangler.jsonc`), R2 `balloonxbros-files`.
-  Secrets set: `ADMIN_PASSWORD`, `SESSION_SECRET`. Not yet: `RESEND_API_KEY`.
+  Secrets set: `ADMIN_PASSWORD`, `SESSION_SECRET`, `RESEND_API_KEY`.
 - Migration `0001_init.sql` is applied in production — never edit it; add
   `0002_*.sql` and up. CI (`.github/workflows/deploy.yml`) applies migrations
   and deploys on push to `main` using repo secrets `CLOUDFLARE_API_TOKEN` /
@@ -28,10 +28,13 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
   Gmail; the catch-all drops. Manage with `wrangler email routing …` or the
   dashboard. Li's Fastmail inbox (also a verified destination) rejects mail
   forwarded from the brand-new domain (451 "blacklisted - RLR633"), so it
-  can't be the target until Fastmail trusts balloonxbros.com. Resend's records
-  live on `send.` and `resend._domainkey`, apart from the root MX.
+  can't be the target until Fastmail trusts balloonxbros.com.
+- Resend verified for balloonxbros.com; confirmation mail goes out from
+  `orders@` (tested to Gmail: inbox, reply-to `hello@`). Its records live on
+  `send.` (CNAME) and `resend._domainkey`, apart from the root MX. No `_dmarc`
+  record yet. Fastmail recipients may hit the same new-domain block.
 - Next: content PRs (event details, real menu/prices/stock, photos in
-  `public/balloons/`), then Resend domain verification.
+  `public/balloons/`), then the launch check.
 
 ## Stack
 
