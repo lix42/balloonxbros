@@ -34,7 +34,7 @@ export function Donate() {
       <>
         <BackHeader to="/" label="Back to home">
           <>
-            Balloon <span className="text-red">×</span> Bros
+            Balloon <span className="text-red-500">×</span> Bros
           </>
         </BackHeader>
         <LoadError message={loadError} retry={reload} />
@@ -136,12 +136,12 @@ export function Donate() {
     <>
       <BackHeader to="/" label="Back to home">
         <>
-          Balloon <span className="text-red">×</span> Bros
+          Balloon <span className="text-red-500">×</span> Bros
         </>
       </BackHeader>
       <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col">
         <section className="flex flex-col gap-2.5 px-5 pt-[26px] pb-4">
-          <p className="text-[13px] font-extrabold tracking-[1.2px] text-red-text uppercase">
+          <p className="text-[13px] font-extrabold tracking-[1.2px] text-red-600 uppercase">
             Paying for your order
           </p>
           <h1 className="text-[34px] leading-[1.05] font-bold tracking-[-0.5px]">
@@ -151,7 +151,7 @@ export function Donate() {
             We don't take payments ourselves. Your donation goes straight to {settings.school_name},
             and your receipt is your ticket for picking up the balloons.
           </p>
-          <p className="rounded-[16px] border-2 border-yellow bg-yellow-tint px-4 py-3 text-[14px] text-[#3d3420]">
+          <p className="rounded-[16px] border-2 border-yellow-500 bg-yellow-100 px-4 py-3 text-[14px] text-yellow-900">
             <strong>Heads up:</strong> the school's site shows your receipt only once, right after
             you pay. Save it before you tap Done (step 6).
           </p>
@@ -171,15 +171,15 @@ export function Donate() {
               </div>
             </li>
           ))}
-          <li className="flex gap-3.5 rounded-2xl border-2 border-yellow bg-yellow-tint p-4">
-            <span className={cn(stepNum, "bg-red")}>6</span>
+          <li className="flex gap-3.5 rounded-2xl border-2 border-yellow-500 bg-yellow-100 p-4">
+            <span className={cn(stepNum, "bg-red-500")}>6</span>
             <div className="flex min-w-0 flex-col gap-1.5">
               <span className="font-extrabold">Save your receipt before you tap Done</span>
-              <span className="text-[14px] text-[#3d3420]">
+              <span className="text-[14px] text-yellow-900">
                 This page is your <strong>only</strong> receipt: once you tap Done, it's gone. Any
                 one of these works:
               </span>
-              <ul className="m-0 list-[circle] pl-[18px] text-[14px] leading-[1.7] text-[#3d3420]">
+              <ul className="m-0 list-[circle] pl-[18px] text-[14px] leading-[1.7] text-yellow-900">
                 <li>Take a screenshot of the receipt</li>
                 <li>
                   Tap <strong>Print</strong> and save it as a PDF

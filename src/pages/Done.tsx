@@ -118,7 +118,7 @@ export function Done({ code }: { code: string }) {
         )}
       </div>
 
-      <div className="rounded-[16px] bg-yellow-tint px-4 py-3.5 text-[14px] text-[#3d3420]">
+      <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-[14px] text-yellow-900">
         Bring a friend! We'll also be twisting balloons on the spot at the event.
       </div>
 

@@ -5,7 +5,7 @@ import type * as React from "react";
 
 // Border, radius, focus ring and type shared by Input and Textarea.
 const fieldClass =
-  "w-full min-w-0 rounded-lg border-[1.5px] border-input bg-white font-semibold text-ink transition-colors placeholder:text-[#757575] focus:border-blue focus:shadow-[0_0_0_3px_rgba(46,107,230,0.2)] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive";
+  "w-full min-w-0 rounded-lg border-[1.5px] border-input bg-white font-semibold text-ink transition-colors placeholder:text-faint focus:border-ring focus:ring-3 focus:ring-ring/25 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive";
 
 // shadcn's Input at the site's sizes: 48px tall (44px for "sm"), 12px radius.
 const inputVariants = cva(fieldClass, {

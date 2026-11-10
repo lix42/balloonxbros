@@ -80,21 +80,26 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 
 ## Visual tokens
 
-Implemented as the Tailwind theme in `src/styles/app.css`.
+Implemented as the Tailwind theme in `src/styles/app.css`. Each hue has only
+the steps listed (Tailwind's own red/yellow/blue/green steps are switched off),
+and page code uses these names, never hex. Only artwork keeps raw hex: the
+logo, the balloon drawings and the per-item tile tints.
 
-| Token      | Value                                                     | Use                                      |
-| ---------- | --------------------------------------------------------- | ---------------------------------------- |
-| ground     | `#F4F7FF`                                                 | page background                          |
-| surface    | `#FFFFFF`                                                 | cards, header                            |
-| line       | `#E2E7F5`                                                 | card borders                             |
-| ink        | `#1B1F3B`                                                 | text, dark cards                         |
-| ink-2      | `#454B6B`                                                 | body copy                                |
-| muted      | `#545A78`                                                 | labels                                   |
-| red        | `#D93A31`                                                 | primary CTA (eyebrow text `#C2332B`)     |
-| blue       | `#2E6BE6`                                                 | focus; links `#2257C9` / hover `#163F99` |
-| yellow     | `#F2A900`, tint `#FFF3CC`, on-navy `#FFD166`              | highlights                               |
-| green      | text `#1E7A50`, tint `#E3F5EC`                            | accent: done states (receipt attached)   |
-| tile tints | `#FFE3E1 #E1EBFF #FFF3CC #FFE1EE #EDE3FF #FFE9D6 #DDF4EF` | per item                                 |
+| Token      | Steps                                                                    | Use                                                                                                                                                   |
+| ---------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| neutrals   | ground `#F4F7FF`, surface `#FFFFFF`                                      | page background; cards, header                                                                                                                        |
+|            | line `#E2E7F5`, line-strong `#C9D1EA`, line-dashed `#7F8BB3`             | card borders; input borders, sold-out tile; dashed drop/placeholder boxes                                                                             |
+|            | faint `#676D8C`, muted `#545A78`, ink-2 `#454B6B`, ink `#1B1F3B`         | placeholders; labels; body copy; text and dark cards                                                                                                  |
+| **accent** | 50 `#F0FAF5`, 100 `#E3F5EC`, 500 `#2E9E6B`, 700 `#1E7A50`, 800 `#155C3C` | green, the interactive colour: links (700, hover 800), focus ring and icons (500), chosen/done states (100 fill, 700 border and text), drag-over (50) |
+| red        | 100 `#FDE8E7`, 500 `#D93A31`, 600 `#C3322A`, 900 `#8F1F19`               | main call to action (500, hover 600), eyebrow text (600), errors (100 fill, 900 text)                                                                 |
+| yellow     | 100 `#FFF3CC`, 300 `#FFD166`, 500 `#F2A900`, 900 `#3D3420`               | notes (100 fill, 500 border, 900 text); highlights on navy (300)                                                                                      |
+| blue       | 100 `#E1EBFF`, 800 `#163F99`                                             | admin "Verified" badge only                                                                                                                           |
+| tile tints | `#FFE3E1 #E1EBFF #FFF3CC #FFE1EE #EDE3FF #FFE9D6 #DDF4EF`                | per item (artwork)                                                                                                                                    |
+
+Roles: `link` / `link-hover` are accent 700 / 800, and shadcn's `ring` is
+accent 500, `accent` / `accent-foreground` accent 100 / 700, `primary` and
+`destructive` red 500. Admin order badges: New yellow, Receipt issue red,
+Verified blue, Picked up accent, Cancelled neutral.
 
 - Type: **Fredoka** 600/700 for headings and wordmark, **Nunito** 400–800 for body.
 - Radii: cards 18–22px, tiles 18px, pills 999px, inputs 12px.

@@ -24,7 +24,7 @@ import { useStore } from "../store";
 export const LAST_ORDER_KEY = "bxb-last-order";
 
 const stepperButton =
-  "size-11 cursor-pointer rounded-full border-none bg-transparent text-[22px] font-bold hover:bg-[#e6ebfa]";
+  "size-11 cursor-pointer rounded-full border-none bg-transparent text-[22px] font-bold hover:bg-accent-100";
 
 function CartRow({ itemId }: { itemId: string }) {
   const { lines, setQty, setNote } = useStore();
@@ -254,7 +254,7 @@ export function Order() {
         <section className="px-5 pt-1.5 pb-4">
           <div className="flex flex-col gap-3.5 rounded-[20px] bg-ink p-[18px] text-white [&_a]:text-white">
             <div className="flex items-baseline justify-between">
-              <span className="font-bold text-[#c9d1ea]">
+              <span className="font-bold text-line-strong">
                 {count} balloon{count === 1 ? "" : "s"}
               </span>
               <span className="font-heading text-[26px] font-semibold">
@@ -270,7 +270,7 @@ export function Order() {
               className={cn(
                 buttonVariants({ variant: "link" }),
                 // ! beats the card's [&_a]:text-white and the hover colour, as the old inline style did
-                "justify-start text-[15px] text-yellow-on-navy!",
+                "justify-start text-[15px] text-yellow-300!",
               )}
             >
               Show me the donation steps <ArrowRight size={16} />
@@ -332,12 +332,12 @@ export function Order() {
             </span>
             <label
               className={cn(
-                "relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 px-[18px] py-[26px] text-center focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-blue",
+                "relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 px-[18px] py-[26px] text-center focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-ring",
                 drag
-                  ? "border-dashed border-blue bg-[#eef3ff]"
+                  ? "border-dashed border-accent-500 bg-accent-50"
                   : receipt
-                    ? "border-solid border-accent-foreground bg-accent"
-                    : "border-dashed border-[#7f8bb3] bg-white",
+                    ? "border-solid border-accent-700 bg-accent-100"
+                    : "border-dashed border-line-dashed bg-white",
               )}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -349,7 +349,7 @@ export function Order() {
               {receipt ? (
                 <>
                   <CheckCircleIcon />
-                  <span className="font-extrabold text-accent-foreground">Receipt attached</span>
+                  <span className="font-extrabold text-accent-700">Receipt attached</span>
                   <span className="text-sm break-all text-ink-2">{receipt.name}</span>
                   <span className="text-[13px] font-bold text-link">
                     Tap to choose a different file
@@ -374,7 +374,7 @@ export function Order() {
             </label>
           </div>
 
-          <div className="rounded-[16px] bg-yellow-tint px-4 py-3.5 text-sm text-[#3d3420]">
+          <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-sm text-yellow-900">
             <strong>Before you submit:</strong> check that your receipt shows{" "}
             <strong>{SCHOOL_SITE.fund}</strong>, <strong>{SCHOOL_SITE.student}</strong> and the
             amount <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if

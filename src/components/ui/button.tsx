@@ -10,7 +10,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        red: "justify-center rounded-full bg-red text-white hover:bg-red-hover hover:text-white",
+        red: "justify-center rounded-full bg-red-500 text-white hover:bg-red-600 hover:text-white",
         ink: "justify-center rounded-full bg-ink text-white hover:bg-ink-hover hover:text-white",
         pill: "min-h-11 justify-center rounded-full border-2 border-ink px-4 text-sm text-ink hover:bg-ground hover:text-ink",
         link: "min-h-11 gap-1.5 bg-transparent p-0 text-sm text-link hover:text-link-hover",

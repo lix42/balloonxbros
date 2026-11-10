@@ -31,7 +31,7 @@ function Tile({ item }: { item: Item }) {
       <div
         className={cn(
           "relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl [&_img]:size-full [&_img]:object-cover [&>svg]:h-auto [&>svg]:w-[64%]",
-          soldOut && "bg-[#c9cee0] [&_img]:opacity-35 [&_svg]:opacity-35",
+          soldOut && "bg-line-strong [&_img]:opacity-35 [&_svg]:opacity-35",
         )}
         style={soldOut ? undefined : { background: tint }}
       >
@@ -41,7 +41,7 @@ function Tile({ item }: { item: Item }) {
             className={cn(
               badge,
               "right-2",
-              soldOut ? "bg-ink text-white" : "bg-yellow-on-navy text-ink",
+              soldOut ? "bg-ink text-white" : "bg-yellow-300 text-ink",
             )}
           >
             {soldOut ? "Sold out" : `${item.stock} left`}
@@ -57,7 +57,7 @@ function Tile({ item }: { item: Item }) {
         )}
         <button
           type="button"
-          className="absolute bottom-1.5 left-1.5 size-11 cursor-pointer rounded-lg border-none bg-white text-2xl leading-none font-bold text-ink shadow-[0_1px_2px_rgba(27,31,59,0.18)] active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-45"
+          className="absolute bottom-1.5 left-1.5 size-11 cursor-pointer rounded-lg border-none bg-white text-2xl leading-none font-bold text-ink shadow-xs shadow-ink/18 active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-45"
           onClick={() => add(item.id)}
           disabled={soldOut || atMax}
           aria-label={soldOut ? `${item.name} is sold out` : `Add ${item.name}`}
@@ -92,7 +92,7 @@ export function Home() {
       <SiteHeader />
       <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col">
         <section className="flex flex-col gap-3.5 px-5 pt-7 pb-4">
-          <p className="text-[13px] font-extrabold tracking-[1.2px] text-red-text uppercase">
+          <p className="text-[13px] font-extrabold tracking-[1.2px] text-red-600 uppercase">
             Fundraiser for {settings.school_name}
           </p>
           <h1 className="text-[40px] leading-[1.05] font-bold tracking-[-0.5px]">
@@ -137,7 +137,7 @@ export function Home() {
           <div className="flex flex-col gap-2.5 rounded-3xl bg-ink p-5 text-white [&_a]:text-white">
             <div className="flex items-center gap-2">
               <MegaphoneIcon />
-              <span className="text-[12px] font-extrabold tracking-[1.2px] text-yellow-on-navy uppercase">
+              <span className="text-[12px] font-extrabold tracking-[1.2px] text-yellow-300 uppercase">
                 Announcement
               </span>
             </div>
@@ -180,11 +180,11 @@ export function Home() {
           <h2 className="text-[22px] font-semibold">How pre-ordering works</h2>
           <ol className="m-0 grid list-none grid-cols-3 gap-2 p-0">
             <li className={stepItem}>
-              <span className={cn(stepNum, "bg-red")}>1</span>
+              <span className={cn(stepNum, "bg-red-500")}>1</span>
               Pick your balloons
             </li>
             <li className={stepItem}>
-              <span className={cn(stepNum, "bg-blue")}>2</span>
+              <span className={cn(stepNum, "bg-accent-700")}>2</span>
               Donate to the school &amp; upload the receipt
             </li>
             <li className={stepItem}>
@@ -221,7 +221,7 @@ export function Home() {
         )}
 
         <section className="px-5 pt-[22px] pb-4">
-          <div className="flex items-start gap-3.5 rounded-[20px] border-2 border-dashed border-[#9aa6cc] bg-surface p-[18px]">
+          <div className="flex items-start gap-3.5 rounded-[20px] border-2 border-dashed border-line-dashed bg-surface p-[18px]">
             <WrenchIcon />
             <div className="flex flex-col gap-1">
               <span className="font-heading text-[18px] font-semibold">Want something custom?</span>
