@@ -26,6 +26,9 @@ describe("getMenu", () => {
     expect(menu.settings.event_address).toBe("14326 124th Ave NE, Kirkland, WA 98034");
     expect(menu.settings.announcement).toMatch(/^Hi! .*\n-Sky and Ocean$/s);
     expect(menu.settings).not.toHaveProperty("cutoff");
+    expect(menu.settings.donation_url).toBe(
+      "https://wa-lakewashington-lite.intouchreceipting.com/default",
+    );
   });
 });
 

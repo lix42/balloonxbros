@@ -117,7 +117,8 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## donation-steps
 
-**Status:** not started
+**Status:** in progress
 **Updated:** 2026-11-09
 
 - 2026-11-09: filed. Goal: real donation_url, screenshots and accurate steps on /donate
+- 2026-11-09: Walked the real flow with Li on 2026-11-09 (Chrome, phone width; Li made a real $10 ASB donation): Lake Washington School District on InTouch Receipting -> form (KIRKLAND MIDDLE SCHOOL, ASB DONATIONS, amount, Student Name 'Sky Xu' per Li) -> Buy (form clears, Cart bar shows amount) -> Cart -> Pay -> Customer Information (all required) -> card (Visa/Mastercard) -> receipt page, shown once: Send to email (from noreply@intouchpay.com), Print, Done. Built: migration 0003_donation_url.sql; /donate rewritten with a heads-up note and six steps with cropped screenshots in public/donate/ (receipt masked with solid blocks: email field, receipt #, transaction code, payer name); src/lib/school-site.ts holds the menu values; order form reminder now checks ASB DONATIONS + Sky Xu + amount (the receipt doesn't name Kirkland), upload hint names receipt page or email. Screenshots are the ~250px captures (Li chose these over re-shooting).

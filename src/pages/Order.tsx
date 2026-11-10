@@ -7,6 +7,7 @@ import { ItemArt } from "../components/Glyph";
 import { ArrowRight, BackHeader, ErrorBox, LoadError, Loading, UploadIcon } from "../components/ui";
 import { buttonVariants } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { SCHOOL_SITE } from "../lib/school-site";
 import { useStore } from "../store";
 
 export const LAST_ORDER_KEY = "bxb-last-order";
@@ -323,7 +324,7 @@ export function Order() {
                 <>
                   <span className="font-extrabold">Drop your receipt here</span>
                   <span className="text-[13px] text-muted">
-                    or tap to choose: screenshot, photo or PDF
+                    or tap to choose: a screenshot or PDF of the receipt page or email
                   </span>
                 </>
               )}
@@ -339,8 +340,8 @@ export function Order() {
 
           <div className="rounded-[16px] bg-yellow-tint px-4 py-3.5 text-sm text-[#3d3420]">
             <strong>Before you submit:</strong> check that your receipt shows{" "}
-            <strong>{settings.school_name}</strong> and the amount{" "}
-            <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if
+            <strong>{SCHOOL_SITE.fund}</strong>, <strong>{SCHOOL_SITE.student}</strong> and the
+            amount <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if
             something doesn't match, we'll contact you by email or phone.
           </div>
 

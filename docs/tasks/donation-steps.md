@@ -1,6 +1,6 @@
 ---
 title: Real donation link and steps
-status: todo
+status: doing
 deps: []
 summary: real donation_url, screenshots and accurate steps on /donate
 ---

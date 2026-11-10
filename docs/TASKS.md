@@ -88,9 +88,9 @@ graph TD
 
 **Legend:** `[ ]` todo · `[~]` doing · `[x]` done · `[-]` closed. Each task file's frontmatter is the source of truth; query with `tasks ready`, `tasks show <id>`.
 
+- [~] [Real donation link and steps](tasks/donation-steps.md) — real donation_url, screenshots and accurate steps on /donate
 - [ ] [Balloon photos](tasks/balloon-photos.md) — square photos in public/balloons/, photo_key set by migration · **waits on** `menu-content`
 - [ ] [Move outbound email to Cloudflare Email Service](tasks/cf-email-service.md) — post-launch: send confirmations via the send_email binding instead of Resend · **waits on** `launch-check` · **low priority**
-- [ ] [Real donation link and steps](tasks/donation-steps.md) — real donation_url, screenshots and accurate steps on /donate
 - [ ] [Production launch check](tasks/launch-check.md) — end-to-end test order on prod, clean up, reopen pre-orders · **waits on** `menu-content`, `balloon-photos`, `donation-steps`
 - [ ] [Real menu, prices and stock](tasks/menu-content.md) — migration with real items, prices, limited stock; hide unused seed items
 - [x] [API route tests in the Workers runtime](tasks/api-tests.md) — route-level tests on local D1/R2 via @cloudflare/vitest-plugin; safety net for server-functions
