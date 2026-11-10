@@ -1,8 +1,12 @@
+import { EVENT_MAP, eventMapUrl } from "../shared/place";
 import { formatCents, type PublicOrder, type Settings } from "../shared/types";
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 export function confirmationEmail(order: PublicOrder, s: Settings, siteUrl: string) {
+  const mapUrl = eventMapUrl(s);
+  const address = s.event_address ? `, ${s.event_address}` : "";
+  const mapImg = new URL(EVENT_MAP.path, siteUrl).href;
   const rows = order.lines
     .map(
       (l) =>
@@ -20,7 +24,9 @@ export function confirmationEmail(order: PublicOrder, s: Settings, siteUrl: stri
 <p style="margin:0 0 16px;line-height:1.5;color:#454B6B">Order <strong style="color:#1B1F3B">${order.id}</strong>. We'll check your donation receipt and have your balloons ready. If anything doesn't match, we'll reach out by email or phone.</p>
 <table style="width:100%;border-collapse:collapse;font-size:15px">${rows}
 <tr><td style="padding:10px 0 0;border-top:1px solid #E2E7F5;font-weight:800">Donated</td><td style="padding:10px 0 0;border-top:1px solid #E2E7F5;text-align:right;font-weight:800">${formatCents(order.totalCents)}</td></tr></table>
-<p style="margin:18px 0 0;line-height:1.5"><strong>Pick up:</strong> ${esc(s.event_date)}, ${esc(s.event_time)} at ${esc(s.event_place)}. Just give your name at the Balloon x Bros table.</p>
+<p style="margin:18px 0 0;line-height:1.5"><strong>Pick up:</strong> ${esc(s.event_date)}, ${esc(s.event_time)} at <a href="${esc(mapUrl)}" style="color:#2257C9">${esc(s.event_place)}</a>${esc(address)}. Just give your name at the Balloon x Bros table.</p>
+<a href="${esc(mapUrl)}" style="display:block;margin:14px 0 0"><img src="${esc(mapImg)}" width="476" alt="Map to ${esc(s.event_place)}" style="display:block;width:100%;max-width:476px;height:auto;border:1px solid #E2E7F5;border-radius:12px"></a>
+<p style="margin:4px 0 0;font-size:11px;color:#545A78;text-align:right">${EVENT_MAP.credit}</p>
 </div>
 <p style="font-size:13px;color:#545A78;line-height:1.5">Every dollar goes to ${esc(s.school_name)}. Questions? Reply to this email or write to ${esc(s.contact_email)}.<br><a href="${esc(siteUrl)}" style="color:#2257C9">${esc(siteUrl.replace(/^https?:\/\//, ""))}</a></p>
 </div></body></html>`;
@@ -31,7 +37,8 @@ export function confirmationEmail(order: PublicOrder, s: Settings, siteUrl: stri
     ...order.lines.map((l) => `${l.qty} x ${l.name}${l.note ? ` (${l.note})` : ""}`),
     `Donated: ${formatCents(order.totalCents)}`,
     "",
-    `Pick up: ${s.event_date}, ${s.event_time} at ${s.event_place}.`,
+    `Pick up: ${s.event_date}, ${s.event_time} at ${s.event_place}${address}.`,
+    `Map: ${mapUrl}`,
     `Questions: ${s.contact_email}`,
   ].join("\n");
 

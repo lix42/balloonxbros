@@ -22,8 +22,8 @@ export interface Settings {
   event_date: string;
   event_time: string;
   event_place: string;
-  cutoff: string;
-  purpose: string;
+  event_address: string;
+  announcement: string;
   donation_url: string;
   contact_email: string;
   orders_open: string;
@@ -34,8 +34,8 @@ export const SETTING_KEYS: (keyof Settings)[] = [
   "event_date",
   "event_time",
   "event_place",
-  "cutoff",
-  "purpose",
+  "event_address",
+  "announcement",
   "donation_url",
   "contact_email",
   "orders_open",

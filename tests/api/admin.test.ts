@@ -214,16 +214,16 @@ describe("admin settings", () => {
     const settings = await adminSaveSettings(env, await adminAuth(), {
       event_date: "Sat, Nov 21",
       orders_open: "0",
-      purpose: "x".repeat(600),
+      announcement: "x".repeat(600),
       evil: "1",
       event_time: 5,
     });
     expect(settings).toMatchObject({
       event_date: "Sat, Nov 21",
       orders_open: "0",
-      event_time: "[TIME]",
+      event_time: "6pm–8pm",
     });
-    expect(settings.purpose).toHaveLength(500);
+    expect(settings.announcement).toHaveLength(500);
     expect(await env.DB.prepare("SELECT 1 FROM settings WHERE key = 'evil'").first()).toBeNull();
 
     const closed = await rejection(

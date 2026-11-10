@@ -2,19 +2,17 @@
 
 Everything below is placeholder content in `migrations/0001_init.sql`.
 Confirmed so far: school = **Kirkland Middle School (KIMS)**, pickup is by name,
-receipts are checked by hand in admin.
+receipts are checked by hand in admin. Event: **Fri, Nov 13, 6pm–8pm** at
+**Kingsgate Skating Rink** (14326 124th Ave NE, Kirkland, WA 98034; Google
+Maps lists it as Sno-King Ice Arena), pre-orders end Thu, Nov 12 (in the `announcement` setting,
+migration `0002`).
 
 ## Event details (`settings` table)
 
-| Key             | Placeholder                  | Shown on                                                           |
-| --------------- | ---------------------------- | ------------------------------------------------------------------ |
-| `event_date`    | `[DATE]`                     | Home info tiles, order form pickup note, confirmation page + email |
-| `event_time`    | `[TIME]`                     | Home, confirmation page + email                                    |
-| `event_place`   | `[PLACE]`                    | Home, confirmation page + email, "pre-orders closed" page          |
-| `cutoff`        | `[CUTOFF DATE]`              | Home announcement                                                  |
-| `purpose`       | `[WHAT THE MONEY IS FOR]`    | Home announcement                                                  |
-| `donation_url`  | `https://example.org/donate` | How to donate, step 1                                              |
-| `contact_email` | `hello@balloonxbros.com`     | Footer; reply-to on confirmation email                             |
+| Key             | Placeholder                  | Shown on                               |
+| --------------- | ---------------------------- | -------------------------------------- |
+| `donation_url`  | `https://example.org/donate` | How to donate, step 1                  |
+| `contact_email` | `hello@balloonxbros.com`     | Footer; reply-to on confirmation email |
 
 ## Menu (`items` table)
 

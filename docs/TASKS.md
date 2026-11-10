@@ -54,6 +54,7 @@ graph TD
   balloon-photos
   cf-email-service
   contact-inbox
+  donation-steps
   event-details
   launch-check
   menu-content
@@ -67,6 +68,7 @@ graph TD
   launch-check --> cf-email-service
   balloon-photos --> launch-check
   contact-inbox --> launch-check
+  donation-steps --> launch-check
   event-details --> launch-check
   menu-content --> launch-check
   pnpm --> launch-check
@@ -88,11 +90,12 @@ graph TD
 
 - [ ] [Balloon photos](tasks/balloon-photos.md) — square photos in public/balloons/, photo_key set by migration · **waits on** `menu-content`
 - [ ] [Move outbound email to Cloudflare Email Service](tasks/cf-email-service.md) — post-launch: send confirmations via the send_email binding instead of Resend · **waits on** `launch-check` · **low priority**
-- [ ] [Real event details](tasks/event-details.md) — migration with date, time, place, cutoff, purpose, donation URL
-- [ ] [Production launch check](tasks/launch-check.md) — end-to-end test order on prod, clean up, reopen pre-orders · **waits on** `event-details`, `menu-content`, `balloon-photos`
+- [ ] [Real donation link and steps](tasks/donation-steps.md) — real donation_url, screenshots and accurate steps on /donate
+- [ ] [Production launch check](tasks/launch-check.md) — end-to-end test order on prod, clean up, reopen pre-orders · **waits on** `menu-content`, `balloon-photos`, `donation-steps`
 - [ ] [Real menu, prices and stock](tasks/menu-content.md) — migration with real items, prices, limited stock; hide unused seed items
 - [x] [API route tests in the Workers runtime](tasks/api-tests.md) — route-level tests on local D1/R2 via @cloudflare/vitest-plugin; safety net for server-functions
 - [x] [Contact inbox for hello@](tasks/contact-inbox.md) — Cloudflare Email Routing forwards hello@balloonxbros.com to Li
+- [x] [Real event details](tasks/event-details.md) — migration with date, time, place, announcement
 - [x] [Switch to pnpm](tasks/pnpm.md) — pnpm lockfile, packageManager, CI, docs
 - [x] [Resend confirmation email](tasks/resend-email.md) — verify domain in Resend, set RESEND_API_KEY, confirm delivery
 - [x] [API as server functions](tasks/server-functions.md) — move worker/ routes to Start server functions and server routes
