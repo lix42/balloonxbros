@@ -1,6 +1,7 @@
 import { useEffect, useState, type DragEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { cn } from "cn";
+import { formatUsPhone } from "../../shared/phone";
 import { formatCents, MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "../../shared/types";
 import { ApiError, api } from "../api";
 import { ItemArt } from "../components/Glyph";
@@ -108,7 +109,7 @@ export function Order() {
     const saved = loadContact();
     setName(saved.name);
     setEmail(saved.email);
-    setPhone(saved.phone);
+    setPhone(formatUsPhone(saved.phone));
     setContactLoaded(true);
   }, []);
   useEffect(() => {
@@ -307,9 +308,12 @@ export function Order() {
                 type="tel"
                 maxLength={CONTACT_LIMITS.phone}
                 autoComplete="tel"
+                inputMode="tel"
+                pattern="\(\d{3}\) \d{3}-\d{4}"
+                title="A 10-digit phone number, like (425) 555-0100"
                 placeholder="(555) 555-0100"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(formatUsPhone(e.target.value))}
               />
             </label>
           </div>
