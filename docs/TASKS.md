@@ -52,6 +52,7 @@ The site itself is built; see [DESIGN.md](DESIGN.md) for the spec and
 graph TD
   api-tests
   balloon-photos
+  cf-email-service
   contact-inbox
   event-details
   launch-check
@@ -63,6 +64,7 @@ graph TD
   tanstack-start
   vite-plus
   menu-content --> balloon-photos
+  launch-check --> cf-email-service
   balloon-photos --> launch-check
   contact-inbox --> launch-check
   event-details --> launch-check
@@ -85,6 +87,7 @@ graph TD
 **Legend:** `[ ]` todo · `[~]` doing · `[x]` done · `[-]` closed. Each task file's frontmatter is the source of truth; query with `tasks ready`, `tasks show <id>`.
 
 - [ ] [Balloon photos](tasks/balloon-photos.md) — square photos in public/balloons/, photo_key set by migration · **waits on** `menu-content`
+- [ ] [Move outbound email to Cloudflare Email Service](tasks/cf-email-service.md) — post-launch: send confirmations via the send_email binding instead of Resend · **waits on** `launch-check` · **low priority**
 - [ ] [Real event details](tasks/event-details.md) — migration with date, time, place, cutoff, purpose, donation URL
 - [ ] [Production launch check](tasks/launch-check.md) — end-to-end test order on prod, clean up, reopen pre-orders · **waits on** `event-details`, `menu-content`, `balloon-photos`
 - [ ] [Real menu, prices and stock](tasks/menu-content.md) — migration with real items, prices, limited stock; hide unused seed items
