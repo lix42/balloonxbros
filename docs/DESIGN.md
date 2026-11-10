@@ -23,11 +23,11 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 
 1. **Home** `/`
    - Header: two-balloon logo + "Balloon × Bros" wordmark, "Pre-order" pill.
-   - Hero: eyebrow "Fundraiser for {school}", H1 "Twisted balloons, made by
-     kids, for our school.", subcopy, three info tiles: When / Time / Where
+   - Hero: eyebrow "Fundraiser for {school}", H1 "Balloon Sale Benefiting
+     Kirkland Middle School", subcopy, three info tiles: When / Time / Where
      (place links to Maps), then "Address: {event_address}" as a Maps link.
-     Map links search `event_address` (Google lists the rink as Sno-King Ice
-     Arena, so the name alone may miss), else the place name.
+     Map links search `event_address` (more precise than the venue name),
+     else the place name.
    - Announcement card (dark navy): the kids' own note (`announcement`
      setting, line breaks kept; editable in admin; the `event_place` name in it
      links to Maps), link "See the donation steps" → `/donate`.

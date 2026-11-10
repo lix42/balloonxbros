@@ -7,7 +7,7 @@ export function mapsSearchUrl(query: string): string {
 
 /**
  * Maps link for the pickup place. Searches the street address when there is
- * one: Google lists the rink under another name, so the name alone may miss.
+ * one: it pins the spot more precisely than the venue name.
  */
 export function eventMapUrl(s: Pick<Settings, "event_place" | "event_address">): string {
   return mapsSearchUrl(s.event_address || s.event_place);
