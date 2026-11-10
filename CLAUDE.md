@@ -9,10 +9,11 @@ real-world facts (prices, dates, menu, school info).
 
 Visual design lives in a Claude Design canvas (screens: Home, How to donate,
 Pre-order form, Order received; 390px mobile artboards):
-https://claude.ai/artifact/XxCQyYroyUzx8EyymEZv5b
-(artifact slug `faa719d3-85b6-45f1-b9fa-abe40f2600ce`; artboards are
-`project/*.dc.html`). The built UI in `src/` follows it; `docs/DESIGN.md`
-records tokens and decisions. If the canvas and code disagree, ask Li which wins.
+https://claude.ai/artifact/2DQZZ5YrRu9yuVYR18NQsC ("Balloon x Bros — live
+site", a copy of the built site Li restyled on 2026-11-09; artboards are
+`project/*.dc.html`). The built UI in `src/` follows this canvas;
+`docs/DESIGN.md` records tokens and decisions. The earlier design canvas is
+https://claude.ai/artifact/XxCQyYroyUzx8EyymEZv5b. If the canvas and code disagree, ask Li which wins.
 
 ## Status (as of 2026-11-09)
 
@@ -49,8 +50,9 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
   touch `window`/`localStorage` during render.
 - Styling: Tailwind v4 (Vite plugin) with shadcn on Base UI. Theme in
   `src/styles/app.css`: the `docs/DESIGN.md` tokens as colours (neutrals
-  `ground`, `ink`, …; stepped hues `accent-500`, `red-500`, `yellow-100`, …;
-  green `accent` is the interactive colour), Fredoka/Nunito, radii, and
+  `ground`, `ink`, …; stepped hues `accent-500`, `red-500`, `yellow-200`,
+  `blue-300`, …; text and links `ink-2`, headings `blue-300`, focus ring green
+  `accent`), Fredoka/Montserrat, radii, and
   shadcn's semantic variables mapped onto them. No hex in page code except
   artwork. Site variants of shadcn parts live in
   `src/components/ui/` (`buttonVariants`: red/ink/pill/link/icon/tab;

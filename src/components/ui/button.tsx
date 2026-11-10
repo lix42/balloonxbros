@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
 // shadcn's Button, with the site's own variants (docs/DESIGN.md): red and ink
-// pill buttons 52–56px tall, the outlined "Pre-order" pill, text links,
+// pill buttons 52–56px tall, the outlined "Pre-order" pill, underlined text links,
 // 44px icon buttons and admin tabs. Use buttonVariants() to style a Link.
 const buttonVariants = cva(
   "inline-flex shrink-0 cursor-pointer items-center gap-2 font-extrabold no-underline transition-colors select-none disabled:cursor-not-allowed disabled:opacity-55 [&_svg]:pointer-events-none [&_svg]:shrink-0",
@@ -12,8 +12,8 @@ const buttonVariants = cva(
       variant: {
         red: "justify-center rounded-full bg-red-500 text-white hover:bg-red-600 hover:text-white",
         ink: "justify-center rounded-full bg-ink text-white hover:bg-ink-hover hover:text-white",
-        pill: "min-h-11 justify-center rounded-full border-2 border-ink px-4 text-sm text-ink hover:bg-ground hover:text-ink",
-        link: "min-h-11 gap-1.5 bg-transparent p-0 text-sm text-link hover:text-link-hover",
+        pill: "min-h-11 justify-center rounded-full border-2 border-blue-300 px-4 text-sm text-ink-2 hover:bg-ground hover:text-ink",
+        link: "min-h-11 gap-1.5 bg-transparent p-0 text-sm text-link underline underline-offset-2 hover:text-link-hover",
         icon: "size-11 justify-center rounded-lg bg-transparent text-ink hover:text-ink",
         tab: "min-h-11 justify-center rounded-full border-[1.5px] border-line-strong bg-white px-4 aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-white",
       },

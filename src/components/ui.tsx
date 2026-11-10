@@ -6,11 +6,11 @@ import { buttonVariants } from "./ui/button";
 export function Logo({ size = 34 }: { size?: number }) {
   return (
     <svg width={size} height={(size * 40) / 34} viewBox="0 0 34 40" aria-hidden="true">
-      <ellipse cx="12" cy="13" rx="9" ry="11" fill="#D93A31" />
-      <ellipse cx="22" cy="15" rx="9" ry="11" fill="#2E6BE6" />
+      <ellipse cx="12" cy="13" rx="9" ry="11" fill="#FF8FC7" />
+      <ellipse cx="22" cy="15" rx="9" ry="11" fill="#8FD3FF" />
       <path
         d="M12 24 Q14 31 17 38 M22 26 Q20 32 17 38"
-        stroke="#1B1F3B"
+        stroke="#FF8A1F"
         strokeWidth="1.5"
         fill="none"
       />
@@ -20,8 +20,8 @@ export function Logo({ size = 34 }: { size?: number }) {
 
 export function Wordmark() {
   return (
-    <span className="font-heading text-[22px] font-bold tracking-[-0.2px]">
-      Balloon <span className="text-red-500">×</span> Bros
+    <span className="font-heading text-[22px] font-bold tracking-[-0.2px] text-blue-300">
+      Balloon <span className="text-orange-500">×</span> Bros
     </span>
   );
 }
@@ -74,7 +74,7 @@ export function MegaphoneIcon() {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      className="text-yellow-300"
+      className="text-blue-700"
     >
       <path d="M3 11v2a1 1 0 0 0 1 1h3l6 5V5L7 10H4a1 1 0 0 0-1 1z" />
       <path d="M17 8a5 5 0 0 1 0 8" />
@@ -145,7 +145,7 @@ export function CheckCircleIcon() {
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-line bg-surface">
+    <header className="border-b border-line bg-yellow-200">
       <div className="mx-auto flex max-w-[640px] items-center justify-between gap-2 px-5 py-3.5">
         <Link
           to="/"
@@ -173,7 +173,7 @@ export function BackHeader({
   children: ReactNode;
 }) {
   return (
-    <header className="border-b border-line bg-surface">
+    <header className="border-b border-line bg-yellow-200">
       <div className="mx-auto flex max-w-[640px] items-center justify-start gap-2 py-3.5 pr-5 pl-3">
         <Link to={to} className={buttonVariants({ variant: "icon" })} aria-label={label}>
           <ArrowLeft />

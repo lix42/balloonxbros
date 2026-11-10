@@ -7,9 +7,9 @@
 @import "shadcn/tailwind.css";
 
 @theme inline {
-  /* type: Fredoka for headings/wordmark, Nunito for body */
-  --font-sans: Nunito, system-ui, sans-serif;
-  --font-heading: Fredoka, Nunito, system-ui, sans-serif;
+  /* type: Fredoka for headings/wordmark, Montserrat for body */
+  --font-sans: Montserrat, system-ui, sans-serif;
+  --font-heading: Fredoka, Montserrat, system-ui, sans-serif;
 
   /* Design tokens (docs/DESIGN.md). Each hue has only the steps below:
      Tailwind's own red/yellow/blue/green steps are switched off so a page
@@ -19,6 +19,7 @@
   --color-yellow-*: initial;
   --color-blue-*: initial;
   --color-green-*: initial;
+  --color-orange-*: initial;
 
   /* neutrals */
   --color-ground: #f4f7ff;
@@ -32,7 +33,7 @@
   --color-ink: #1b1f3b;
   --color-ink-hover: #2a2f55;
 
-  /* accent (green): links, focus, icons, chosen/done states */
+  /* accent (green): focus ring, icons, step 2, chosen/done states */
   --color-accent-50: #f0faf5;
   --color-accent-100: #e3f5ec;
   --color-accent-500: #2e9e6b;
@@ -45,25 +46,35 @@
   --color-red-600: #c3322a;
   --color-red-900: #8f1f19;
 
-  /* yellow: notes and highlights */
+  /* yellow: notes and highlights; 200 fills the header, info tiles and the
+     announcement and order-total cards */
   --color-yellow-100: #fff3cc;
+  --color-yellow-200: #fff39f;
   --color-yellow-300: #ffd166;
   --color-yellow-500: #f2a900;
   --color-yellow-900: #3d3420;
 
-  /* blue: the admin "Verified" badge (the logo's blue is artwork) */
+  /* blue: 300 for headings, the wordmark and the Pre-order pill; 700 for the
+     announcement label and its venue link; 100/800 for the admin "Verified"
+     badge */
   --color-blue-100: #e1ebff;
+  --color-blue-300: #71b2ff;
+  --color-blue-700: #1c4fc2;
   --color-blue-800: #163f99;
 
-  /* roles */
-  --color-link: var(--color-accent-700);
-  --color-link-hover: var(--color-accent-800);
+  /* orange: the wordmark's × (the logo's colours are artwork) */
+  --color-orange-500: #ff8a1f;
+
+  /* roles: body text and links are ink-2; links keep their underline */
+  --color-heading: var(--color-blue-300);
+  --color-link: var(--color-ink-2);
+  --color-link-hover: var(--color-ink);
 
   /* shadcn semantic colours → tokens */
   --color-background: var(--color-ground);
-  --color-foreground: var(--color-ink);
+  --color-foreground: var(--color-ink-2);
   --color-card: var(--color-surface);
-  --color-card-foreground: var(--color-ink);
+  --color-card-foreground: var(--color-ink-2);
   --color-popover: var(--color-surface);
   --color-popover-foreground: var(--color-ink);
   --color-primary: var(--color-red-500);
@@ -114,7 +125,7 @@
   h1,
   h2,
   h3 {
-    @apply font-heading leading-[1.1];
+    @apply font-heading leading-[1.1] text-heading;
   }
   :focus-visible {
     @apply outline-3 outline-offset-2 outline-ring;

@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "cn";
 import type { ReactNode } from "react";
 import { formatCents } from "../../shared/types";
-import { ArrowRight, BackHeader, LoadError } from "../components/ui";
+import { ArrowRight, LoadError, SiteHeader } from "../components/ui";
 import { buttonVariants } from "../components/ui/button";
 import { SCHOOL_SITE } from "../lib/school-site";
 import { useStore } from "../store";
@@ -32,11 +32,7 @@ export function Donate() {
   if (loadError)
     return (
       <>
-        <BackHeader to="/" label="Back to home">
-          <>
-            Balloon <span className="text-red-500">×</span> Bros
-          </>
-        </BackHeader>
+        <SiteHeader />
         <LoadError message={loadError} retry={reload} />
       </>
     );
@@ -69,12 +65,12 @@ export function Donate() {
               ["Student Name", SCHOOL_SITE.student],
             ].map(([field, value]) => (
               <li key={field}>
-                {field}: <strong className="text-ink">{value}</strong>
+                {field}: <strong>{value}</strong>
               </li>
             ))}
           </ul>
-          Then tap <strong className="text-ink">Buy</strong>. The form clears, but the green{" "}
-          <strong className="text-ink">Cart</strong> bar at the top now shows your amount. Tap it.
+          Then tap <strong>Buy</strong>. The form clears, but the green <strong>Cart</strong> bar at
+          the top now shows your amount. Tap it.
         </>
       ),
       image: {
@@ -88,9 +84,8 @@ export function Donate() {
       title: "Check your cart, then tap Pay",
       body: (
         <>
-          Check the school, fund, student name and amount, then tap{" "}
-          <strong className="text-ink">Pay</strong>. Something wrong? Tap{" "}
-          <strong className="text-ink">Remove</strong> and start again.
+          Check the school, fund, student name and amount, then tap <strong>Pay</strong>. Something
+          wrong? Tap <strong>Remove</strong> and start again.
         </>
       ),
       image: {
@@ -104,8 +99,7 @@ export function Donate() {
       title: "Enter your details",
       body: (
         <>
-          Name, address, phone and email are all required. Then tap{" "}
-          <strong className="text-ink">Pay</strong>.
+          Name, address, phone and email are all required. Then tap <strong>Pay</strong>.
         </>
       ),
       image: {
@@ -119,8 +113,7 @@ export function Donate() {
       title: "Pay by card",
       body: (
         <>
-          Visa or Mastercard only. Enter your card and tap{" "}
-          <strong className="text-ink">Pay {amount}</strong>.
+          Visa or Mastercard only. Enter your card and tap <strong>Pay {amount}</strong>.
         </>
       ),
       image: {
@@ -134,11 +127,7 @@ export function Donate() {
 
   return (
     <>
-      <BackHeader to="/" label="Back to home">
-        <>
-          Balloon <span className="text-red-500">×</span> Bros
-        </>
-      </BackHeader>
+      <SiteHeader />
       <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col">
         <section className="flex flex-col gap-2.5 px-5 pt-[26px] pb-4">
           <p className="text-[13px] font-extrabold tracking-[1.2px] text-red-600 uppercase">
@@ -147,11 +136,11 @@ export function Donate() {
           <h1 className="text-[34px] leading-[1.05] font-bold tracking-[-0.5px]">
             How to donate to the school
           </h1>
-          <p className="text-base text-ink-2">
+          <p className="text-base">
             We don't take payments ourselves. Your donation goes straight to {settings.school_name},
             and your receipt is your ticket for picking up the balloons.
           </p>
-          <p className="rounded-[16px] border-2 border-yellow-500 bg-yellow-100 px-4 py-3 text-[14px] text-yellow-900">
+          <p className="rounded-[16px] border-2 border-yellow-500 bg-yellow-100 px-4 py-3 text-[14px]">
             <strong>Heads up:</strong> the school's site shows your receipt only once, right after
             you pay. Save it before you tap Done (step 6).
           </p>
@@ -166,7 +155,7 @@ export function Donate() {
               <span className={cn(stepNum, "bg-ink")}>{i + 1}</span>
               <div className="flex min-w-0 flex-col gap-1">
                 <span className="font-extrabold">{s.title}</span>
-                <div className="text-[14px] text-ink-2">{s.body}</div>
+                <div className="text-[14px]">{s.body}</div>
                 {s.image && <StepImage {...s.image} />}
               </div>
             </li>
@@ -175,11 +164,11 @@ export function Donate() {
             <span className={cn(stepNum, "bg-red-500")}>6</span>
             <div className="flex min-w-0 flex-col gap-1.5">
               <span className="font-extrabold">Save your receipt before you tap Done</span>
-              <span className="text-[14px] text-yellow-900">
+              <span className="text-[14px]">
                 This page is your <strong>only</strong> receipt: once you tap Done, it's gone. Any
                 one of these works:
               </span>
-              <ul className="m-0 list-[circle] pl-[18px] text-[14px] leading-[1.7] text-yellow-900">
+              <ul className="m-0 list-[circle] pl-[18px] text-[14px] leading-[1.7]">
                 <li>Take a screenshot of the receipt</li>
                 <li>
                   Tap <strong>Print</strong> and save it as a PDF

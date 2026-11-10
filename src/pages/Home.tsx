@@ -17,11 +17,11 @@ import { useStore } from "../store";
 
 const badge =
   "pointer-events-none absolute top-2 inline-flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px] text-[12px] font-extrabold";
-const label = "font-extrabold tracking-[0.8px] text-muted uppercase";
+const label = "font-extrabold tracking-[0.8px] uppercase";
 const stepItem = "flex flex-col gap-1.5 text-[13px] leading-[1.35] font-bold";
 const stepNum =
   "inline-flex size-7 shrink-0 items-center justify-center rounded-full text-[14px] font-extrabold text-white";
-const infoTile = "flex flex-col gap-0.5 rounded-xl border border-line bg-surface p-3";
+const infoTile = "flex flex-col gap-0.5 rounded-xl border border-line bg-yellow-200 p-3";
 const infoValue = "text-[14px] [overflow-wrap:anywhere]";
 const menuGrid = "grid grid-cols-3 gap-2.5 min-[560px]:grid-cols-4 min-[560px]:gap-3.5";
 
@@ -85,7 +85,7 @@ function Tile({ item }: { item: Item }) {
           </button>
         </div>
         <span className="text-[14px] leading-[1.2] font-extrabold">{item.name}</span>
-        <span className={cn("text-[13px] font-bold text-muted", soldOut && "line-through")}>
+        <span className={cn("text-[13px] font-bold", soldOut && "line-through")}>
           {formatCents(item.priceCents)}
         </span>
       </div>
@@ -141,13 +141,10 @@ export function Home() {
       <SiteHeader />
       <main className="mx-auto flex min-h-screen w-full max-w-[640px] flex-col">
         <section className="flex flex-col gap-3.5 px-5 pt-7 pb-4">
-          <p className="text-[13px] font-extrabold tracking-[1.2px] text-red-600 uppercase">
-            Fundraiser for {settings.school_name}
-          </p>
-          <h1 className="text-[40px] leading-[1.05] font-bold tracking-[-0.5px]">
+          <h1 className="text-center text-[30px] leading-[1.05] font-semibold tracking-[-0.5px]">
             Balloon Sale Benefiting Kirkland Middle School
           </h1>
-          <p className="text-base text-ink-2">
+          <p className="text-base">
             Pre-order your favorites and pick them up ready-made, or come by and we'll twist one for
             you on the spot.
           </p>
@@ -166,14 +163,14 @@ export function Home() {
                 href={eventMapUrl(settings)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={cn(infoValue, "font-extrabold text-link underline underline-offset-2")}
+                className={cn(infoValue, "font-extrabold underline-offset-2")}
               >
                 {settings.event_place}
               </a>
             </div>
           </div>
           {settings.event_address && (
-            <p className="m-0 text-[14px] font-bold text-ink-2">
+            <p className="m-0 text-[14px] font-bold">
               Address:{" "}
               <a href={eventMapUrl(settings)} target="_blank" rel="noopener noreferrer">
                 {settings.event_address}
@@ -183,10 +180,10 @@ export function Home() {
         </section>
 
         <section className="px-5 py-4">
-          <div className="flex flex-col gap-2.5 rounded-3xl bg-ink p-5 text-white [&_a]:text-white">
+          <div className="flex flex-col gap-2.5 rounded-3xl bg-yellow-200 p-5">
             <div className="flex items-center gap-2">
               <MegaphoneIcon />
-              <span className="text-[12px] font-extrabold tracking-[1.2px] text-yellow-300 uppercase">
+              <span className="text-[12px] font-extrabold tracking-[1.2px] text-blue-700 uppercase">
                 Announcement
               </span>
             </div>
@@ -199,7 +196,7 @@ export function Home() {
                       href={eventMapUrl(settings)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-bold underline underline-offset-2"
+                      className="font-bold text-blue-700 underline-offset-2 hover:text-blue-800"
                     >
                       {part.text}
                     </a>
@@ -215,10 +212,7 @@ export function Home() {
             )}
             <Link
               to="/donate"
-              className={cn(
-                buttonVariants({ variant: "link" }),
-                "text-[15px] text-white hover:text-white",
-              )}
+              className={cn(buttonVariants({ variant: "link" }), "self-start text-[15px]")}
             >
               See the donation steps <ArrowRight size={16} />
             </Link>
@@ -246,7 +240,7 @@ export function Home() {
         <section className="flex flex-col gap-3.5 px-5 pt-[22px] pb-4">
           <div className="flex items-baseline justify-between">
             <h2 className="text-[22px] font-semibold">The balloon menu</h2>
-            <span className="text-[13px] font-bold text-muted">Tap + to add</span>
+            <span className="text-[13px] font-bold">Tap + to add</span>
           </div>
           <div className={menuGrid}>
             {items.map((i) => (
@@ -259,8 +253,8 @@ export function Home() {
           <div className="flex items-start gap-3.5 rounded-[20px] border-2 border-dashed border-line-dashed bg-surface p-[18px]">
             <WrenchIcon />
             <div className="flex flex-col gap-1">
-              <span className="font-heading text-[18px] font-semibold">Want something custom?</span>
-              <span className="text-[14px] text-ink-2">
+              <span className="text-[18px] font-semibold">Want something custom?</span>
+              <span className="text-[14px]">
                 Skip the pre-order and visit our table. We'll twist balloons on the spot while you
                 wait, as long as supplies last.
               </span>
@@ -268,7 +262,7 @@ export function Home() {
           </div>
         </section>
 
-        <footer className="px-5 pt-4 pb-7 text-[13px] text-muted">
+        <footer className="px-5 pt-4 pb-7 text-[13px]">
           Balloon x Bros is a student fundraiser. Questions? Email{" "}
           <a href={`mailto:${settings.contact_email}`} className="underline">
             {settings.contact_email}
