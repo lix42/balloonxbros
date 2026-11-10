@@ -1,8 +1,9 @@
 ---
 title: Real donation link and steps
-status: todo
+status: done
 deps: []
 summary: real donation_url, screenshots and accurate steps on /donate
+done: 2026-11-09
 ---
 # Real donation link and steps
 
@@ -14,23 +15,26 @@ step so they can follow along on a phone.
 
 ## Design
 
-Known: `/donate` (`src/pages/Donate.tsx`) has five steps written as guesses
-(open the page, select the school from a list, enter the order total, submit,
-pay) and links `settings.donation_url`, still `https://example.org/donate`.
-The order total is filled in from the cart.
+Walked the real site with Li (2026-11-09; see the progress log). It is the
+Lake Washington School District page on InTouch Receipting: a form (School,
+I want to donate to, Donation amount, Student Name) → Buy → Cart → Pay →
+Customer Information (all required) → card (Visa/Mastercard) → a receipt
+page shown only once, with Send (email from noreply@intouchpay.com), Print
+and Done. There is no free-text note field.
 
-Unknown, from Li: the real donation URL, what the school's page actually asks
-for (whether there's a school list, fund/designation, a note field for the
-order or pickup name, fees), and screenshots of each screen.
-
-- New migration (next free `000N_donation_url.sql`) setting `donation_url`.
-- Rewrite the steps to match the real page. If a note field exists, tell
-  parents to put their pickup name there so receipts match orders.
-- Screenshots: crop to the relevant part, compress, store under
-  `public/donate/` and show one per step (`alt` text describing the step).
-  Check them for personal data (names, emails, card details) before
-  committing.
-- Remove the `donation_url` row from `docs/PLACEHOLDERS.md`.
+- Migration `0003_donation_url.sql` sets `donation_url`.
+- `/donate` follows that flow in six steps: KIRKLAND MIDDLE SCHOOL, ASB
+  DONATIONS, the order total and Student Name "Sky Xu" (Li's choice), then
+  cart, details, card, and saving the receipt before Done. A heads-up note at
+  the top says the receipt is shown once. The menu values live in
+  `src/lib/school-site.ts`.
+- Screenshots are cropped to the relevant part, stored in `public/donate/`
+  with `alt` text; the receipt has the payer's email, name, receipt number
+  and transaction code covered with solid blocks.
+- The order form checks the receipt for ASB DONATIONS, Sky Xu and the amount
+  (the receipt doesn't name the school), and keeps name, email and phone
+  across a closed tab.
+- `donation_url` is gone from `docs/PLACEHOLDERS.md`.
 
 ## How to Verify
 

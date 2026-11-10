@@ -1,12 +1,31 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "cn";
+import type { ReactNode } from "react";
 import { formatCents } from "../../shared/types";
 import { ArrowRight, BackHeader, LoadError } from "../components/ui";
 import { buttonVariants } from "../components/ui/button";
+import { SCHOOL_SITE } from "../lib/school-site";
 import { useStore } from "../store";
 
 const stepNum =
   "inline-flex size-[34px] shrink-0 items-center justify-center rounded-full font-heading text-[17px] font-semibold text-white";
+
+type StepImageProps = { src: string; width: number; height: number; alt: string };
+type Step = { title: string; body: ReactNode; image?: StepImageProps };
+
+function StepImage({ src, width, height, alt }: StepImageProps) {
+  return (
+    <img
+      src={src}
+      width={width}
+      height={height}
+      alt={alt}
+      loading="lazy"
+      className="mt-2 block h-auto w-full rounded-xl border border-line bg-white"
+      style={{ maxWidth: width }}
+    />
+  );
+}
 
 export function Donate() {
   const { settings, loadError, reload, totalCents, count } = useStore();
@@ -24,7 +43,7 @@ export function Donate() {
 
   const amount = count > 0 ? formatCents(totalCents) : "your order total";
 
-  const steps = [
+  const steps: Step[] = [
     {
       title: "Open the school's donation page",
       body: (
@@ -39,23 +58,78 @@ export function Donate() {
       ),
     },
     {
-      title: "Select the school",
+      title: "Fill in the donation form",
       body: (
         <>
-          Choose <strong className="text-ink">{settings.school_name}</strong> from the list.
+          <ul className="m-0 list-none p-0 leading-[1.7]">
+            {[
+              ["School", SCHOOL_SITE.school],
+              ["I want to donate to", SCHOOL_SITE.fund],
+              ["Donation amount", amount],
+              ["Student Name", SCHOOL_SITE.student],
+            ].map(([field, value]) => (
+              <li key={field}>
+                {field}: <strong className="text-ink">{value}</strong>
+              </li>
+            ))}
+          </ul>
+          Then tap <strong className="text-ink">Buy</strong>. The form clears, but the green{" "}
+          <strong className="text-ink">Cart</strong> bar at the top now shows your amount. Tap it.
         </>
       ),
+      image: {
+        src: "/donate/form.jpg",
+        width: 251,
+        height: 262,
+        alt: "The donation form filled in with Kirkland Middle School, ASB Donations and Student Name Sky Xu.",
+      },
     },
     {
-      title: "Enter your order total",
+      title: "Check your cart, then tap Pay",
       body: (
         <>
-          Type <strong className="text-ink">{amount}</strong>. Rounding up is always welcome.
+          Check the school, fund, student name and amount, then tap{" "}
+          <strong className="text-ink">Pay</strong>. Something wrong? Tap{" "}
+          <strong className="text-ink">Remove</strong> and start again.
         </>
       ),
+      image: {
+        src: "/donate/cart.jpg",
+        width: 251,
+        height: 180,
+        alt: "The cart: Kirkland Middle School, ASB Donations, Sky Xu, $10.00, with a Pay button.",
+      },
     },
-    { title: "Submit", body: "Check the school and amount, then submit the form." },
-    { title: "Pay", body: "Finish the payment on the school's page." },
+    {
+      title: "Enter your details",
+      body: (
+        <>
+          Name, address, phone and email are all required. Then tap{" "}
+          <strong className="text-ink">Pay</strong>.
+        </>
+      ),
+      image: {
+        src: "/donate/details.jpg",
+        width: 251,
+        height: 280,
+        alt: "The Customer Information form: name, address, phone and email.",
+      },
+    },
+    {
+      title: "Pay by card",
+      body: (
+        <>
+          Visa or Mastercard only. Enter your card and tap{" "}
+          <strong className="text-ink">Pay {amount}</strong>.
+        </>
+      ),
+      image: {
+        src: "/donate/card.jpg",
+        width: 251,
+        height: 355,
+        alt: "The Payment Information form: cardholder name, card number, expiry date and CVV.",
+      },
+    },
   ];
 
   return (
@@ -77,6 +151,10 @@ export function Donate() {
             We don't take payments ourselves. Your donation goes straight to {settings.school_name},
             and your receipt is your ticket for picking up the balloons.
           </p>
+          <p className="rounded-[16px] border-2 border-yellow bg-yellow-tint px-4 py-3 text-[14px] text-[#3d3420]">
+            <strong>Heads up:</strong> the school's site shows your receipt only once, right after
+            you pay. Save it before you tap Done (step 6).
+          </p>
         </section>
 
         <ol className="m-0 flex list-none flex-col gap-2.5 px-5 py-4">
@@ -86,22 +164,37 @@ export function Donate() {
               className="flex gap-3.5 rounded-2xl border border-line bg-surface p-4"
             >
               <span className={cn(stepNum, "bg-ink")}>{i + 1}</span>
-              <div className="flex flex-col gap-1">
+              <div className="flex min-w-0 flex-col gap-1">
                 <span className="font-extrabold">{s.title}</span>
-                <span className="text-[14px] text-ink-2">{s.body}</span>
+                <div className="text-[14px] text-ink-2">{s.body}</div>
+                {s.image && <StepImage {...s.image} />}
               </div>
             </li>
           ))}
           <li className="flex gap-3.5 rounded-2xl border-2 border-yellow bg-yellow-tint p-4">
             <span className={cn(stepNum, "bg-red")}>6</span>
-            <div className="flex flex-col gap-1.5">
-              <span className="font-extrabold">Save your receipt</span>
-              <span className="text-[14px] text-[#3d3420]">Any one of these works:</span>
+            <div className="flex min-w-0 flex-col gap-1.5">
+              <span className="font-extrabold">Save your receipt before you tap Done</span>
+              <span className="text-[14px] text-[#3d3420]">
+                This page is your <strong>only</strong> receipt: once you tap Done, it's gone. Any
+                one of these works:
+              </span>
               <ul className="m-0 list-[circle] pl-[18px] text-[14px] leading-[1.7] text-[#3d3420]">
-                <li>Take a screenshot of the confirmation</li>
-                <li>Print or save the page as a PDF</li>
-                <li>Email the receipt to yourself and download it</li>
+                <li>Take a screenshot of the receipt</li>
+                <li>
+                  Tap <strong>Print</strong> and save it as a PDF
+                </li>
+                <li>
+                  Type your email and tap <strong>Send</strong>. It comes from
+                  noreply@intouchpay.com (check spam); screenshot or save that email.
+                </li>
               </ul>
+              <StepImage
+                src="/donate/receipt.jpg"
+                width={262}
+                height={357}
+                alt="The receipt page with Send, Print and Done buttons, showing ASB Donations, Sky Xu and $10.00. Personal details are blocked out."
+              />
             </div>
           </li>
         </ol>

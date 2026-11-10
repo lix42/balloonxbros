@@ -41,9 +41,17 @@ A student fundraiser selling twist balloons for the school, in about two weeks
    - Sticky bottom bar: "Your order · N balloons" + red "Order →".
 2. **How to donate** `/donate`
    - Back arrow header. Eyebrow "Paying for your order", H1, explanation.
-   - Six step cards: open donation page (link), select school, enter total,
-     submit, pay, save receipt (yellow highlighted; screenshot / print PDF /
-     email to self).
+   - Yellow "Heads up" note: the school's site shows the receipt only once.
+   - Six step cards following the real school site (Lake Washington School
+     District on InTouch Receipting), each with a cropped phone screenshot from
+     `public/donate/`: open the donation page (link); fill the form (KIRKLAND
+     MIDDLE SCHOOL, ASB DONATIONS, the order total, Student Name Sky Xu; Buy, then the green Cart bar shows the amount: tap
+     it); check the cart and Pay (Remove to start over); enter your details and Pay; pay by card (Visa or
+     Mastercard); save the receipt before Done (yellow highlighted; screenshot
+     / Print to PDF / Send to email from noreply@intouchpay.com). The receipt
+     screenshot has the payer's details blocked out. The menu values live in
+     `src/lib/school-site.ts`; the order form's reminder checks the receipt
+     for its fund and student name.
    - CTA "I've donated: upload my receipt" → `/order`; secondary link back.
 3. **Pre-order form** `/order`
    - Cart rows: thumbnail, name, "$X each", − count + stepper, "+ Add note"
@@ -51,7 +59,10 @@ A student fundraiser selling twist balloons for the school, in about two weeks
    - "+ Add more balloons" link.
    - Navy summary card: N balloons, $TOTAL, "donate $TOTAL to the school, then
      drop your receipt below", link to donation steps.
-   - Your details: Name; Email + Phone side by side.
+   - Your details: Name; Email + Phone side by side. Saved on the device
+     (localStorage `bxb-contact-v1`, `src/lib/contact-storage.ts`) so a closed
+     tab keeps them; cleared once the order goes through. The receipt file is
+     not saved.
    - Receipt dropzone (dashed; shows chosen filename).
    - Pickup note, red "Submit pre-order".
 4. **Order received** `/order/:code`
@@ -97,5 +108,4 @@ Implemented as the Tailwind theme in `src/styles/app.css`.
 
 ## Still placeholder
 
-See `docs/PLACEHOLDERS.md`: donation URL and steps, menu, prices, limited
-stock, photos.
+See `docs/PLACEHOLDERS.md`: menu, prices, limited stock, photos.

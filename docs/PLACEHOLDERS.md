@@ -5,14 +5,15 @@ Confirmed so far: school = **Kirkland Middle School (KIMS)**, pickup is by name,
 receipts are checked by hand in admin. Event: **Fri, Nov 13, 6pm–8pm** at
 **Kingsgate Skating Rink** (14326 124th Ave NE, Kirkland, WA 98034; Google
 Maps lists it as Sno-King Ice Arena), pre-orders end Thu, Nov 12 (in the `announcement` setting,
-migration `0002`).
+migration `0002`). Donations go through the Lake Washington School District
+site (migration `0003`), as KIRKLAND MIDDLE SCHOOL → ASB DONATIONS with
+Student Name Sky Xu.
 
 ## Event details (`settings` table)
 
-| Key             | Placeholder                  | Shown on                               |
-| --------------- | ---------------------------- | -------------------------------------- |
-| `donation_url`  | `https://example.org/donate` | How to donate, step 1                  |
-| `contact_email` | `hello@balloonxbros.com`     | Footer; reply-to on confirmation email |
+| Key             | Placeholder              | Shown on                               |
+| --------------- | ------------------------ | -------------------------------------- |
+| `contact_email` | `hello@balloonxbros.com` | Footer; reply-to on confirmation email |
 
 ## Menu (`items` table)
 
