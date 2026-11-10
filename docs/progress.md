@@ -4,10 +4,14 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## event-details
 
-**Status:** not started
-**Updated:** 2026-11-08
+**Status:** done
+**Updated:** 2026-11-09
 
 - 2026-11-08: filed. Goal: migration with date, time, place, cutoff, purpose, donation URL
+- 2026-11-09: Migration 0002_event_details.sql: event_date 'Fri, Nov 13', event_place 'Kingsgate Skating Rink' (Li, 2026-11-09). Home announcement is now the kids' note (Sky and Ocean) as a new `announcement` setting with an admin textarea; their 9/12, 9/13 corrected to 11/12, 11/13 per Li. Removed the cutoff/purpose settings (only the old template used them). Still open: event_time, donation_url.
+- 2026-11-09: event_time '6pm–8pm' (Li). donation_url split out to the new donation-steps task (link, screenshots, real steps), so this task is complete with PR.
+- 2026-11-09: Map links: new event_address setting (14326 124th Ave NE, Kirkland, WA 98034, from Li); every Maps link searches the address because Google lists the rink as Sno-King Ice Arena. Home Where tile + address line + the place name in the announcement link to Maps. Order-received page and confirmation email show the address and a map preview (public/event-map.jpg, Li's screenshot cropped to 952x476, 64 KB) with the Google credit as a caption. Checked Home and order-received in headless Chrome.
+- 2026-11-09: Done. Landed: migration 0002_event_details.sql (event_date 'Fri, Nov 13', event_time '6pm–8pm', event_place 'Kingsgate Skating Rink', new event_address '14326 124th Ave NE, Kirkland, WA 98034', new announcement = Sky and Ocean's note; cutoff/purpose deleted). Map links (shared/place.ts eventMapUrl) search the address; Home Where tile, address line and announcement link to Maps; order-received page and confirmation email show the address and public/event-map.jpg with the Google credit. Verified: pnpm run check (36 tests), build, headless screenshots of Home and order-received at phone width; review loop (bugs, security, types, tests, conventions, docs) converged. For dependents: donation_url is the donation-steps task; launch-check should confirm the map image loads in a real email after deploy, and decide whether to call the venue Sno-King Ice Arena.
 
 ## menu-content
 
@@ -110,3 +114,10 @@ How each task is actually being carried out. One `##` section per task; append e
 **Updated:** 2026-11-09
 
 - 2026-11-09: filed. Goal: post-launch: send confirmations via the send_email binding instead of Resend
+
+## donation-steps
+
+**Status:** not started
+**Updated:** 2026-11-09
+
+- 2026-11-09: filed. Goal: real donation_url, screenshots and accurate steps on /donate

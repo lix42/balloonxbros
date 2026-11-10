@@ -22,6 +22,10 @@ describe("getMenu", () => {
     expect(menu.items.map((i) => i.id)).toEqual(["dog", "sword", "star", "gone"]);
     expect(menu.settings.school_name).toBe("Kirkland Middle School (KIMS)");
     expect(menu.settings.orders_open).toBe("1");
+    expect(menu.settings.event_place).toBe("Kingsgate Skating Rink");
+    expect(menu.settings.event_address).toBe("14326 124th Ave NE, Kirkland, WA 98034");
+    expect(menu.settings.announcement).toMatch(/^Hi! .*\n-Sky and Ocean$/s);
+    expect(menu.settings).not.toHaveProperty("cutoff");
   });
 });
 

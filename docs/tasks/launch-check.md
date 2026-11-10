@@ -1,7 +1,7 @@
 ---
 title: Production launch check
 status: todo
-deps: [event-details, menu-content, balloon-photos, contact-inbox, resend-email, pnpm, tanstack-start, server-functions, tailwind-shadcn, vite-plus]
+deps: [event-details, menu-content, balloon-photos, contact-inbox, resend-email, pnpm, tanstack-start, server-functions, tailwind-shadcn, vite-plus, donation-steps]
 summary: end-to-end test order on prod, clean up, reopen pre-orders
 ---
 # Production launch check
@@ -15,7 +15,7 @@ content, leave no test data behind, then open pre-orders.
 
 A manual checklist on production, on a phone:
 
-1. Home: event tiles, announcement (cutoff, purpose), menu and limited items,
+1. Home: event tiles, announcement, menu and limited items,
    photos and footer email are all real, with no `[BRACKETS]` anywhere, and
    `docs/PLACEHOLDERS.md` lists nothing left.
 2. `/donate`: step 1 opens the real school donation page.

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "cn";
+import { EVENT_MAP, eventMapUrl } from "../../shared/place";
 import type { PublicOrder, Settings } from "../../shared/types";
 import { buttonVariants } from "../components/ui/button";
 import { useStore } from "../store";
@@ -84,8 +85,35 @@ export function Done({ code }: { code: string }) {
             </div>
             <div className={kv}>
               <span className={kvKey}>Where</span>
-              <span className={kvValue}>{settings.event_place}</span>
+              <a
+                href={eventMapUrl(settings)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(kvValue, "flex flex-col")}
+              >
+                {settings.event_place}
+                {settings.event_address && (
+                  <span className="text-[13px] font-bold">{settings.event_address}</span>
+                )}
+              </a>
             </div>
+            <a
+              href={eventMapUrl(settings)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block overflow-hidden rounded-xl border border-line"
+            >
+              <img
+                src={EVENT_MAP.path}
+                width={EVENT_MAP.width}
+                height={EVENT_MAP.height}
+                alt={`Map to ${settings.event_place}. Opens Google Maps.`}
+                className="block h-auto w-full"
+              />
+              <span className="block border-t border-line bg-white px-2.5 py-1 text-right text-[11px] font-semibold text-muted">
+                {EVENT_MAP.credit}
+              </span>
+            </a>
           </>
         )}
       </div>

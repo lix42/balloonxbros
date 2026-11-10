@@ -4,6 +4,8 @@ import { formatCents, type Item } from "../../shared/types";
 import { ItemArt } from "../components/Glyph";
 import { ArrowRight, LoadError, MegaphoneIcon, SiteHeader, WrenchIcon } from "../components/ui";
 import { buttonVariants } from "../components/ui/button";
+import { eventMapUrl } from "../../shared/place";
+import { splitOnPhrase } from "../lib/place-link";
 import { useStore } from "../store";
 
 const badge =
@@ -111,9 +113,24 @@ export function Home() {
             </div>
             <div className={infoTile}>
               <span className={cn(label, "text-[11px]")}>Where</span>
-              <strong className={infoValue}>{settings.event_place}</strong>
+              <a
+                href={eventMapUrl(settings)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(infoValue, "font-extrabold text-link underline underline-offset-2")}
+              >
+                {settings.event_place}
+              </a>
             </div>
           </div>
+          {settings.event_address && (
+            <p className="m-0 text-[14px] font-bold text-ink-2">
+              Address:{" "}
+              <a href={eventMapUrl(settings)} target="_blank" rel="noopener noreferrer">
+                {settings.event_address}
+              </a>
+            </p>
+          )}
         </section>
 
         <section className="px-5 py-4">
@@ -125,9 +142,22 @@ export function Home() {
               </span>
             </div>
             {open ? (
-              <p>
-                Pre-orders are open until {settings.cutoff}. You pay by donating straight to the
-                school, so every dollar goes to {settings.purpose}.
+              <p className="whitespace-pre-line">
+                {splitOnPhrase(settings.announcement, settings.event_place).map((part, i) =>
+                  part.match ? (
+                    <a
+                      key={i}
+                      href={eventMapUrl(settings)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold underline underline-offset-2"
+                    >
+                      {part.text}
+                    </a>
+                  ) : (
+                    part.text
+                  ),
+                )}
               </p>
             ) : (
               <p>

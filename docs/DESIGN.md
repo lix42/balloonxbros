@@ -23,9 +23,13 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 1. **Home** `/`
    - Header: two-balloon logo + "Balloon × Bros" wordmark, "Pre-order" pill.
    - Hero: eyebrow "Fundraiser for {school}", H1 "Twisted balloons, made by
-     kids, for our school.", subcopy, three info tiles: When / Time / Where.
-   - Announcement card (dark navy): pre-order cutoff + what the money is for,
-     link "See the donation steps" → `/donate`.
+     kids, for our school.", subcopy, three info tiles: When / Time / Where
+     (place links to Maps), then "Address: {event_address}" as a Maps link.
+     Map links search `event_address` (Google lists the rink as Sno-King Ice
+     Arena, so the name alone may miss), else the place name.
+   - Announcement card (dark navy): the kids' own note (`announcement`
+     setting, line breaks kept; editable in admin; the `event_place` name in it
+     links to Maps), link "See the donation steps" → `/donate`.
    - "How pre-ordering works": 3 numbered steps.
    - "The balloon menu": 3-col grid of tiles (tinted square, illustration or
      photo, + button bottom-left, count badge top-right when in cart), name,
@@ -52,8 +56,10 @@ A student fundraiser selling twist balloons for the school, in about two weeks
    - Pickup note, red "Submit pre-order".
 4. **Order received** `/order/:code`
    - Three-balloon check illustration, "Order received!", summary card
-     (order no., balloons, pickup date/time, place), yellow tip card,
-     "Back to home".
+     (order no., balloons, pickup date/time, place + address), map preview
+     (`public/event-map.jpg`, a cropped Google Maps screenshot with its
+     "Map data ©2026 Google" credit, also in the confirmation email; the place
+     and the map link to Maps), yellow tip card, "Back to home".
 5. **Admin** `/admin` (not in the canvas; added for operations)
    - Password login. Orders list with receipt preview, status
      (new → verified → picked up; new → receipt issue → verified; cancelled). Edit menu items
@@ -91,5 +97,5 @@ Implemented as the Tailwind theme in `src/styles/app.css`.
 
 ## Still placeholder
 
-See `docs/PLACEHOLDERS.md`: event date/time/place, cutoff, purpose, donation
-URL, contact email, menu, prices, limited stock, photos.
+See `docs/PLACEHOLDERS.md`: donation URL and steps, menu, prices, limited
+stock, photos.

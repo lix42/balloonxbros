@@ -13,6 +13,7 @@ import { ErrorBox, Logo } from "../components/ui";
 import { Button, buttonVariants } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
 import { Input, inputVariants } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
 
 type Tab = "orders" | "menu" | "event";
 
@@ -542,13 +543,13 @@ function ItemEditor({
 
 // ---------- event settings ----------
 
-const SETTING_FIELDS: { key: keyof Settings; label: string }[] = [
+const SETTING_FIELDS: { key: keyof Settings; label: string; multiline?: boolean }[] = [
   { key: "school_name", label: "School name" },
   { key: "event_date", label: "Event date" },
   { key: "event_time", label: "Event time" },
   { key: "event_place", label: "Where" },
-  { key: "cutoff", label: "Pre-order cutoff" },
-  { key: "purpose", label: "What the money is for" },
+  { key: "event_address", label: "Street address (map links)" },
+  { key: "announcement", label: "Home announcement", multiline: true },
   { key: "donation_url", label: "School donation page URL" },
   { key: "contact_email", label: "Contact email" },
 ];
@@ -584,7 +585,15 @@ function EventSettings() {
       {SETTING_FIELDS.map((f) => (
         <label key={f.key} className={fieldClass}>
           {f.label}
-          <Input value={s[f.key]} onChange={(e) => setS({ ...s, [f.key]: e.target.value })} />
+          {f.multiline ? (
+            <Textarea
+              value={s[f.key]}
+              maxLength={500}
+              onChange={(e) => setS({ ...s, [f.key]: e.target.value })}
+            />
+          ) : (
+            <Input value={s[f.key]} onChange={(e) => setS({ ...s, [f.key]: e.target.value })} />
+          )}
         </label>
       ))}
       <Button type="submit" variant="ink" size="lg">
