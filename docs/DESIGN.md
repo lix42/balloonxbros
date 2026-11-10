@@ -50,7 +50,8 @@ A student fundraiser selling twist balloons for the school, in about two weeks
      Mastercard); save the receipt before Done (yellow highlighted; screenshot
      / Print to PDF / Send to email from noreply@intouchpay.com). The receipt
      screenshot has the payer's details blocked out. The menu values live in
-     `src/lib/school-site.ts`; the order form's reminder uses them too.
+     `src/lib/school-site.ts`; the order form's reminder checks the receipt
+     for its fund and student name.
    - CTA "I've donated: upload my receipt" → `/order`; secondary link back.
 3. **Pre-order form** `/order`
    - Cart rows: thumbnail, name, "$X each", − count + stepper, "+ Add note"
@@ -58,7 +59,10 @@ A student fundraiser selling twist balloons for the school, in about two weeks
    - "+ Add more balloons" link.
    - Navy summary card: N balloons, $TOTAL, "donate $TOTAL to the school, then
      drop your receipt below", link to donation steps.
-   - Your details: Name; Email + Phone side by side.
+   - Your details: Name; Email + Phone side by side. Saved on the device
+     (localStorage `bxb-contact-v1`, `src/lib/contact-storage.ts`) so a closed
+     tab keeps them; cleared once the order goes through. The receipt file is
+     not saved.
    - Receipt dropzone (dashed; shows chosen filename).
    - Pickup note, red "Submit pre-order".
 4. **Order received** `/order/:code`

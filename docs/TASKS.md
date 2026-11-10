@@ -88,13 +88,13 @@ graph TD
 
 **Legend:** `[ ]` todo · `[~]` doing · `[x]` done · `[-]` closed. Each task file's frontmatter is the source of truth; query with `tasks ready`, `tasks show <id>`.
 
-- [~] [Real donation link and steps](tasks/donation-steps.md) — real donation_url, screenshots and accurate steps on /donate
 - [ ] [Balloon photos](tasks/balloon-photos.md) — square photos in public/balloons/, photo_key set by migration · **waits on** `menu-content`
 - [ ] [Move outbound email to Cloudflare Email Service](tasks/cf-email-service.md) — post-launch: send confirmations via the send_email binding instead of Resend · **waits on** `launch-check` · **low priority**
-- [ ] [Production launch check](tasks/launch-check.md) — end-to-end test order on prod, clean up, reopen pre-orders · **waits on** `menu-content`, `balloon-photos`, `donation-steps`
+- [ ] [Production launch check](tasks/launch-check.md) — end-to-end test order on prod, clean up, reopen pre-orders · **waits on** `menu-content`, `balloon-photos`
 - [ ] [Real menu, prices and stock](tasks/menu-content.md) — migration with real items, prices, limited stock; hide unused seed items
 - [x] [API route tests in the Workers runtime](tasks/api-tests.md) — route-level tests on local D1/R2 via @cloudflare/vitest-plugin; safety net for server-functions
 - [x] [Contact inbox for hello@](tasks/contact-inbox.md) — Cloudflare Email Routing forwards hello@balloonxbros.com to Li
+- [x] [Real donation link and steps](tasks/donation-steps.md) — real donation_url, screenshots and accurate steps on /donate
 - [x] [Real event details](tasks/event-details.md) — migration with date, time, place, announcement
 - [x] [Switch to pnpm](tasks/pnpm.md) — pnpm lockfile, packageManager, CI, docs
 - [x] [Resend confirmation email](tasks/resend-email.md) — verify domain in Resend, set RESEND_API_KEY, confirm delivery
