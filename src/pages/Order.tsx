@@ -1,4 +1,4 @@
-import { useState, type DragEvent, type FormEvent } from "react";
+import { useEffect, useState, type DragEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { cn } from "cn";
 import { formatCents, MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "../../shared/types";
@@ -7,6 +7,8 @@ import { ItemArt } from "../components/Glyph";
 import { ArrowRight, BackHeader, ErrorBox, LoadError, Loading, UploadIcon } from "../components/ui";
 import { buttonVariants } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { CONTACT_LIMITS } from "../lib/contact-draft";
+import { clearContact, loadContact, saveContact } from "../lib/contact-storage";
 import { SCHOOL_SITE } from "../lib/school-site";
 import { useStore } from "../store";
 
@@ -98,6 +100,21 @@ export function Order() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
+  // Contact fields survive a closed tab: load the saved draft once mounted
+  // (the server has no localStorage), and save every change after that, so
+  // the empty first render never overwrites the draft.
+  const [contactLoaded, setContactLoaded] = useState(false);
+  useEffect(() => {
+    const saved = loadContact();
+    setName(saved.name);
+    setEmail(saved.email);
+    setPhone(saved.phone);
+    setContactLoaded(true);
+  }, []);
+  useEffect(() => {
+    if (contactLoaded) saveContact({ name, email, phone });
+  }, [name, email, phone, contactLoaded]);
+
   const header = (
     <BackHeader to="/" label="Back to the balloon menu">
       Your pre-order
@@ -168,6 +185,7 @@ export function Order() {
     } catch {
       /* private mode: the confirmation page falls back to the generic text */
     }
+    clearContact();
     // Clear the cart once we've left this page, so it never flashes "empty".
     navigate({ to: "/order/$code", params: { code: res.order.id } })
       .catch((err: unknown) => console.error("navigate", err))
@@ -261,7 +279,7 @@ export function Order() {
             Name
             <Input
               required
-              maxLength={80}
+              maxLength={CONTACT_LIMITS.name}
               autoComplete="name"
               placeholder="Who's picking up?"
               value={name}
@@ -274,7 +292,7 @@ export function Order() {
               <Input
                 required
                 type="email"
-                maxLength={254}
+                maxLength={CONTACT_LIMITS.email}
                 autoComplete="email"
                 inputMode="email"
                 placeholder="you@email.com"
@@ -287,7 +305,7 @@ export function Order() {
               <Input
                 required
                 type="tel"
-                maxLength={30}
+                maxLength={CONTACT_LIMITS.phone}
                 autoComplete="tel"
                 placeholder="(555) 555-0100"
                 value={phone}
