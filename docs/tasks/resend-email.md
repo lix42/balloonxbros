@@ -1,9 +1,10 @@
 ---
 title: Resend confirmation email
-status: todo
+status: done
 deps: []
 related: [contact-inbox]
 summary: verify domain in Resend, set RESEND_API_KEY, confirm delivery
+done: 2026-11-09
 ---
 # Resend confirmation email
 
@@ -15,7 +16,8 @@ Buyers get a confirmation email after submitting a pre-order, sent from
 ## Design
 
 - In Resend, add the domain `balloonxbros.com` and add the DNS records it asks
-  for (DKIM TXT, plus the MX/SPF on its `send.` subdomain) in Cloudflare DNS.
+  for (DKIM TXT `resend._domainkey`, plus a CNAME on its `send.` subdomain,
+  which carries the MX/SPF) in Cloudflare DNS.
   They don't conflict with Email Routing's root MX.
 - Create a sending-only API key and run `pnpm exec wrangler secret put RESEND_API_KEY`.
 - The Worker already sends via `worker/email.ts` once the key is set, and

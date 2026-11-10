@@ -27,10 +27,12 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## resend-email
 
-**Status:** not started
-**Updated:** 2026-11-08
+**Status:** done
+**Updated:** 2026-11-09
 
 - 2026-11-08: filed. Goal: verify domain in Resend, set RESEND_API_KEY, confirm delivery
+- 2026-11-09: Started. Resend shows balloonxbros.com Verified (Li); records already in DNS: send. CNAME to send.forge.rmta.net, resend._domainkey TXT (CNAME-style setup, not the MX/SPF TXT the spec describes). RESEND_API_KEY set by Li (secret list confirms). No _dmarc record yet.
+- 2026-11-09: Verified on prod 2026-11-09: Li opened orders_open briefly, placed a test order to a Gmail address, closed it again and cancelled the order. The confirmation arrived in the Inbox (not spam), items and total correct, reply-to hello@balloonxbros.com. wrangler tail (allowed via a user-settings rule for 'pnpm exec wrangler tail') showed every request Ok, no 'resend failed'. DMARC skipped by decision (no _dmarc record). Not tested: Fastmail recipients, who may hit the same new-domain block as hello@ forwarding. Note for launch-check: the pickup line still shows [BRACKET] placeholders until event-details lands.
 
 ## balloon-photos
 
@@ -101,3 +103,10 @@ How each task is actually being carried out. One `##` section per task; append e
 - 2026-11-08: filed. Goal: route-level tests on local D1/R2 via @cloudflare/vitest-plugin; safety net for server-functions
 - 2026-11-08: Added @cloudflare/vitest-plugin 1.6.0 (the older vitest-pool-workers peers on Vitest 4 only); config copied from the nc telemetry-ingest pattern. All tests, including the old pure ones, now run in workerd. tests/api/ has 31 route tests (public + admin) going through exports.default with fixture items installed per test, so they don't depend on seed content. The mid-checkout sold-out race is simulated with a BEFORE INSERT trigger on orders that zeroes stock inside the batch. Checked that the tests can fail: removing the stock decrement, the admin session check, or the CHECK-constraint handling each fails tests. Added tsconfig.tests.json (cloudflare:test types) so tsc -b covers tests. Note for server-functions: the scenarios assert status + body + DB state; port them to call the server functions instead of /api/*.
 - 2026-11-08: Merged in #5. CI on Node 24.22.2 green; deploy succeeded. server-functions can port tests/api/ scenarios (status + body + DB state) onto the server functions.
+
+## cf-email-service
+
+**Status:** not started
+**Updated:** 2026-11-09
+
+- 2026-11-09: filed. Goal: post-launch: send confirmations via the send_email binding instead of Resend

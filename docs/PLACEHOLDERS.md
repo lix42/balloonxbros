@@ -31,11 +31,6 @@ receipts are checked by hand in admin.
 | `star-pink` | [LIMITED ITEM 2] | $15   | 5            | drawn star |
 | `star-blue` | [LIMITED ITEM 3] | $15   | 0 (sold out) | drawn star |
 
-## Other
-
-- `EMAIL_FROM` in `wrangler.jsonc`: `Balloon x Bros <orders@balloonxbros.com>`
-  (works once balloonxbros.com is verified in Resend).
-
 ## How to update in a PR
 
 **Before the first production deploy:** edit the `INSERT` rows in
