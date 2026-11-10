@@ -237,11 +237,17 @@ export function Order() {
               </Link>
             </div>
           ) : (
-            <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
-              {lines.map((l) => (
-                <CartRow key={l.item.id} itemId={l.item.id} />
-              ))}
-            </ul>
+            <>
+              <p className="text-[14px]">
+                You can choose your favorite colors. We will do our best to accommodate, but cannot
+                guarantee specific colors.
+              </p>
+              <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+                {lines.map((l) => (
+                  <CartRow key={l.item.id} itemId={l.item.id} />
+                ))}
+              </ul>
+            </>
           )}
           {count > 0 && (
             <Link to="/" className={cn(buttonVariants({ variant: "link" }), "justify-start")}>

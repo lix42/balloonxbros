@@ -262,11 +262,19 @@ export function Home() {
           </div>
         </section>
 
-        <footer className="px-5 pt-4 pb-7 text-[13px]">
-          Balloon x Bros is a student fundraiser. Questions? Email{" "}
-          <a href={`mailto:${settings.contact_email}`} className="underline">
-            {settings.contact_email}
-          </a>
+        <footer className="flex flex-col gap-3 px-5 pt-4 pb-7 text-[13px]">
+          <p>
+            Balloon x Bros is a student fundraiser. Questions? Email{" "}
+            <a href={`mailto:${settings.contact_email}`} className="underline">
+              {settings.contact_email}
+            </a>
+          </p>
+          <p>
+            <strong>Warning:</strong> Children under 8 years can choke or suffocate on un-inflated
+            or broken balloons. Adult supervision required. Keep un-inflated balloons from young
+            children. Discard broken balloons at once. Made of natural rubber latex, which may cause
+            allergies.
+          </p>
         </footer>
 
         {open && (
