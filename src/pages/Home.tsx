@@ -145,7 +145,7 @@ export function Home() {
             Fundraiser for {settings.school_name}
           </p>
           <h1 className="text-[40px] leading-[1.05] font-bold tracking-[-0.5px]">
-            Twisted balloons, made by kids, for our school.
+            Balloon Sale Benefiting Kirkland Middle School
           </h1>
           <p className="text-base text-ink-2">
             Pre-order your favorites and pick them up ready-made, or come by and we'll twist one for
