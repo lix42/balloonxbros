@@ -15,10 +15,13 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## menu-content
 
-**Status:** not started
-**Updated:** 2026-11-08
+**Status:** done
+**Updated:** 2026-11-09
 
 - 2026-11-08: filed. Goal: migration with real items, prices, limited stock; hide unused seed items
+- 2026-11-09: Scope change from Li: no regular vs limited split, every balloon has a count. Li gave 14 photos (iCloud "balloon photos/New Folder With Items"); names from the file names, placeholder $10 / 3 each, real values to be set in /admin after deploy. Migration 0004_menu.sql inserts the 14 (ids from file names, e.g. balloon-dog for "baloon - 2.jpeg"), deletes the 10 seed items unless order_items references them (prod has at least the resend-email test order), and hides those that remain. Couldn't read prod D1 (auto-mode blocks production reads), hence the guarded DELETE. Code: Item.category removed from the shared type/admin/Home (column kept, insert writes 'menu'); admin stock is always a number, new items start at 0; itemFields ignores stock null. Tests keep NULL-stock fixtures as legacy rows.
+- 2026-11-09: Rebased onto f376baf (order-form polish, green accent tokens); no conflicts. Li asked for a photo popup: added shadcn dialog (shadcn@4.23.0 add dialog, declined overwriting button.tsx), restyled to tokens; tile photo is a DialogTrigger, badges pointer-events-none, + stays separate. Popup has photo, name, price, "N left · N in your order", red Add to order (disabled at sold out / max). Checked in Chrome DevTools at 390x844: opens, adds 1→3 then disables, real Esc closes and returns focus to the photo, tile + adds without opening it.
+- 2026-11-09: Done. Landed: migrations/0004_menu.sql inserts 14 real balloons (ids from Li's photo names, $10 / 3 each as placeholders, photo_key /balloons/<id>.jpg), deletes the 10 seed items no order references and hides the rest. One counted menu: Item.category removed from shared type/admin/Home (column kept, writes 'menu'), admin stock always a number (new item = 0), itemFields ignores stock null. Home tile photos open a Base UI dialog (shadcn dialog.tsx restyled) with photo, price, N left and Add to order. Verified: pnpm run check (48 tests), pnpm run build, Chrome DevTools at 390x844 (grid, popup add 1-3 then disabled, Esc closes, tile + separate), sqlite3 simulation of 0004 with an order referencing dog (dog hidden, others deleted). Review loop (bugs, security, error handling, tests, conventions, types, docs) converged after 2 doc re-reviews. For launch-check: real prices/stock go in /admin after deploy; don't create items in /admin before 0004 deploys (an id clash fails the migration); seed items referenced by the resend-email test order stay hidden in /admin.
 
 ## contact-inbox
 
@@ -40,10 +43,12 @@ How each task is actually being carried out. One `##` section per task; append e
 
 ## balloon-photos
 
-**Status:** not started
-**Updated:** 2026-11-08
+**Status:** done
+**Updated:** 2026-11-09
 
 - 2026-11-08: filed. Goal: square photos in public/balloons/, photo_key set by migration
+- 2026-11-09: Folded into menu-content. Li's photos are 640x427 / 427x640; a centre square crop cut off the seahorse, dragon, dog and rainbow, so (Li's pick) each is fitted whole into 600x600 over a blurred, slightly dimmed copy of itself (Pillow via uv, JPEG q80 progressive, 18-45 KB). photo_key set in 0004_menu.sql.
+- 2026-11-09: Done inside menu-content (same PR): 14 photos in public/balloons/ (600x600 blurred-fill, 18-45 KB), photo_key set by 0004_menu.sql. Verified served from /balloons/ locally (200, ~38 KB) and rendered at 390px. For launch-check: confirm they load on a phone after deploy.
 
 ## launch-check
 

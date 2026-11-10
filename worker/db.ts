@@ -10,7 +10,6 @@ import {
 interface ItemRow {
   id: string;
   name: string;
-  category: "menu" | "limited";
   price_cents: number;
   stock: number | null;
   glyph: string | null;
@@ -47,7 +46,6 @@ export function toItem(r: ItemRow): Item {
   return {
     id: r.id,
     name: r.name,
-    category: r.category,
     priceCents: r.price_cents,
     stock: r.stock,
     glyph: r.glyph,

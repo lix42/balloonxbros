@@ -3,13 +3,20 @@ import { cn } from "cn";
 import { formatCents, type Item } from "../../shared/types";
 import { ItemArt } from "../components/Glyph";
 import { ArrowRight, LoadError, MegaphoneIcon, SiteHeader, WrenchIcon } from "../components/ui";
-import { buttonVariants } from "../components/ui/button";
+import { Button, buttonVariants } from "../components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
 import { eventMapUrl } from "../../shared/place";
 import { splitOnPhrase } from "../lib/place-link";
 import { useStore } from "../store";
 
 const badge =
-  "absolute top-2 inline-flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px] text-[12px] font-extrabold";
+  "pointer-events-none absolute top-2 inline-flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px] text-[12px] font-extrabold";
 const label = "font-extrabold tracking-[0.8px] text-muted uppercase";
 const stepItem = "flex flex-col gap-1.5 text-[13px] leading-[1.35] font-bold";
 const stepNum =
@@ -27,49 +34,93 @@ function Tile({ item }: { item: Item }) {
   const tint = item.tint ?? "#E1EBFF";
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <div
-        className={cn(
-          "relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl [&_img]:size-full [&_img]:object-cover [&>svg]:h-auto [&>svg]:w-[64%]",
-          soldOut && "bg-line-strong [&_img]:opacity-35 [&_svg]:opacity-35",
-        )}
-        style={soldOut ? undefined : { background: tint }}
-      >
-        <ItemArt item={item} />
-        {limited && (
-          <span
-            className={cn(
-              badge,
-              "right-2",
-              soldOut ? "bg-ink text-white" : "bg-yellow-300 text-ink",
-            )}
-          >
-            {soldOut ? "Sold out" : `${item.stock} left`}
-          </span>
-        )}
-        {inCart > 0 && (
-          <span
-            className={cn(badge, "bg-ink text-white", limited ? "left-2" : "right-2")}
-            aria-label={`${inCart} in your order`}
-          >
-            {inCart}
-          </span>
-        )}
-        <button
-          type="button"
-          className="absolute bottom-1.5 left-1.5 size-11 cursor-pointer rounded-lg border-none bg-white text-2xl leading-none font-bold text-ink shadow-xs shadow-ink/18 active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-45"
-          onClick={() => add(item.id)}
-          disabled={soldOut || atMax}
-          aria-label={soldOut ? `${item.name} is sold out` : `Add ${item.name}`}
+    <Dialog>
+      <div className="flex flex-col gap-1.5">
+        <div
+          className={cn(
+            "relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl [&_img]:size-full [&_img]:object-cover [&_svg]:h-auto [&_svg]:w-[64%]",
+            soldOut && "bg-line-strong [&_img]:opacity-35 [&_svg]:opacity-35",
+          )}
+          style={soldOut ? undefined : { background: tint }}
         >
-          +
-        </button>
+          {item.photoUrl ? (
+            // The photo opens a bigger view; the badges sit on top of it but
+            // let taps through, and the + button stays its own target.
+            <DialogTrigger
+              className="absolute inset-0 flex cursor-zoom-in items-center justify-center border-none bg-transparent p-0"
+              aria-label={`See a bigger photo of ${item.name}`}
+            >
+              <ItemArt item={item} />
+            </DialogTrigger>
+          ) : (
+            <ItemArt item={item} />
+          )}
+          {limited && (
+            <span
+              className={cn(
+                badge,
+                "right-2",
+                soldOut ? "bg-ink text-white" : "bg-yellow-300 text-ink",
+              )}
+            >
+              {soldOut ? "Sold out" : `${item.stock} left`}
+            </span>
+          )}
+          {inCart > 0 && (
+            <span
+              className={cn(badge, "bg-ink text-white", limited ? "left-2" : "right-2")}
+              aria-label={`${inCart} in your order`}
+            >
+              {inCart}
+            </span>
+          )}
+          <button
+            type="button"
+            className="absolute bottom-1.5 left-1.5 size-11 cursor-pointer rounded-lg border-none bg-white text-2xl leading-none font-bold text-ink shadow-xs shadow-ink/18 active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-45"
+            onClick={() => add(item.id)}
+            disabled={soldOut || atMax}
+            aria-label={soldOut ? `${item.name} is sold out` : `Add ${item.name}`}
+          >
+            +
+          </button>
+        </div>
+        <span className="text-[14px] leading-[1.2] font-extrabold">{item.name}</span>
+        <span className={cn("text-[13px] font-bold text-muted", soldOut && "line-through")}>
+          {formatCents(item.priceCents)}
+        </span>
       </div>
-      <span className="text-[14px] leading-[1.2] font-extrabold">{item.name}</span>
-      <span className={cn("text-[13px] font-bold text-muted", soldOut && "line-through")}>
-        {formatCents(item.priceCents)}
-      </span>
-    </div>
+      {item.photoUrl && (
+        <DialogContent>
+          <img
+            src={item.photoUrl}
+            alt={item.name}
+            className={cn("aspect-square w-full rounded-2xl object-cover", soldOut && "opacity-50")}
+            style={{ background: tint }}
+          />
+          <div className="flex items-baseline justify-between gap-3">
+            <DialogTitle>{item.name}</DialogTitle>
+            <span
+              className={cn("text-[18px] font-extrabold", soldOut && "text-muted line-through")}
+            >
+              {formatCents(item.priceCents)}
+            </span>
+          </div>
+          <DialogDescription>
+            {soldOut ? "Sold out" : limited ? `${item.stock} left` : "Made to order"}
+            {inCart > 0 && ` · ${inCart} in your order`}
+          </DialogDescription>
+          <Button
+            variant="red"
+            size="md"
+            block
+            onClick={() => add(item.id)}
+            disabled={soldOut || atMax}
+          >
+            {soldOut ? "Sold out" : atMax ? "All of them are in your order" : "+ Add to order"}
+          </Button>
+        </DialogContent>
+      )}
+    </Dialog>
   );
 }
 
@@ -83,8 +134,6 @@ export function Home() {
       </>
     );
 
-  const menu = items.filter((i) => i.category === "menu");
-  const limited = items.filter((i) => i.category === "limited");
   const open = settings.orders_open === "1";
 
   return (
@@ -200,25 +249,11 @@ export function Home() {
             <span className="text-[13px] font-bold text-muted">Tap + to add</span>
           </div>
           <div className={menuGrid}>
-            {menu.map((i) => (
+            {items.map((i) => (
               <Tile key={i.id} item={i} />
             ))}
           </div>
         </section>
-
-        {limited.length > 0 && (
-          <section className="flex flex-col gap-3.5 px-5 pt-[22px] pb-4">
-            <div className="flex items-baseline justify-between">
-              <h2 className="text-[22px] font-semibold">Limited edition</h2>
-              <span className="text-[13px] font-bold text-muted">Only a few made</span>
-            </div>
-            <div className={menuGrid}>
-              {limited.map((i) => (
-                <Tile key={i.id} item={i} />
-              ))}
-            </div>
-          </section>
-        )}
 
         <section className="px-5 pt-[22px] pb-4">
           <div className="flex items-start gap-3.5 rounded-[20px] border-2 border-dashed border-line-dashed bg-surface p-[18px]">

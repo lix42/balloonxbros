@@ -1,38 +1,48 @@
 ---
 title: Real menu, prices and stock
-status: todo
+status: done
 deps: []
-summary: migration with real items, prices, limited stock; hide unused seed items
+summary: migration with the 14 real balloons (photos, counts); one menu, every item counted
+done: 2026-11-09
 ---
 # Real menu, prices and stock
 
+## Change (2026-11-09, Li)
+
+No separate limited-edition section: every balloon has a stock count, shown
+as "N left". Li supplied 14 photos, so this task also does `balloon-photos`.
+Names come from the photo files; price ($10) and stock (3) are placeholders Li
+sets in `/admin` after deploy. Landed as `migrations/0004_menu.sql`: inserts
+the 14 items with `photo_key`, deletes the old seed items no order references
+and hides the rest. Home shows one grid; admin drops the Section field and
+"unlimited" stock (a new item starts at 0 = sold out). `items.category` stays
+in the schema (dropping it needs a table rebuild) but nothing reads it.
+
 ## Goal
 
-The menu and limited-edition sections list the balloons the kids will
-actually make, at real prices, with real limited stock counts.
+The menu lists the balloons the kids will actually make, each with a photo
+and a stock count, at real prices.
 
 ## Design
 
-A new migration (`migrations/000N_menu.sql`, next free number):
-- `UPDATE items` for seed items that stay (name, `price_cents`, `stock`,
-  `tint`, `sort`), keeping their ids where they fit. Ids are permanent once
-  orders reference them.
-- `INSERT` for new items (id kebab-case, `category` `menu` or `limited`,
-  `stock` NULL for unlimited, a tile tint from the DESIGN.md palette).
-- `UPDATE items SET active = 0` for seed items not on the real menu. Hide,
-  don't delete.
+A new migration (`migrations/0004_menu.sql`):
+- `INSERT` the real items (id kebab-case from the photo file name, `category`
+  `'menu'` since the column is NOT NULL but unused, a stock number, a tile
+  tint from the DESIGN.md palette, `photo_key = '/balloons/<id>.jpg'`).
+- Delete the placeholder seed items no order references; hide (`active = 0`)
+  the ones an order does. Ids are permanent once orders reference them.
 
-Prices are integer cents. Limited items need a stock number; `0` shows as sold
-out. Names, prices and counts come from Li. The final item ids are what
-`balloon-photos` names its files after, so settle them here.
+Prices are integer cents. Every item has a stock number; `0` shows as sold
+out. Names come from the photos; prices and counts are placeholders Li sets
+in `/admin` after deploy.
 
-Remove the filled rows from `docs/PLACEHOLDERS.md`.
+Update the menu rows in `docs/PLACEHOLDERS.md`.
 
 ## How to Verify
 
-- Locally: the menu grid and limited section show exactly the real items in
-  the intended order; a limited item shows "N left"; a stock-0 item is greyed
-  out and can't be added.
+- Locally: the menu grid shows exactly the 14 real items in the intended
+  order, each with its photo and "N left"; a stock-0 item is greyed out and
+  can't be added; tapping a photo opens the bigger view.
 - Add items to the cart and submit an order locally: line prices and the total
-  match; limited stock drops by the ordered quantity.
+  match; stock drops by the ordered quantity.
 - `pnpm run check` passes.

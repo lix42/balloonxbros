@@ -385,7 +385,7 @@ function Menu() {
   return (
     <div className="flex flex-col gap-3.5">
       <p className={smallClass}>
-        Changes save when you leave a field. Leave stock empty for unlimited (regular menu).
+        Changes save when you leave a field. Stock is how many are left; 0 shows as sold out.
       </p>
       {items.map((i) => (
         <ItemEditor key={i.id} item={i} onSave={save} onItems={setItems} />
@@ -468,25 +468,15 @@ function ItemEditor({
             <Input
               size="sm"
               inputMode="numeric"
-              placeholder="unlimited"
               value={stock}
               onChange={(e) => setStock(e.target.value)}
               onBlur={() => {
-                const v = stock.trim() === "" ? null : Number.parseInt(stock, 10);
-                if (v !== item.stock && (v === null || v >= 0)) onSave(item.id, { stock: v });
+                const v = Number.parseInt(stock, 10);
+                if (Number.isInteger(v) && v >= 0) {
+                  if (v !== item.stock) onSave(item.id, { stock: v });
+                } else setStock(item.stock === null ? "" : String(item.stock));
               }}
             />
-          </label>
-          <label className={itemFieldClass}>
-            Section
-            <select
-              className={selectSmClass}
-              value={item.category}
-              onChange={(e) => onSave(item.id, { category: e.target.value as Item["category"] })}
-            >
-              <option value="menu">Menu</option>
-              <option value="limited">Limited edition</option>
-            </select>
           </label>
           <label className={itemFieldClass}>
             Drawing

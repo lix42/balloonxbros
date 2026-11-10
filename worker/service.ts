@@ -273,14 +273,14 @@ export async function adminCreateItem(
   if (!id) throw new HttpError(400, "Item id is required.");
   const fields = itemFields(body);
   await env.DB.prepare(
-    "INSERT INTO items (id, name, category, price_cents, stock, glyph, tint, active, sort) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    // category is a legacy column (menu/limited); there is one menu now.
+    "INSERT INTO items (id, name, category, price_cents, stock, glyph, tint, active, sort) VALUES (?, ?, 'menu', ?, ?, ?, ?, ?, ?)",
   )
     .bind(
       id,
       fields.name ?? "New balloon",
-      fields.category ?? "menu",
       fields.price_cents ?? 0,
-      fields.stock ?? null,
+      fields.stock ?? 0, // every balloon has a count; 0 shows sold out until set
       fields.glyph ?? null,
       fields.tint ?? "#E1EBFF",
       fields.active ?? 1,
@@ -345,21 +345,18 @@ export async function adminSaveSettings(
 function itemFields(body: Record<string, unknown>) {
   const f: Partial<{
     name: string;
-    category: "menu" | "limited";
     price_cents: number;
-    stock: number | null;
+    stock: number;
     glyph: string | null;
     tint: string;
     active: number;
     sort: number;
   }> = {};
   if (typeof body.name === "string" && body.name.trim()) f.name = body.name.trim().slice(0, 60);
-  if (body.category === "menu" || body.category === "limited") f.category = body.category;
   if (Number.isInteger(body.priceCents) && (body.priceCents as number) >= 0) {
     f.price_cents = body.priceCents as number;
   }
-  if (body.stock === null) f.stock = null;
-  else if (Number.isInteger(body.stock) && (body.stock as number) >= 0) {
+  if (Number.isInteger(body.stock) && (body.stock as number) >= 0) {
     f.stock = body.stock as number;
   }
   if (typeof body.glyph === "string") f.glyph = body.glyph.slice(0, 30) || null;
