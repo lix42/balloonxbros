@@ -8,7 +8,7 @@ import { useStore } from "../store";
 import { LAST_ORDER_KEY } from "./Order";
 
 const kv = "flex justify-between gap-3 text-[15px]";
-const kvKey = "font-bold text-muted";
+const kvKey = "font-bold";
 const kvValue = "text-right font-extrabold";
 
 function readLast(code: string): { order: PublicOrder; settings: Settings } | null {
@@ -56,7 +56,7 @@ export function Done({ code }: { code: string }) {
 
       <div className="flex flex-col gap-2.5 text-center">
         <h1 className="text-[34px] leading-[1.05] font-bold tracking-[-0.5px]">Order received!</h1>
-        <p className="text-base text-ink-2">
+        <p className="text-base">
           Thank you for supporting {settings.school_name}. We'll check your receipt and email you a
           confirmation.
         </p>
@@ -110,7 +110,7 @@ export function Done({ code }: { code: string }) {
                 alt={`Map to ${settings.event_place}. Opens Google Maps.`}
                 className="block h-auto w-full"
               />
-              <span className="block border-t border-line bg-white px-2.5 py-1 text-right text-[11px] font-semibold text-muted">
+              <span className="block border-t border-line bg-white px-2.5 py-1 text-right text-[11px] font-semibold">
                 {EVENT_MAP.credit}
               </span>
             </a>
@@ -118,7 +118,7 @@ export function Done({ code }: { code: string }) {
         )}
       </div>
 
-      <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-[14px] text-yellow-900">
+      <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-[14px]">
         Bring a friend! We'll also be twisting balloons on the spot at the event.
       </div>
 

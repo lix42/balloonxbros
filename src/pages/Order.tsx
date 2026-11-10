@@ -45,7 +45,7 @@ function CartRow({ itemId }: { itemId: string }) {
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="font-extrabold">{item.name}</span>
-          <span className="text-[13px] font-bold text-muted">
+          <span className="text-[13px] font-bold">
             {formatCents(item.priceCents)} each{item.stock !== null ? ` · ${item.stock} left` : ""}
           </span>
         </div>
@@ -73,11 +73,10 @@ function CartRow({ itemId }: { itemId: string }) {
         </div>
       </div>
       {noteOpen ? (
-        <label className="flex min-w-0 flex-col gap-1.5 text-[13px] font-extrabold text-ink-2">
+        <label className="flex min-w-0 flex-col gap-1.5 text-[13px] font-extrabold">
           Note for this balloon
           <Input
             size="sm"
-            className="text-ink-2"
             value={note}
             maxLength={200}
             placeholder="e.g. blue ears, please"
@@ -213,7 +212,7 @@ export function Order() {
           <h1 className="text-[34px] leading-[1.05] font-bold tracking-[-0.5px]">
             Pre-orders are closed
           </h1>
-          <p className="text-base text-ink-2">
+          <p className="text-base">
             Come see us at {settings.event_place} on {settings.event_date} — we'll twist balloons on
             the spot.
           </p>
@@ -252,9 +251,9 @@ export function Order() {
         </section>
 
         <section className="px-5 pt-1.5 pb-4">
-          <div className="flex flex-col gap-3.5 rounded-[20px] bg-ink p-[18px] text-white [&_a]:text-white">
+          <div className="flex flex-col gap-3.5 rounded-[20px] bg-yellow-200 p-[18px]">
             <div className="flex items-baseline justify-between">
-              <span className="font-bold text-line-strong">
+              <span className="font-bold">
                 {count} balloon{count === 1 ? "" : "s"}
               </span>
               <span className="font-heading text-[26px] font-semibold">
@@ -267,11 +266,7 @@ export function Order() {
             </p>
             <Link
               to="/donate"
-              className={cn(
-                buttonVariants({ variant: "link" }),
-                // ! beats the card's [&_a]:text-white and the hover colour, as the old inline style did
-                "justify-start text-[15px] text-yellow-300!",
-              )}
+              className={cn(buttonVariants({ variant: "link" }), "justify-start text-[15px]")}
             >
               Show me the donation steps <ArrowRight size={16} />
             </Link>
@@ -350,8 +345,8 @@ export function Order() {
                 <>
                   <CheckCircleIcon />
                   <span className="font-extrabold text-accent-700">Receipt attached</span>
-                  <span className="text-sm break-all text-ink-2">{receipt.name}</span>
-                  <span className="text-[13px] font-bold text-link">
+                  <span className="text-sm break-all">{receipt.name}</span>
+                  <span className="text-[13px] font-bold text-link underline underline-offset-2">
                     Tap to choose a different file
                   </span>
                 </>
@@ -359,7 +354,7 @@ export function Order() {
                 <>
                   <UploadIcon />
                   <span className="font-extrabold">Drop your receipt here</span>
-                  <span className="text-[13px] text-muted">
+                  <span className="text-[13px]">
                     or tap to choose: a screenshot or PDF of the receipt page or email
                   </span>
                 </>
@@ -374,14 +369,14 @@ export function Order() {
             </label>
           </div>
 
-          <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-sm text-yellow-900">
+          <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-sm">
             <strong>Before you submit:</strong> check that your receipt shows{" "}
             <strong>{SCHOOL_SITE.fund}</strong>, <strong>{SCHOOL_SITE.student}</strong> and the
             amount <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if
             something doesn't match, we'll contact you by email or phone.
           </div>
 
-          <p className="text-[13px] text-muted">
+          <p className="text-[13px]">
             Pick up your balloons at the Balloon x Bros table on {settings.event_date}. Give your
             name and we'll have them ready.
           </p>

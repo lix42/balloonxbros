@@ -24,7 +24,7 @@ Claude Design canvas.
   the code imports relatively and takes `cn` straight from the `cn` npm
   package (the class merger shadcn's components use). The Geist font the
   init adds is dropped.
-- Theme: the DESIGN.md tokens as Tailwind colours, Fredoka/Nunito, radii
+- Theme: the DESIGN.md tokens as Tailwind colours, Fredoka/Montserrat, radii
   12–22px, and shadcn's semantic variables (`primary` = red, `border` = line,
   `input` = line-strong, `ring` = blue, …) mapped onto them. Text sizes keep
   the old inherited line-height 1.5. No dark mode.

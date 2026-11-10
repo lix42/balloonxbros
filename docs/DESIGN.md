@@ -1,8 +1,11 @@
 # Balloon x Bros — design spec
 
 Source of truth for the visual design: the Claude Design canvas
-"Balloon x Bros — Site Design" (https://claude.ai/artifact/XxCQyYroyUzx8EyymEZv5b).
-This file records what the build follows.
+"Balloon x Bros — live site"
+(https://claude.ai/artifact/2DQZZ5YrRu9yuVYR18NQsC), a copy of the built site
+that Li restyled on 2026-11-09 (yellow header and cards, blue headings, pastel
+logo, Montserrat body). The original canvas, "Balloon x Bros — Site Design"
+(https://claude.ai/artifact/XxCQyYroyUzx8EyymEZv5b), is the earlier design. This file records what the build follows.
 
 ## What the site does
 
@@ -22,15 +25,16 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 ## Screens (mobile first, 390px design width)
 
 1. **Home** `/`
-   - Header: two-balloon logo + "Balloon × Bros" wordmark, "Pre-order" pill.
-   - Hero: eyebrow "Fundraiser for {school}", H1 "Balloon Sale Benefiting
-     Kirkland Middle School", subcopy, three info tiles: When / Time / Where
+   - Header (yellow 200): pastel two-balloon logo + "Balloon × Bros" wordmark
+     (blue 300, orange ×), "Pre-order" pill (blue 300 border).
+   - Hero: centred H1 "Balloon Sale Benefiting Kirkland Middle School" (30px
+     semibold), subcopy, three yellow info tiles: When / Time / Where
      (place links to Maps), then "Address: {event_address}" as a Maps link.
      Map links search `event_address` (more precise than the venue name),
      else the place name.
-   - Announcement card (dark navy): the kids' own note (`announcement`
+   - Announcement card (yellow 200, blue 700 label): the kids' own note (`announcement`
      setting, line breaks kept; editable in admin; the `event_place` name in it
-     links to Maps), link "See the donation steps" → `/donate`.
+     links to Maps in blue 700), link "See the donation steps" → `/donate`.
    - "How pre-ordering works": 3 numbered steps.
    - "The balloon menu": 3-col grid of tiles (tinted square, photo or
      illustration, + button bottom-left, yellow "N left" badge top-right,
@@ -46,7 +50,7 @@ A student fundraiser selling twist balloons for the school, in about two weeks
    - Footer with contact email.
    - Sticky bottom bar: "Your order · N balloons" + red "Order →".
 2. **How to donate** `/donate`
-   - Back arrow header. Eyebrow "Paying for your order", H1, explanation.
+   - The Home header. Eyebrow "Paying for your order", H1, explanation.
    - Yellow "Heads up" note: the school's site shows the receipt only once.
    - Six step cards following the real school site (Lake Washington School
      District on InTouch Receipting), each with a cropped phone screenshot from
@@ -63,7 +67,8 @@ A student fundraiser selling twist balloons for the school, in about two weeks
    - Cart rows: thumbnail, name, "$X each", − count + stepper, "+ Add note"
      that reveals a text input.
    - "+ Add more balloons" link.
-   - Navy summary card: N balloons, $TOTAL, "donate $TOTAL to the school, then
+   - Back-arrow header "Your pre-order" (yellow 200).
+   - Yellow 200 summary card: N balloons, $TOTAL, "donate $TOTAL to the school, then
      drop your receipt below", link to donation steps.
    - Your details: Name; Email + Phone side by side. Saved on the device
      (localStorage `bxb-contact-v1`, `src/lib/contact-storage.ts`) so a closed
@@ -91,23 +96,29 @@ the steps listed (Tailwind's own red/yellow/blue/green steps are switched off),
 and page code uses these names, never hex. Only artwork keeps raw hex: the
 logo, the balloon drawings and the per-item tile tints.
 
-| Token      | Steps                                                                    | Use                                                                                                                                                   |
-| ---------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| neutrals   | ground `#F4F7FF`, surface `#FFFFFF`                                      | page background; cards, header                                                                                                                        |
-|            | line `#E2E7F5`, line-strong `#C9D1EA`, line-dashed `#7F8BB3`             | card borders; input borders, sold-out tile; dashed drop/placeholder boxes                                                                             |
-|            | faint `#676D8C`, muted `#545A78`, ink-2 `#454B6B`, ink `#1B1F3B`         | placeholders; labels; body copy; text and dark cards                                                                                                  |
-| **accent** | 50 `#F0FAF5`, 100 `#E3F5EC`, 500 `#2E9E6B`, 700 `#1E7A50`, 800 `#155C3C` | green, the interactive colour: links (700, hover 800), focus ring and icons (500), chosen/done states (100 fill, 700 border and text), drag-over (50) |
-| red        | 100 `#FDE8E7`, 500 `#D93A31`, 600 `#C3322A`, 900 `#8F1F19`               | main call to action (500, hover 600), eyebrow text (600), errors (100 fill, 900 text)                                                                 |
-| yellow     | 100 `#FFF3CC`, 300 `#FFD166`, 500 `#F2A900`, 900 `#3D3420`               | notes (100 fill, 500 border, 900 text); highlights on navy (300)                                                                                      |
-| blue       | 100 `#E1EBFF`, 800 `#163F99`                                             | admin "Verified" badge only                                                                                                                           |
-| tile tints | `#FFE3E1 #E1EBFF #FFF3CC #FFE1EE #EDE3FF #FFE9D6 #DDF4EF`                | per item (artwork)                                                                                                                                    |
+| Token      | Steps                                                                     | Use                                                                                                                                |
+| ---------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| neutrals   | ground `#F4F7FF`, surface `#FFFFFF`                                       | page background; cards                                                                                                             |
+|            | line `#E2E7F5`, line-strong `#C9D1EA`, line-dashed `#7F8BB3`              | card borders; input borders, sold-out tile; dashed drop/placeholder boxes                                                          |
+|            | faint `#676D8C`, muted `#545A78`, ink-2 `#454B6B`, ink `#1B1F3B`          | placeholders; admin labels; all body text, labels and links on the public pages; dark buttons, badges and step numbers             |
+| **accent** | 50 `#F0FAF5`, 100 `#E3F5EC`, 500 `#2E9E6B`, 700 `#1E7A50`, 800 `#155C3C`  | green: focus ring and icons (500), step 2 (700), chosen/done states (100 fill, 700 border and text), drag-over (50)                |
+| red        | 100 `#FDE8E7`, 500 `#D93A31`, 600 `#C3322A`, 900 `#8F1F19`                | main call to action (500, hover 600), eyebrow text (600), errors (100 fill, 900 text)                                              |
+| yellow     | 100 `#FFF3CC`, 200 `#FFF39F`, 300 `#FFD166`, 500 `#F2A900`, 900 `#3D3420` | notes (100 fill, 500 border); header, info tiles, announcement and order-total cards (200); "N left" badge (300); admin (900 text) |
+| blue       | 100 `#E1EBFF`, 300 `#71B2FF`, 700 `#1C4FC2`, 800 `#163F99`                | headings, wordmark, Pre-order pill border (300); announcement label and venue link (700); admin "Verified" badge (100/800)         |
+| orange     | 500 `#FF8A1F`                                                             | the wordmark's ×                                                                                                                   |
+| tile tints | `#FFE3E1 #E1EBFF #FFF3CC #FFE1EE #EDE3FF #FFE9D6 #DDF4EF`                 | per item (artwork)                                                                                                                 |
 
-Roles: `link` / `link-hover` are accent 700 / 800, and shadcn's `ring` is
+Roles: `heading` is blue 300 (every h1–h3; at about 2.4:1 on the page it is
+below the 3:1 large-text contrast minimum, Li's choice); `foreground` (body
+text) and `link` are ink-2, `link-hover` ink; links and link-style buttons are
+underlined. shadcn's `ring` is
 accent 500, `accent` / `accent-foreground` accent 100 / 700, `primary` and
 `destructive` red 500. Admin order badges: New yellow, Receipt issue red,
 Verified blue, Picked up accent, Cancelled neutral.
 
-- Type: **Fredoka** 600/700 for headings and wordmark, **Nunito** 400–800 for body.
+- Type: **Fredoka** 600/700 for headings and wordmark, **Montserrat** 400–800 for body.
+- Logo (artwork, also `public/favicon.svg`): pink `#FF8FC7` and light blue
+  `#8FD3FF` balloons on an orange `#FF8A1F` string.
 - Radii: cards 18–22px, tiles 18px, pills 999px, inputs 12px.
 - Touch targets ≥ 44px; primary buttons 52–56px tall.
 - Icons: inline stroke SVG, no emoji.
