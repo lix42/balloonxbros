@@ -30,6 +30,7 @@
   --color-yellow-tint: #fff3cc;
   --color-yellow-on-navy: #ffd166;
   --color-green-text: #1e7a50;
+  --color-green-tint: #e3f5ec;
   --color-error-bg: #fde8e7;
   --color-error-text: #8f1f19;
 
@@ -45,8 +46,8 @@
   --color-secondary: var(--color-ink);
   --color-secondary-foreground: #ffffff;
   --color-muted-foreground: var(--color-muted);
-  --color-accent: var(--color-yellow-tint);
-  --color-accent-foreground: var(--color-ink);
+  --color-accent: var(--color-green-tint);
+  --color-accent-foreground: var(--color-green-text);
   --color-destructive: var(--color-red);
   --color-border: var(--color-line);
   --color-input: var(--color-line-strong);

@@ -63,7 +63,9 @@ A student fundraiser selling twist balloons for the school, in about two weeks
      (localStorage `bxb-contact-v1`, `src/lib/contact-storage.ts`) so a closed
      tab keeps them; cleared once the order goes through. The receipt file is
      not saved.
-   - Receipt dropzone (dashed; shows chosen filename).
+   - Receipt dropzone (dashed). Once a file is chosen it turns solid accent
+     green with a check, "Receipt attached", the filename and "Tap to choose a
+     different file".
    - Pickup note, red "Submit pre-order".
 4. **Order received** `/order/:code`
    - Three-balloon check illustration, "Order received!", summary card
@@ -80,18 +82,19 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 
 Implemented as the Tailwind theme in `src/styles/app.css`.
 
-| Token      | Value                                                     | Use                                       |
-| ---------- | --------------------------------------------------------- | ----------------------------------------- |
-| ground     | `#F4F7FF`                                                 | page background                           |
-| surface    | `#FFFFFF`                                                 | cards, header                             |
-| line       | `#E2E7F5`                                                 | card borders                              |
-| ink        | `#1B1F3B`                                                 | text, dark cards                          |
-| ink-2      | `#454B6B`                                                 | body copy                                 |
-| muted      | `#545A78`                                                 | labels                                    |
-| red        | `#D93A31`                                                 | primary CTA (eyebrow text `#C2332B`)      |
-| blue       | `#2E6BE6`                                                 | accent; links `#2257C9` / hover `#163F99` |
-| yellow     | `#F2A900`, tint `#FFF3CC`, on-navy `#FFD166`              | highlights                                |
-| tile tints | `#FFE3E1 #E1EBFF #FFF3CC #FFE1EE #EDE3FF #FFE9D6 #DDF4EF` | per item                                  |
+| Token      | Value                                                     | Use                                      |
+| ---------- | --------------------------------------------------------- | ---------------------------------------- |
+| ground     | `#F4F7FF`                                                 | page background                          |
+| surface    | `#FFFFFF`                                                 | cards, header                            |
+| line       | `#E2E7F5`                                                 | card borders                             |
+| ink        | `#1B1F3B`                                                 | text, dark cards                         |
+| ink-2      | `#454B6B`                                                 | body copy                                |
+| muted      | `#545A78`                                                 | labels                                   |
+| red        | `#D93A31`                                                 | primary CTA (eyebrow text `#C2332B`)     |
+| blue       | `#2E6BE6`                                                 | focus; links `#2257C9` / hover `#163F99` |
+| yellow     | `#F2A900`, tint `#FFF3CC`, on-navy `#FFD166`              | highlights                               |
+| green      | text `#1E7A50`, tint `#E3F5EC`                            | accent: done states (receipt attached)   |
+| tile tints | `#FFE3E1 #E1EBFF #FFF3CC #FFE1EE #EDE3FF #FFE9D6 #DDF4EF` | per item                                 |
 
 - Type: **Fredoka** 600/700 for headings and wordmark, **Nunito** 400–800 for body.
 - Radii: cards 18–22px, tiles 18px, pills 999px, inputs 12px.

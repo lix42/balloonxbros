@@ -120,6 +120,27 @@ export function UploadIcon() {
   );
 }
 
+/** Shown in the receipt dropzone once a file is chosen. */
+export function CheckCircleIcon() {
+  return (
+    <svg
+      width="36"
+      height="36"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="text-accent-foreground"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 12.5l2.7 2.7L16 9.8" />
+    </svg>
+  );
+}
+
 export function SiteHeader() {
   return (
     <header className="border-b border-line bg-surface">

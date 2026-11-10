@@ -5,7 +5,15 @@ import { formatUsPhone } from "../../shared/phone";
 import { formatCents, MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "../../shared/types";
 import { ApiError, api } from "../api";
 import { ItemArt } from "../components/Glyph";
-import { ArrowRight, BackHeader, ErrorBox, LoadError, Loading, UploadIcon } from "../components/ui";
+import {
+  ArrowRight,
+  BackHeader,
+  CheckCircleIcon,
+  ErrorBox,
+  LoadError,
+  Loading,
+  UploadIcon,
+} from "../components/ui";
 import { buttonVariants } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { CONTACT_LIMITS } from "../lib/contact-draft";
@@ -324,8 +332,12 @@ export function Order() {
             </span>
             <label
               className={cn(
-                "relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-[#7f8bb3] bg-white px-[18px] py-[26px] text-center focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-blue",
-                drag && "border-blue bg-[#eef3ff]",
+                "relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 px-[18px] py-[26px] text-center focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-blue",
+                drag
+                  ? "border-dashed border-blue bg-[#eef3ff]"
+                  : receipt
+                    ? "border-solid border-accent-foreground bg-accent"
+                    : "border-dashed border-[#7f8bb3] bg-white",
               )}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -334,16 +346,18 @@ export function Order() {
               onDragLeave={() => setDrag(false)}
               onDrop={onDrop}
             >
-              <UploadIcon />
               {receipt ? (
                 <>
-                  <span className="font-extrabold break-all text-green-text">{receipt.name}</span>
+                  <CheckCircleIcon />
+                  <span className="font-extrabold text-accent-foreground">Receipt attached</span>
+                  <span className="text-sm break-all text-ink-2">{receipt.name}</span>
                   <span className="text-[13px] font-bold text-link">
                     Tap to choose a different file
                   </span>
                 </>
               ) : (
                 <>
+                  <UploadIcon />
                   <span className="font-extrabold">Drop your receipt here</span>
                   <span className="text-[13px] text-muted">
                     or tap to choose: a screenshot or PDF of the receipt page or email
