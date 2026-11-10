@@ -33,8 +33,10 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
   `orders@` (tested to Gmail: inbox, reply-to `hello@`). Its records live on
   `send.` (CNAME) and `resend._domainkey`, apart from the root MX. No `_dmarc`
   record yet. Fastmail recipients may hit the same new-domain block.
-- Next: content PRs (event details, real menu/prices/stock, photos in
-  `public/balloons/`), then the launch check.
+- Menu (`0004_menu.sql`): 14 real balloons with photos in
+  `public/balloons/`, one grid, every item counted. Prices ($10) and stock (3)
+  are placeholders Li sets in /admin.
+- Next: real prices/stock in /admin, then the launch check.
 
 ## Stack
 
@@ -70,8 +72,10 @@ records tokens and decisions. If the canvas and code disagree, ask Li which wins
   `tests/worker.ts`, since Start's entry needs its Vite plugin to build).
 - D1 (`DB`) for items, orders, settings — schema in `migrations/`.
 - R2 (`FILES`) for receipt uploads (`receipts/`) and item photos (`photos/`).
-- Seed data in `migrations/0001_init.sql` is placeholder (names in [BRACKETS],
-  prices) — replace via a new migration (see `docs/PLACEHOLDERS.md`) or /admin.
+- Menu content lands by migration (`0004_menu.sql` replaced the `0001` seed
+  items) or /admin; see `docs/PLACEHOLDERS.md`. Every item has a stock count
+  (`stock` NULL = unlimited survives only on legacy rows); `items.category` is
+  unused (always `'menu'`).
 - Resend for customer confirmation email (skipped when `RESEND_API_KEY` unset).
 - Domain: balloonxbros.com (registered on Cloudflare).
 - Vite+ (`vite-plus`, the `vp` CLI) wraps Vite, Vitest, Oxlint and Oxfmt;

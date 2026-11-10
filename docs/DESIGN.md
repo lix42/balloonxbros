@@ -15,8 +15,9 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 - **Payment = a donation to the school** on the school's own donation page.
   The site never takes money. The buyer uploads the donation receipt
   (screenshot / PDF / photo) as proof.
-- A **limited edition** section shows items with a fixed stock count
-  ("N left") and a sold-out state.
+- Every balloon is made in a fixed number: each tile shows "N left" and a
+  sold-out state. (There used to be a separate "Limited edition" section; it
+  went in `menu-content`, and the `items.category` column is unused since.)
 
 ## Screens (mobile first, 390px design width)
 
@@ -31,11 +32,16 @@ A student fundraiser selling twist balloons for the school, in about two weeks
      setting, line breaks kept; editable in admin; the `event_place` name in it
      links to Maps), link "See the donation steps" → `/donate`.
    - "How pre-ordering works": 3 numbered steps.
-   - "The balloon menu": 3-col grid of tiles (tinted square, illustration or
-     photo, + button bottom-left, count badge top-right when in cart), name,
-     price.
-   - "Limited edition": same tile on navy, star illustration, "N left" badge;
-     sold-out tile greyed, struck-through price, disabled +.
+   - "The balloon menu": 3-col grid of tiles (tinted square, photo or
+     illustration, + button bottom-left, yellow "N left" badge top-right,
+     count badge top-left when in cart), name, price. Sold-out tile greyed,
+     struck-through price, disabled +. Photos are square `public/balloons/<id>.jpg`
+     (600×600; the whole 3:2 photo fitted in, with a blurred copy filling the
+     edges so no balloon is cut off). Tapping a photo opens a popup
+     (`src/components/ui/dialog.tsx`, Base UI Dialog): the photo large, name,
+     price, "N left · N in your order", and a red "+ Add to order" button
+     (disabled when sold out or all left are in the order). Esc, ✕ or a tap
+     outside closes it. Tiles with only a drawing don't open one.
    - "Want something custom?" dashed card (on-the-spot balloons).
    - Footer with contact email.
    - Sticky bottom bar: "Your order · N balloons" + red "Order →".
@@ -76,7 +82,7 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 5. **Admin** `/admin` (not in the canvas; added for operations)
    - Password login. Orders list with receipt preview, status
      (new → verified → picked up; new → receipt issue → verified; cancelled). Edit menu items
-     (price, stock, active, photo) and event settings.
+     (name, price, stock — always a number, 0 = sold out — active, photo) and event settings.
 
 ## Visual tokens
 
@@ -116,4 +122,4 @@ Verified blue, Picked up accent, Cancelled neutral.
 
 ## Still placeholder
 
-See `docs/PLACEHOLDERS.md`: menu, prices, limited stock, photos.
+See `docs/PLACEHOLDERS.md`: balloon names, prices and stock counts.

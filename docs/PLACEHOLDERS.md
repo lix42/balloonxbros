@@ -1,6 +1,7 @@
 # Placeholders to fill in
 
-Everything below is placeholder content in `migrations/0001_init.sql`.
+Everything below is still placeholder: settings seeded in
+`migrations/0001_init.sql`, and the menu's prices and stock from `0004_menu.sql`.
 Confirmed so far: school = **Kirkland Middle School (KIMS)**, pickup is by name,
 receipts are checked by hand in admin. Event: **Fri, Nov 13, 6pm–8pm** at
 **Kingsgate Skating Rink** (14326 124th Ave NE, Kirkland, WA 98034; Google
@@ -17,38 +18,45 @@ Student Name Sky Xu.
 
 ## Menu (`items` table)
 
-| id          | Name             | Price | Stock        | Image      |
-| ----------- | ---------------- | ----- | ------------ | ---------- |
-| `dog`       | Balloon Dog      | $5    | unlimited    | drawn icon |
-| `sword`     | Sword            | $5    | unlimited    | drawn icon |
-| `flower`    | Flower           | $5    | unlimited    | drawn icon |
-| `heart`     | Heart Wand       | $5    | unlimited    | drawn icon |
-| `crown`     | Crown            | $5    | unlimited    | drawn icon |
-| `butterfly` | Butterfly        | $5    | unlimited    | drawn icon |
-| `bouquet`   | Bouquet          | $8    | unlimited    | drawn icon |
-| `star-gold` | [LIMITED ITEM 1] | $15   | 5            | drawn star |
-| `star-pink` | [LIMITED ITEM 2] | $15   | 5            | drawn star |
-| `star-blue` | [LIMITED ITEM 3] | $15   | 0 (sold out) | drawn star |
+The 14 balloons and their photos are real (migration `0004_menu.sql`). Their
+names come from the photo files; **price ($10) and stock (3 each) are
+placeholders**. Li sets the real names, prices and counts in `/admin` → Menu
+after `0004` deploys. Don't add balloons in `/admin` before then: `0004` inserts
+these ids, so one that already exists (e.g. a new "Pumpkin") makes the
+migration fail and blocks the deploy.
+
+| id                | Name            | Price | Stock |
+| ----------------- | --------------- | ----- | ----- |
+| `balloon-dog`     | Balloon Dog     | $10   | 3     |
+| `bow-and-arrow`   | Bow and Arrow   | $10   | 3     |
+| `cherries`        | Cherries        | $10   | 3     |
+| `dragon`          | Dragon          | $10   | 3     |
+| `flower-bracelet` | Flower Bracelet | $10   | 3     |
+| `grapes`          | Grapes          | $10   | 3     |
+| `idea-hat`        | Idea Hat        | $10   | 3     |
+| `music-note`      | Music Note      | $10   | 3     |
+| `octopus`         | Octopus         | $10   | 3     |
+| `poke-ball`       | Poke Ball       | $10   | 3     |
+| `pumpkin`         | Pumpkin         | $10   | 3     |
+| `rainbow`         | Rainbow         | $10   | 3     |
+| `seahorse`        | Seahorse        | $10   | 3     |
+| `wearable-shield` | Wearable Shield | $10   | 3     |
 
 ## How to update in a PR
 
-**Before the first production deploy:** edit the `INSERT` rows in
-`migrations/0001_init.sql` directly.
-
-**After it has been deployed:** add a new migration, e.g.
-`migrations/0002_content.sql` (CI runs `wrangler d1 migrations apply --remote`
-before each deploy):
+Production is live, so never edit an applied migration: add the next one,
+e.g. `migrations/0005_content.sql` (CI runs
+`wrangler d1 migrations apply --remote` before each deploy):
 
 ```sql
 UPDATE settings SET value = 'Sat, Nov 21' WHERE key = 'event_date';
 
-UPDATE items SET name = 'Puppy', price_cents = 600, photo_key = '/balloons/dog.jpg'
-  WHERE id = 'dog';
+UPDATE items SET name = 'Puppy', price_cents = 600 WHERE id = 'balloon-dog';
 
 INSERT INTO items (id, name, category, price_cents, stock, tint, photo_key, sort)
-  VALUES ('unicorn', 'Unicorn', 'limited', 2000, 4, '#EDE3FF', '/balloons/unicorn.jpg', 140);
+  VALUES ('unicorn', 'Unicorn', 'menu', 2000, 4, '#EDE3FF', '/balloons/unicorn.jpg', 150);
 
-UPDATE items SET active = 0 WHERE id = 'star-blue';   -- hide rather than delete
+UPDATE items SET active = 0 WHERE id = 'dragon';   -- hide rather than delete
 ```
 
 **Images:** commit square photos (about 600×600 JPG/WebP) to

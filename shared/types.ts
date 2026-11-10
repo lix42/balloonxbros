@@ -1,13 +1,11 @@
 // Types shared by the Worker API and the React app.
 
-export type Category = "menu" | "limited";
-
 export interface Item {
   id: string;
   name: string;
-  category: Category;
   priceCents: number;
-  /** null = unlimited; a number = units left (limited edition). */
+  /** Units left; 0 = sold out. Every balloon has a count (admin always sets one);
+   *  null (unlimited) is only possible on rows predating migration 0004. */
   stock: number | null;
   glyph: string | null;
   tint: string | null;

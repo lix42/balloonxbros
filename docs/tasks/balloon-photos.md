@@ -1,10 +1,18 @@
 ---
 title: Balloon photos
-status: todo
+status: done
 deps: [menu-content]
 summary: square photos in public/balloons/, photo_key set by migration
+done: 2026-11-09
 ---
 # Balloon photos
+
+## Change (2026-11-09)
+
+Done inside `menu-content` (same PR): Li's 14 photos are in
+`public/balloons/<id>.jpg` and `0004_menu.sql` sets their `photo_key`. The
+photos are 3:2, so each is fitted whole into a 600×600 square with a blurred
+copy filling the edges (18–45 KB each).
 
 ## Goal
 

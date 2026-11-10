@@ -160,17 +160,23 @@ describe("admin items", () => {
     const items = await adminCreateItem(env, await adminAuth(), {
       id: "  Rainbow Unicorn! ",
       name: "Unicorn",
-      category: "limited",
       priceCents: 2000,
       stock: 4,
     });
     expect(items.find((i) => i.id === "rainbow-unicorn")).toMatchObject({
       name: "Unicorn",
-      category: "limited",
       priceCents: 2000,
       stock: 4,
       active: true,
     });
+  });
+
+  it("starts a new item at stock 0 (sold out) and never makes it unlimited", async () => {
+    const auth = await adminAuth();
+    let items = await adminCreateItem(env, auth, { id: "Pumpkin", stock: null });
+    expect(items.find((i) => i.id === "pumpkin")?.stock).toBe(0);
+    items = await adminUpdateItem(env, auth, "star", { stock: null });
+    expect(items.find((i) => i.id === "star")?.stock).toBe(3);
   });
 
   it("edits only valid fields and can hide an item from the menu", async () => {
