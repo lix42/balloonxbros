@@ -325,8 +325,8 @@ export function Order() {
             </div>
             {venmoHandle ? (
               <p className="text-[15px]">
-                Pay <strong>{formatCents(totalCents)}</strong> one of two ways: donate to the
-                school, or send it on Venmo. Then tell us below how you paid.
+                Pay <strong>{formatCents(totalCents)}</strong> one of two ways: donate directly to
+                the school, or send it via Venmo. Then tell us below how you paid.
               </p>
             ) : (
               <p className="text-[15px]">
