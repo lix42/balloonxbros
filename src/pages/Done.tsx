@@ -57,8 +57,13 @@ export function Done({ code }: { code: string }) {
       <div className="flex flex-col gap-2.5 text-center">
         <h1 className="text-[34px] leading-[1.05] font-bold tracking-[-0.5px]">Order received!</h1>
         <p className="text-base">
-          Thank you for supporting {settings.school_name}. We'll check your receipt and email you a
-          confirmation.
+          Thank you for supporting {settings.school_name}. We'll check your{" "}
+          {order?.paymentMethod === "venmo"
+            ? "Venmo payment"
+            : order?.paymentMethod === "school"
+              ? "receipt"
+              : "payment"}{" "}
+          and email you a confirmation.
         </p>
       </div>
 

@@ -2,7 +2,15 @@ import { useEffect, useState, type DragEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { cn } from "cn";
 import { formatUsPhone } from "../../shared/phone";
-import { formatCents, MAX_RECEIPT_BYTES, RECEIPT_TYPES } from "../../shared/types";
+import {
+  formatCents,
+  MAX_RECEIPT_BYTES,
+  RECEIPT_TYPES,
+  VENMO_NOTE,
+  venmoPayUrl,
+  type PaymentInput,
+  type PaymentMethod,
+} from "../../shared/types";
 import { ApiError, api } from "../api";
 import { ItemArt } from "../components/Glyph";
 import {
@@ -96,13 +104,50 @@ function CartRow({ itemId }: { itemId: string }) {
   );
 }
 
+function PayOption({
+  checked,
+  onSelect,
+  title,
+  detail,
+}: {
+  checked: boolean;
+  onSelect: () => void;
+  title: string;
+  detail: string;
+}) {
+  return (
+    <label
+      className={cn(
+        "flex min-h-11 cursor-pointer items-center gap-3 rounded-2xl border-2 px-4 py-3 focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-ring",
+        checked ? "border-ink bg-surface" : "border-line bg-white",
+      )}
+    >
+      <input
+        type="radio"
+        name="payment"
+        className="size-5 shrink-0 accent-ink"
+        checked={checked}
+        onChange={onSelect}
+        required
+      />
+      <span className="flex min-w-0 flex-col">
+        <span className="font-extrabold">{title}</span>
+        <span className="text-[13px]">{detail}</span>
+      </span>
+    </label>
+  );
+}
+
 export function Order() {
   const store = useStore();
   const { settings, loadError, reload, lines, count, totalCents, clearCart, cartReady } = store;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  // null until the buyer picks one (only asked when Venmo is on).
+  const [method, setMethod] = useState<PaymentMethod | null>(null);
   const [receipt, setReceipt] = useState<File | null>(null);
+  const [venmoUsername, setVenmoUsername] = useState("");
   const [drag, setDrag] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -144,6 +189,9 @@ export function Order() {
       </>
     );
 
+  const venmoHandle = settings.venmo_handle;
+  const payMethod: PaymentMethod | null = venmoHandle ? method : "school";
+
   const pickFile = (f: File | undefined | null) => {
     if (!f) return;
     if (!RECEIPT_TYPES.includes(f.type)) {
@@ -167,7 +215,15 @@ export function Order() {
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (count === 0) return setError("Your order is empty. Add some balloons first.");
-    if (!receipt) return setError("Please attach your donation receipt.");
+    if (!payMethod) return setError("Please choose how you paid.");
+    if (payMethod === "school" && !receipt) {
+      return setError("Please attach your donation receipt.");
+    }
+    if (payMethod === "venmo" && !venmoUsername.trim()) {
+      return setError("Please enter your Venmo username.");
+    }
+    const payment: PaymentInput =
+      payMethod === "venmo" ? { method: "venmo", venmoUsername } : { method: "school" };
     setError(null);
     setSubmitting(true);
     let res: Awaited<ReturnType<typeof api.submitOrder>>;
@@ -178,8 +234,9 @@ export function Order() {
           email,
           phone,
           lines: lines.map((l) => ({ itemId: l.item.id, qty: l.qty, note: l.note || undefined })),
+          payment,
         },
-        receipt,
+        payment.method === "school" ? receipt : null,
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -266,16 +323,36 @@ export function Order() {
                 {formatCents(totalCents)}
               </span>
             </div>
-            <p className="text-[15px]">
-              Please follow the steps to donate <strong>{formatCents(totalCents)}</strong> to the
-              school, then drop your receipt below.
-            </p>
-            <Link
-              to="/donate"
-              className={cn(buttonVariants({ variant: "link" }), "justify-start text-[15px]")}
-            >
-              Show me the donation steps <ArrowRight size={16} />
-            </Link>
+            {venmoHandle ? (
+              <p className="text-[15px]">
+                Pay <strong>{formatCents(totalCents)}</strong> one of two ways: donate to the
+                school, or send it on Venmo. Then tell us below how you paid.
+              </p>
+            ) : (
+              <p className="text-[15px]">
+                Please follow the steps to donate <strong>{formatCents(totalCents)}</strong> to the
+                school, then drop your receipt below.
+              </p>
+            )}
+            <div className="flex flex-wrap gap-x-5">
+              <Link
+                to="/donate"
+                search={count > 0 ? { total: totalCents } : {}}
+                className={cn(buttonVariants({ variant: "link" }), "justify-start text-[15px]")}
+              >
+                How to donate to the school <ArrowRight size={16} />
+              </Link>
+              {venmoHandle && count > 0 && (
+                <a
+                  href={venmoPayUrl(venmoHandle, totalCents, VENMO_NOTE)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(buttonVariants({ variant: "link" }), "justify-start text-[15px]")}
+                >
+                  Donate {formatCents(totalCents)} via Venmo <ArrowRight size={16} />
+                </a>
+              )}
+            </div>
           </div>
         </section>
 
@@ -327,60 +404,129 @@ export function Order() {
             </label>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-extrabold" id="receipt-label">
-              Donation receipt
-            </span>
-            <label
-              className={cn(
-                "relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 px-[18px] py-[26px] text-center focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-ring",
-                drag
-                  ? "border-dashed border-accent-500 bg-accent-50"
-                  : receipt
-                    ? "border-solid border-accent-700 bg-accent-100"
-                    : "border-dashed border-line-dashed bg-white",
-              )}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setDrag(true);
-              }}
-              onDragLeave={() => setDrag(false)}
-              onDrop={onDrop}
-            >
-              {receipt ? (
-                <>
-                  <CheckCircleIcon />
-                  <span className="font-extrabold text-accent-700">Receipt attached</span>
-                  <span className="text-sm break-all">{receipt.name}</span>
-                  <span className="text-[13px] font-bold text-link underline underline-offset-2">
-                    Tap to choose a different file
-                  </span>
-                </>
-              ) : (
-                <>
-                  <UploadIcon />
-                  <span className="font-extrabold">Drop your receipt here</span>
-                  <span className="text-[13px]">
-                    or tap to choose: a screenshot or PDF of the receipt page or email
-                  </span>
-                </>
-              )}
-              <input
-                type="file"
-                className="absolute inset-0 cursor-pointer opacity-0"
-                accept="image/*,.pdf,application/pdf"
-                aria-labelledby="receipt-label"
-                onChange={(e) => pickFile(e.target.files?.[0])}
+          {venmoHandle && (
+            <fieldset className="m-0 flex min-w-0 flex-col gap-2.5 border-none p-0">
+              <legend className="mb-2.5 p-0 text-[22px] font-semibold">How did you pay?</legend>
+              <PayOption
+                checked={method === "school"}
+                onSelect={() => setMethod("school")}
+                title="Donated to the school"
+                detail="Upload your donation receipt"
               />
-            </label>
-          </div>
+              <PayOption
+                checked={method === "venmo"}
+                onSelect={() => setMethod("venmo")}
+                title={`Venmo @${venmoHandle}`}
+                detail="No receipt needed: just your Venmo username"
+              />
+            </fieldset>
+          )}
 
-          <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-sm">
-            <strong>Before you submit:</strong> check that your receipt shows{" "}
-            <strong>{SCHOOL_SITE.fund}</strong>, <strong>{SCHOOL_SITE.student}</strong> and the
-            amount <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand — if
-            something doesn't match, we'll contact you by email or phone.
-          </div>
+          {payMethod === "school" && (
+            <>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-sm font-extrabold" id="receipt-label">
+                  Donation receipt
+                </span>
+                <label
+                  className={cn(
+                    "relative flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 px-[18px] py-[26px] text-center focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-ring",
+                    drag
+                      ? "border-dashed border-accent-500 bg-accent-50"
+                      : receipt
+                        ? "border-solid border-accent-700 bg-accent-100"
+                        : "border-dashed border-line-dashed bg-white",
+                  )}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDrag(true);
+                  }}
+                  onDragLeave={() => setDrag(false)}
+                  onDrop={onDrop}
+                >
+                  {receipt ? (
+                    <>
+                      <CheckCircleIcon />
+                      <span className="font-extrabold text-accent-700">Receipt attached</span>
+                      <span className="text-sm break-all">{receipt.name}</span>
+                      <span className="text-[13px] font-bold text-link underline underline-offset-2">
+                        Tap to choose a different file
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <UploadIcon />
+                      <span className="font-extrabold">Drop your receipt here</span>
+                      <span className="text-[13px]">
+                        or tap to choose: a screenshot or PDF of the receipt page or email
+                      </span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                    accept="image/*,.pdf,application/pdf"
+                    aria-labelledby="receipt-label"
+                    onChange={(e) => pickFile(e.target.files?.[0])}
+                  />
+                </label>
+              </div>
+
+              <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-sm">
+                <strong>Before you submit:</strong> check that your receipt shows{" "}
+                <strong>{SCHOOL_SITE.fund}</strong>, <strong>{SCHOOL_SITE.student}</strong> and the
+                amount <strong>{formatCents(totalCents)}</strong>. We check every receipt by hand —
+                if something doesn't match, we'll contact you by email or phone.
+              </div>
+            </>
+          )}
+
+          {payMethod === "venmo" && venmoHandle && (
+            <>
+              <div className="flex flex-col gap-2.5 rounded-2xl border border-line bg-surface p-4">
+                <span className="font-extrabold">
+                  1. Send {formatCents(totalCents)} to @{venmoHandle}
+                </span>
+                <a
+                  href={venmoPayUrl(venmoHandle, totalCents, VENMO_NOTE)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={buttonVariants({ variant: "ink", size: "md", block: true })}
+                >
+                  Donate {formatCents(totalCents)} via Venmo <ArrowRight />
+                </a>
+                <span className="text-[13px]">
+                  Opens Venmo with the amount filled in. Check it says{" "}
+                  <strong>{formatCents(totalCents)}</strong> to <strong>@{venmoHandle}</strong>.
+                </span>
+              </div>
+              <label className="flex min-w-0 flex-col gap-1.5 text-sm font-extrabold">
+                2. Your Venmo username
+                <Input
+                  required
+                  maxLength={31}
+                  autoComplete="off"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  pattern="@?[A-Za-z0-9_\-]{1,30}"
+                  title="Your Venmo username, like @jane-doe"
+                  placeholder="@your-username"
+                  aria-describedby="venmo-username-hint"
+                  value={venmoUsername}
+                  onChange={(e) => setVenmoUsername(e.target.value)}
+                />
+                <span id="venmo-username-hint" className="text-[13px] font-normal">
+                  So we know which Venmo payment is yours.
+                </span>
+              </label>
+              <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-sm">
+                <strong>Pay first, then submit.</strong> We look for your username and{" "}
+                <strong>{formatCents(totalCents)}</strong> in @{venmoHandle}'s Venmo payments. If we
+                can't find it, we'll contact you by email or phone.
+              </div>
+            </>
+          )}
 
           <p className="text-[13px]">
             Pick up your balloons at the Balloon x Bros table on {settings.event_date}. Give your

@@ -1,7 +1,7 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch } from "@tanstack/react-router";
 import { cn } from "cn";
 import type { ReactNode } from "react";
-import { formatCents } from "../../shared/types";
+import { formatCents, VENMO_NOTE, venmoPayUrl } from "../../shared/types";
 import { ArrowRight, LoadError, SiteHeader } from "../components/ui";
 import { buttonVariants } from "../components/ui/button";
 import { SCHOOL_SITE } from "../lib/school-site";
@@ -28,7 +28,9 @@ function StepImage({ src, width, height, alt }: StepImageProps) {
 }
 
 export function Donate() {
-  const { settings, loadError, reload, totalCents, count } = useStore();
+  const { settings, loadError, reload } = useStore();
+  // The order page passes its total; arriving any other way, the amount is unknown.
+  const { total } = useSearch({ from: "/donate" });
   if (loadError)
     return (
       <>
@@ -37,7 +39,7 @@ export function Donate() {
       </>
     );
 
-  const amount = count > 0 ? formatCents(totalCents) : "your order total";
+  const amount = total ? formatCents(total) : "your order total";
 
   const steps: Step[] = [
     {
@@ -136,9 +138,28 @@ export function Donate() {
           <h1 className="text-[34px] leading-[1.05] font-bold tracking-[-0.5px]">
             How to donate to the school
           </h1>
+          {settings.venmo_handle && (
+            <div className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-4">
+              <span className="font-extrabold">Rather pay with Venmo?</span>
+              <span className="text-[14px]">
+                Send {amount} to{" "}
+                <a
+                  href={venmoPayUrl(settings.venmo_handle, total ?? null, VENMO_NOTE)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold underline"
+                >
+                  @{settings.venmo_handle}
+                </a>{" "}
+                instead and skip the steps below.
+                {!total && " Type the amount in Venmo yourself."} No receipt needed: on the order
+                form, choose Venmo and type your Venmo username.
+              </span>
+            </div>
+          )}
           <p className="text-base">
-            We don't take payments ourselves. Your donation goes straight to {settings.school_name},
-            and your receipt is your ticket for picking up the balloons.
+            Your donation goes straight to {settings.school_name}, and your receipt is your ticket
+            for picking up the balloons.
           </p>
           <p className="rounded-[16px] border-2 border-yellow-500 bg-yellow-100 px-4 py-3 text-[14px]">
             <strong>Heads up:</strong> the school's site shows your receipt only once, right after

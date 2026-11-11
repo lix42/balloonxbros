@@ -30,6 +30,7 @@ describe("getMenu", () => {
     expect(menu.settings.donation_url).toBe(
       "https://wa-lakewashington-lite.intouchreceipting.com/default",
     );
+    expect(menu.settings.venmo_handle).toBe("huhuwen");
   });
 });
 
@@ -46,6 +47,7 @@ describe("createOrder", () => {
     );
     expect(order.id).toMatch(/^BXB-[2-9A-HJKMNP-Z]{5}$/);
     expect(order.status).toBe("submitted");
+    expect(order.paymentMethod).toBe("school");
     expect(order.totalCents).toBe(3 * 500 + 1500);
     expect(order.lines).toEqual([
       { itemId: "dog", name: "Balloon Dog", unitPriceCents: 500, qty: 3, note: "blue please" },
@@ -132,6 +134,115 @@ describe("createOrder", () => {
     expect(err.message).toMatch(/image .* or a PDF/);
     expect(await count("orders")).toBe(0);
     expect(await fileKeys()).toEqual([]);
+  });
+
+  it("takes a school donation with its receipt when the form says so", async () => {
+    const { order } = await submit(
+      orderForm({ lines: [{ itemId: "dog", qty: 1 }], payment: { method: "school" } }),
+    );
+    expect(order.paymentMethod).toBe("school");
+    expect(await fileKeys("receipts/")).toEqual([`receipts/${order.id}.png`]);
+
+    const err = await rejection(
+      submit(
+        orderForm({ lines: [{ itemId: "dog", qty: 1 }], payment: { method: "school" } }, null),
+      ),
+    );
+    expect(err.message).toMatch(/attach your donation receipt/);
+  });
+
+  it("takes a Venmo order with the username and no receipt", async () => {
+    const { order } = await submit(
+      orderForm(
+        {
+          lines: [{ itemId: "star", qty: 1 }],
+          payment: { method: "venmo", venmoUsername: " @Ada-Lovelace_1 " },
+        },
+        null,
+      ),
+    );
+    expect(order.paymentMethod).toBe("venmo");
+    expect(await stockOf("star")).toBe(2);
+    const row = await env.DB.prepare(
+      "SELECT payment_method, venmo_username, receipt_key, receipt_type FROM orders WHERE id = ?",
+    )
+      .bind(order.id)
+      .first();
+    expect(row).toEqual({
+      payment_method: "venmo",
+      venmo_username: "Ada-Lovelace_1",
+      receipt_key: null,
+      receipt_type: null,
+    });
+  });
+
+  it("ignores a receipt sent with a Venmo order", async () => {
+    await submit(
+      orderForm({
+        lines: [{ itemId: "dog", qty: 1 }],
+        payment: { method: "venmo", venmoUsername: "ada" },
+      }),
+    );
+    expect(await fileKeys()).toEqual([]);
+  });
+
+  it("requires a valid Venmo username", async () => {
+    for (const venmoUsername of [undefined, "", "@", "ada lovelace", "ada@x.com", "a".repeat(31)]) {
+      const err = await rejection(
+        submit(
+          orderForm(
+            { lines: [{ itemId: "dog", qty: 1 }], payment: { method: "venmo", venmoUsername } },
+            null,
+          ),
+        ),
+      );
+      expect(err.status).toBe(400);
+      expect(err.message).toMatch(/Venmo username/);
+    }
+    for (const payment of [null, "venmo", { method: "cash" }]) {
+      const err = await rejection(
+        submit(orderForm({ lines: [{ itemId: "dog", qty: 1 }], payment })),
+      );
+      expect(err).toEqual({ status: 400, message: "Invalid payment." });
+    }
+    expect(await count("orders")).toBe(0);
+  });
+
+  it("refuses Venmo orders while no Venmo account is set", async () => {
+    await env.DB.prepare("UPDATE settings SET value = '' WHERE key = 'venmo_handle'").run();
+    const err = await rejection(
+      submit(
+        orderForm(
+          {
+            lines: [{ itemId: "dog", qty: 1 }],
+            payment: { method: "venmo", venmoUsername: "ada" },
+          },
+          null,
+        ),
+      ),
+    );
+    expect(err.status).toBe(409);
+    expect(err.message).toMatch(/Venmo isn't available/);
+    expect(await count("orders")).toBe(0);
+  });
+
+  it("keeps each payment method's proof in the database", async () => {
+    const insert = (method: string, receiptKey: string | null, username: string | null) =>
+      env.DB.prepare(
+        "INSERT INTO orders (id, name, email, phone, total_cents, payment_method, receipt_key, receipt_type, venmo_username) VALUES ('BXB-CHECK', 'A', 'a@b.co', '4255550100', 500, ?, ?, ?, ?)",
+      )
+        .bind(method, receiptKey, receiptKey && "image/png", username)
+        .run();
+    for (const [method, key, username] of [
+      ["school", null, null],
+      ["school", "receipts/x.png", "ada"],
+      ["venmo", null, null],
+      ["venmo", "receipts/x.png", "ada"],
+      ["cash", null, "ada"],
+    ] as const) {
+      await expect(insert(method, key, username)).rejects.toThrow(/CHECK constraint/);
+    }
+    expect(await count("orders")).toBe(0);
   });
 
   it("rejects malformed submissions", async () => {

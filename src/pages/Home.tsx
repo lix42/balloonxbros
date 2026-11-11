@@ -228,7 +228,9 @@ export function Home() {
             </li>
             <li className={stepItem}>
               <span className={cn(stepNum, "bg-accent-700")}>2</span>
-              Donate to the school &amp; upload the receipt
+              {settings.venmo_handle
+                ? "Donate to the school or pay on Venmo"
+                : "Donate to the school & upload the receipt"}
             </li>
             <li className={stepItem}>
               <span className={cn(stepNum, "bg-ink")}>3</span>

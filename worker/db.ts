@@ -4,6 +4,8 @@ import {
   type Item,
   type OrderLine,
   type OrderStatus,
+  type PaymentMethod,
+  type PaymentProof,
   type Settings,
 } from "../shared/types";
 
@@ -25,8 +27,10 @@ interface OrderRow {
   email: string;
   phone: string;
   total_cents: number;
-  receipt_key: string;
-  receipt_type: string;
+  payment_method: PaymentMethod;
+  receipt_key: string | null;
+  receipt_type: string | null;
+  venmo_username: string | null;
   status: OrderStatus;
   admin_note: string | null;
   email_sent: number;
@@ -100,6 +104,17 @@ function toLine(r: LineRow): OrderLine {
   };
 }
 
+/** The orders CHECK constraint guarantees each method's columns are set. */
+function toPayment(r: OrderRow): PaymentProof {
+  return r.payment_method === "venmo"
+    ? { method: "venmo", venmoUsername: r.venmo_username ?? "" }
+    : {
+        method: "school",
+        receiptUrl: `/api/admin/orders/${r.id}/receipt`,
+        receiptType: r.receipt_type ?? "",
+      };
+}
+
 function toAdminOrder(r: OrderRow, lines: OrderLine[]): AdminOrder {
   return {
     id: r.id,
@@ -107,11 +122,11 @@ function toAdminOrder(r: OrderRow, lines: OrderLine[]): AdminOrder {
     email: r.email,
     phone: r.phone,
     totalCents: r.total_cents,
+    paymentMethod: r.payment_method,
     status: r.status,
     lines,
     createdAt: r.created_at,
-    receiptUrl: `/api/admin/orders/${r.id}/receipt`,
-    receiptType: r.receipt_type,
+    payment: toPayment(r),
     adminNote: r.admin_note,
     emailSent: r.email_sent === 1,
   };

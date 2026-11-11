@@ -4,6 +4,7 @@ import {
   RECEIPT_TYPES,
   type OrderInput,
   type OrderLineInput,
+  type PaymentInput,
 } from "../shared/types";
 
 export class HttpError extends Error {
@@ -70,7 +71,36 @@ export function parseOrderInput(raw: unknown): OrderInput {
   const lines = [...merged.values()];
   if (lines.length === 0) throw new HttpError(400, "Your order is empty.");
   if (lines.some((l) => l.qty > MAX_QTY)) throw new HttpError(400, "Invalid quantity.");
-  return { name, email, phone, lines };
+  return { name, email, phone, lines, payment: parsePayment(o.payment) };
+}
+
+// Venmo usernames are letters, digits, - and _ (up to 30); people often type the @.
+const VENMO_USERNAME_RE = /^[A-Za-z0-9_-]{1,30}$/;
+
+/** The venmo_handle setting as /admin sends it: trimmed, without a leading @.
+ *  Empty turns Venmo off. Anything else that isn't a Venmo username is refused,
+ *  since every Venmo link on the site is built from it. */
+export function parseVenmoHandle(raw: string): string {
+  const handle = raw.trim().replace(/^@/, "");
+  if (handle && !VENMO_USERNAME_RE.test(handle)) {
+    throw new HttpError(400, "The Venmo username can only have letters, numbers, - and _.");
+  }
+  return handle;
+}
+
+/** How the buyer paid. A form loaded before Venmo existed sends no payment:
+ *  that is a school donation. */
+function parsePayment(raw: unknown): PaymentInput {
+  if (raw === undefined) return { method: "school" };
+  if (!raw || typeof raw !== "object") throw new HttpError(400, "Invalid payment.");
+  const p = raw as Record<string, unknown>;
+  if (p.method === "school") return { method: "school" };
+  if (p.method !== "venmo") throw new HttpError(400, "Invalid payment.");
+  const username = str(p.venmoUsername, "Venmo username", 40).replace(/^@/, "");
+  if (!VENMO_USERNAME_RE.test(username)) {
+    throw new HttpError(400, "Please enter your Venmo username, like @jane-doe.");
+  }
+  return { method: "venmo", venmoUsername: username };
 }
 
 export function checkReceipt(file: unknown): File {
