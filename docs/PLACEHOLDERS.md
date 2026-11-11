@@ -59,10 +59,15 @@ INSERT INTO items (id, name, category, price_cents, stock, tint, photo_key, sort
 UPDATE items SET active = 0 WHERE id = 'dragon';   -- hide rather than delete
 ```
 
-**Images:** commit square photos (about 600×600 JPG/WebP) to
-`public/balloons/<id>.jpg` and set `photo_key = '/balloons/<id>.jpg'`. A
-`photo_key` starting with `/` is served as a static file; anything else is an
-R2 key from an admin upload. Don't delete items that already have orders
+**Images:** make the square with
+`uv run scripts/square-photo.py IN.jpg public/balloons/<id>.jpg` (600×600, the
+whole photo over a blurred copy of itself), commit it, and set
+`photo_key = '/balloons/<id>.jpg'`. A `photo_key` starting with `/` is served
+as a static file; anything else is an R2 key from an admin upload. An upload
+in `/admin` replaces the static path in D1 (a later commit to the file won't
+show), and is stored as-is: run it through the script first, since the tile
+crops non-square photos. To go back to the committed file, set `photo_key`
+to the `/balloons/…` path again. Don't delete items that already have orders
 (orders reference them); set `active = 0` instead.
 
 A migration overwrites whatever it touches, including edits made in `/admin`,
