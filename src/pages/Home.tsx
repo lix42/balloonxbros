@@ -24,9 +24,12 @@ const stepNum =
 const infoTile = "flex flex-col gap-0.5 rounded-xl border border-line bg-yellow-200 p-3";
 const infoValue = "text-[14px] [overflow-wrap:anywhere]";
 const menuGrid = "grid grid-cols-3 gap-2.5 min-[560px]:grid-cols-4 min-[560px]:gap-3.5";
+// The tile's + and − buttons: 44px white squares in the photo's bottom corners.
+const tileButton =
+  "absolute bottom-1.5 size-11 cursor-pointer rounded-lg border-none bg-white text-2xl leading-none font-bold text-ink shadow-xs shadow-ink/18 active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-45";
 
 function Tile({ item }: { item: Item }) {
-  const { cart, add } = useStore();
+  const { cart, add, setQty } = useStore();
   const inCart = cart[item.id]?.qty ?? 0;
   const limited = item.stock !== null;
   const soldOut = item.stock === 0;
@@ -45,7 +48,7 @@ function Tile({ item }: { item: Item }) {
         >
           {item.photoUrl ? (
             // The photo opens a bigger view; the badges sit on top of it but
-            // let taps through, and the + button stays its own target.
+            // let taps through, and the + and − buttons stay their own targets.
             <DialogTrigger
               className="absolute inset-0 flex cursor-zoom-in items-center justify-center border-none bg-transparent p-0"
               aria-label={`See a bigger photo of ${item.name}`}
@@ -76,13 +79,26 @@ function Tile({ item }: { item: Item }) {
           )}
           <button
             type="button"
-            className="absolute bottom-1.5 left-1.5 size-11 cursor-pointer rounded-lg border-none bg-white text-2xl leading-none font-bold text-ink shadow-xs shadow-ink/18 active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-45"
+            className={cn(tileButton, "left-1.5")}
             onClick={() => add(item.id)}
             disabled={soldOut || atMax}
             aria-label={soldOut ? `${item.name} is sold out` : `Add ${item.name}`}
           >
             +
           </button>
+          {/* Shown once the balloon is in the order (even if it sold out
+              since), so a tap too many can be undone without leaving the menu.
+              It sits apart from +, which never moves. */}
+          {inCart > 0 && (
+            <button
+              type="button"
+              className={cn(tileButton, "right-1.5")}
+              onClick={() => setQty(item.id, inCart - 1)}
+              aria-label={`Remove one ${item.name}`}
+            >
+              −
+            </button>
+          )}
         </div>
         <span className="text-[14px] leading-[1.2] font-extrabold">{item.name}</span>
         <span className={cn("text-[13px] font-bold", soldOut && "line-through")}>
