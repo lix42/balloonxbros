@@ -15,9 +15,14 @@ A student fundraiser selling twist balloons for the school, in about two weeks
 - People **pre-order** balloons on the site; they're made ahead and handed out
   at the event. Balloons are also made **on demand** at the event (no site
   flow needed for that, just a callout).
-- **Payment = a donation to the school** on the school's own donation page.
-  The site never takes money. The buyer uploads the donation receipt
-  (screenshot / PDF / photo) as proof.
+- **Payment, two ways** (the site itself never takes money):
+  - **A donation to the school** on the school's own donation page. The buyer
+    uploads the donation receipt (screenshot / PDF / photo) as proof.
+  - **Venmo** to the `venmo_handle` setting's account (@huhuwen, Li
+    2026-11-10). No receipt: the buyer gives their Venmo username, and the
+    admin matches it and the amount in that account's Venmo feed. Venmo has no
+    API for personal accounts, so checking is manual either way. An empty
+    `venmo_handle` hides the option and refuses Venmo orders.
 - Every balloon is made in a fixed number: each tile shows "N left" and a
   sold-out state. (There used to be a separate "Limited edition" section; it
   went in `menu-content`, and the `items.category` column is unused since.)
@@ -50,7 +55,14 @@ A student fundraiser selling twist balloons for the school, in about two weeks
    - Footer with contact email.
    - Sticky bottom bar: "Your order · N balloons" + red "Order →".
 2. **How to donate** `/donate`
-   - The Home header. Eyebrow "Paying for your order", H1, explanation.
+   - `?total=<cents>` sets the amount (the order page's "Show me the donation
+     steps" link passes it; `src/lib/donate-search.ts`). Without it the page
+     says "your order total" and doesn't guess from the cart.
+   - The Home header. Eyebrow "Paying for your order", H1, then (when
+     `venmo_handle` is set) a "Rather pay with Venmo?" card above the school
+     steps: send the amount to @handle (a Venmo link with the amount filled in
+     from `total`; without it the buyer types the amount) and skip the steps,
+     then choose Venmo on the order form. Then the explanation.
    - Yellow "Heads up" note: the school's site shows the receipt only once.
    - Six step cards following the real school site (Lake Washington School
      District on InTouch Receipting), each with a cropped phone screenshot from
@@ -68,15 +80,23 @@ A student fundraiser selling twist balloons for the school, in about two weeks
      that reveals a text input.
    - "+ Add more balloons" link.
    - Back-arrow header "Your pre-order" (yellow 200).
-   - Yellow 200 summary card: N balloons, $TOTAL, "donate $TOTAL to the school, then
-     drop your receipt below", link to donation steps.
+   - Yellow 200 summary card: N balloons, $TOTAL, "pay $TOTAL one of two ways"
+     (or, with Venmo off, "donate $TOTAL to the school, then drop your receipt
+     below"), links "How to donate to the school" (→ `/donate?total=…`) and,
+     with Venmo on, "Donate $TOTAL via Venmo" (the pre-filled Venmo link).
    - Your details: Name; Email + Phone side by side. Saved on the device
      (localStorage `bxb-contact-v1`, `src/lib/contact-storage.ts`) so a closed
      tab keeps them; cleared once the order goes through. The receipt file is
      not saved.
-   - Receipt dropzone (dashed). Once a file is chosen it turns solid accent
-     green with a check, "Receipt attached", the filename and "Tap to choose a
-     different file".
+   - "How did you pay?": two radio cards, "Donated to the school" and "Venmo
+     @handle" (only with Venmo on; otherwise the school path shows directly).
+   - School: receipt dropzone (dashed). Once a file is chosen it turns solid
+     accent green with a check, "Receipt attached", the filename and "Tap to
+     choose a different file". Then the yellow check-your-receipt note.
+   - Venmo: card "1. Send $TOTAL to @handle" with an ink "Donate $TOTAL via
+     Venmo" button (Venmo's payment link, `venmo.com/<handle>?txn=pay&amount=…&note=…`,
+     amount and note pre-filled); "2. Your Venmo username" input (the @ is
+     optional); yellow "Pay first, then submit" note.
    - Pickup note, red "Submit pre-order".
 4. **Order received** `/order/:code`
    - Three-balloon check illustration, "Order received!", summary card
@@ -85,8 +105,9 @@ A student fundraiser selling twist balloons for the school, in about two weeks
      "Map data ©2026 Google" credit, also in the confirmation email; the place
      and the map link to Maps), yellow tip card, "Back to home".
 5. **Admin** `/admin` (not in the canvas; added for operations)
-   - Password login. Orders list with receipt preview, status
-     (new → verified → picked up; new → receipt issue → verified; cancelled). Edit menu items
+   - Password login. Orders list with the receipt link (school) or "Venmo:
+     look for @username paying $TOTAL", status
+     (new → verified → picked up; new → payment issue → verified; cancelled). Edit menu items
      (name, price, stock — always a number, 0 = sold out — active, photo) and event settings.
 
 ## Visual tokens
@@ -113,7 +134,7 @@ below the 3:1 large-text contrast minimum, Li's choice); `foreground` (body
 text) and `link` are ink-2, `link-hover` ink; links and link-style buttons are
 underlined. shadcn's `ring` is
 accent 500, `accent` / `accent-foreground` accent 100 / 700, `primary` and
-`destructive` red 500. Admin order badges: New yellow, Receipt issue red,
+`destructive` red 500. Admin order badges: New yellow, Payment issue red,
 Verified blue, Picked up accent, Cancelled neutral.
 
 - Type: **Fredoka** 600/700 for headings and wordmark, **Montserrat** 400–800 for body.
@@ -127,9 +148,10 @@ Verified blue, Picked up accent, Cancelled neutral.
 
 - School: Kirkland Middle School (KIMS).
 - Pickup: by name only (order code is for reference).
-- Receipts: the order form reminds buyers to check the school and amount;
-  admins verify each receipt by hand and can mark an order "Receipt issue",
-  then contact the buyer by email or phone.
+- Payments: the order form reminds buyers to check the school and amount (or,
+  for Venmo, to pay before submitting); admins verify each receipt or Venmo
+  payment by hand and can mark an order "Payment issue", then contact the
+  buyer by email or phone.
 
 ## Still placeholder
 

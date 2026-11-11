@@ -9,6 +9,8 @@ formerly called Kingsgate Skating Rink here, renamed in migration `0005`),
 pre-orders end Thu, Nov 12 (in the `announcement` setting, migration `0002`).
 Donations go through the Lake Washington School District site (migration
 `0003`), as KIRKLAND MIDDLE SCHOOL → ASB DONATIONS with Student Name Sky Xu.
+Venmo is the second way to pay, to **@huhuwen** (`venmo_handle`, migration
+`0006`; editable in /admin, empty turns Venmo off).
 
 ## Event details (`settings` table)
 

@@ -31,10 +31,11 @@ export { ApiError };
 export const api = {
   menu: (): Promise<MenuResponse> => call(getMenuFn()),
 
-  submitOrder: (input: OrderInput, receipt: File) => {
+  /** `receipt` is the school donation's receipt; a Venmo order has none. */
+  submitOrder: (input: OrderInput, receipt: File | null) => {
     const form = new FormData();
     form.set("order", JSON.stringify(input));
-    form.set("receipt", receipt);
+    if (receipt) form.set("receipt", receipt);
     return call<{ order: PublicOrder; settings: Settings }>(submitOrderFn({ data: form }));
   },
 

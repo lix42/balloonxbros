@@ -23,6 +23,8 @@ export interface Settings {
   event_address: string;
   announcement: string;
   donation_url: string;
+  /** The Venmo account buyers can pay instead, without the @. Empty hides Venmo. */
+  venmo_handle: string;
   contact_email: string;
   orders_open: string;
 }
@@ -35,6 +37,7 @@ export const SETTING_KEYS: (keyof Settings)[] = [
   "event_address",
   "announcement",
   "donation_url",
+  "venmo_handle",
   "contact_email",
   "orders_open",
 ];
@@ -50,11 +53,20 @@ export interface OrderLineInput {
   note?: string;
 }
 
+/** school: a donation on the school's site, proven by an uploaded receipt.
+ *  venmo: paid to the venmo_handle account, matched by the buyer's username. */
+export type PaymentMethod = "school" | "venmo";
+
+/** How the buyer paid, as the order form sends it. The receipt file travels
+ *  next to the JSON in the FormData. */
+export type PaymentInput = { method: "school" } | { method: "venmo"; venmoUsername: string };
+
 export interface OrderInput {
   name: string;
   email: string;
   phone: string;
   lines: OrderLineInput[];
+  payment: PaymentInput;
 }
 
 export type OrderStatus = "submitted" | "issue" | "verified" | "picked_up" | "cancelled";
@@ -71,16 +83,21 @@ export interface PublicOrder {
   id: string;
   name: string;
   totalCents: number;
+  paymentMethod: PaymentMethod;
   status: OrderStatus;
   lines: OrderLine[];
   createdAt: string;
 }
 
+/** What an admin checks to verify an order's payment. */
+export type PaymentProof =
+  | { method: "school"; receiptUrl: string; receiptType: string }
+  | { method: "venmo"; venmoUsername: string };
+
 export interface AdminOrder extends PublicOrder {
   email: string;
   phone: string;
-  receiptUrl: string;
-  receiptType: string;
+  payment: PaymentProof;
   adminNote: string | null;
   emailSent: boolean;
 }
@@ -94,6 +111,18 @@ export const RECEIPT_TYPES = [
   "image/heif",
   "application/pdf",
 ];
+
+/** Venmo's payment link: opens a payment to `handle` with the note, and the
+ *  amount when known, filled in (https://venmo.com/paymentlinks). With no
+ *  amount the buyer types it; either way they can still edit both. */
+export function venmoPayUrl(handle: string, cents: number | null, note: string): string {
+  const params = new URLSearchParams({ txn: "pay" });
+  if (cents !== null) params.set("amount", (cents / 100).toFixed(2));
+  params.set("note", note);
+  return `https://venmo.com/${encodeURIComponent(handle)}?${params}`;
+}
+
+export const VENMO_NOTE = "Balloon x Bros pre-order";
 
 export function formatCents(cents: number): string {
   const dollars = cents / 100;

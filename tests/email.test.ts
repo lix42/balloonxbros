@@ -6,6 +6,7 @@ const order: PublicOrder = {
   id: "BB-1234",
   name: "Ada",
   totalCents: 500,
+  paymentMethod: "school",
   status: "submitted",
   lines: [{ itemId: "dog", name: "Balloon Dog", unitPriceCents: 500, qty: 1, note: null }],
   createdAt: "2026-11-09T00:00:00Z",
@@ -37,5 +38,20 @@ describe("confirmation email", () => {
     expect(text).toContain(
       "Map: https://www.google.com/maps/search/?api=1&query=14326%20124th%20Ave%20NE%2C%20Kirkland%2C%20WA%2098034",
     );
+  });
+
+  it("names the payment the buyer made", () => {
+    const school = confirmationEmail(order, settings, "https://balloonxbros.com");
+    expect(school.html).toContain("check your donation receipt");
+    expect(school.text).toContain("Donated: $5");
+
+    const venmo = confirmationEmail(
+      { ...order, paymentMethod: "venmo" },
+      settings,
+      "https://balloonxbros.com",
+    );
+    expect(venmo.html).toContain("check your Venmo payment");
+    expect(venmo.html).toContain(">Paid on Venmo</td>");
+    expect(venmo.text).toContain("Paid on Venmo: $5");
   });
 });

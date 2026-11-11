@@ -50,6 +50,7 @@ export async function reset(): Promise<void> {
       "DELETE FROM items",
       "UPDATE settings SET value = '1' WHERE key = 'orders_open'",
       "UPDATE settings SET value = 'hello@balloonxbros.com' WHERE key = 'contact_email'",
+      "UPDATE settings SET value = 'huhuwen' WHERE key = 'venmo_handle'",
     ].map((s) => env.DB.prepare(s)),
   );
   await env.DB.batch(
@@ -68,6 +69,8 @@ export interface OrderPayload {
   email?: string;
   phone?: string;
   lines: { itemId: string; qty: number; note?: string }[];
+  /** Left out, as a form loaded before Venmo existed sends it: a school donation. */
+  payment?: unknown;
 }
 
 export const buyer = { name: "Ada Lovelace", email: "Ada@Example.com", phone: "425-555-0100" };

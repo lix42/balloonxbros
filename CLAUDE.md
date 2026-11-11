@@ -37,6 +37,8 @@ https://claude.ai/artifact/XxCQyYroyUzx8EyymEZv5b. If the canvas and code disagr
 - Menu (`0004_menu.sql`): 14 real balloons with photos in
   `public/balloons/`, one grid, every item counted. Prices ($10) and stock (3)
   are placeholders Li sets in /admin.
+- Payment: a school donation (receipt upload) or Venmo to @huhuwen
+  (`venmo_handle` setting, migration `0006`; buyer's username, no receipt).
 - Next: real prices/stock in /admin, then the launch check.
 
 ## Stack

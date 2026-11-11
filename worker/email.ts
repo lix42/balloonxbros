@@ -7,6 +7,9 @@ export function confirmationEmail(order: PublicOrder, s: Settings, siteUrl: stri
   const mapUrl = eventMapUrl(s);
   const address = s.event_address ? `, ${s.event_address}` : "";
   const mapImg = new URL(EVENT_MAP.path, siteUrl).href;
+  const venmo = order.paymentMethod === "venmo";
+  const checking = venmo ? "your Venmo payment" : "your donation receipt";
+  const paidLabel = venmo ? "Paid on Venmo" : "Donated";
   const rows = order.lines
     .map(
       (l) =>
@@ -21,9 +24,9 @@ export function confirmationEmail(order: PublicOrder, s: Settings, siteUrl: stri
 <p style="font-size:22px;font-weight:700;margin:0 0 16px">Balloon <span style="color:#D93A31">×</span> Bros</p>
 <div style="background:#fff;border-radius:18px;padding:22px;border:1px solid #E2E7F5">
 <h1 style="font-size:24px;margin:0 0 8px">Thanks, ${esc(order.name)}! We got your pre-order.</h1>
-<p style="margin:0 0 16px;line-height:1.5;color:#454B6B">Order <strong style="color:#1B1F3B">${order.id}</strong>. We'll check your donation receipt and have your balloons ready. If anything doesn't match, we'll reach out by email or phone.</p>
+<p style="margin:0 0 16px;line-height:1.5;color:#454B6B">Order <strong style="color:#1B1F3B">${order.id}</strong>. We'll check ${checking} and have your balloons ready. If anything doesn't match, we'll reach out by email or phone.</p>
 <table style="width:100%;border-collapse:collapse;font-size:15px">${rows}
-<tr><td style="padding:10px 0 0;border-top:1px solid #E2E7F5;font-weight:800">Donated</td><td style="padding:10px 0 0;border-top:1px solid #E2E7F5;text-align:right;font-weight:800">${formatCents(order.totalCents)}</td></tr></table>
+<tr><td style="padding:10px 0 0;border-top:1px solid #E2E7F5;font-weight:800">${paidLabel}</td><td style="padding:10px 0 0;border-top:1px solid #E2E7F5;text-align:right;font-weight:800">${formatCents(order.totalCents)}</td></tr></table>
 <p style="margin:18px 0 0;line-height:1.5"><strong>Pick up:</strong> ${esc(s.event_date)}, ${esc(s.event_time)} at <a href="${esc(mapUrl)}" style="color:#2257C9">${esc(s.event_place)}</a>${esc(address)}. Just give your name at the Balloon x Bros table.</p>
 <a href="${esc(mapUrl)}" style="display:block;margin:14px 0 0"><img src="${esc(mapImg)}" width="476" alt="Map to ${esc(s.event_place)}" style="display:block;width:100%;max-width:476px;height:auto;border:1px solid #E2E7F5;border-radius:12px"></a>
 <p style="margin:4px 0 0;font-size:11px;color:#545A78;text-align:right">${EVENT_MAP.credit}</p>
@@ -35,7 +38,7 @@ export function confirmationEmail(order: PublicOrder, s: Settings, siteUrl: stri
     `Thanks, ${order.name}! We got your pre-order ${order.id}.`,
     "",
     ...order.lines.map((l) => `${l.qty} x ${l.name}${l.note ? ` (${l.note})` : ""}`),
-    `Donated: ${formatCents(order.totalCents)}`,
+    `${paidLabel}: ${formatCents(order.totalCents)}`,
     "",
     `Pick up: ${s.event_date}, ${s.event_time} at ${s.event_place}${address}.`,
     `Map: ${mapUrl}`,

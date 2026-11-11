@@ -19,7 +19,7 @@ type Tab = "orders" | "menu" | "event";
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   submitted: "New",
-  issue: "Receipt issue",
+  issue: "Payment issue",
   verified: "Verified",
   picked_up: "Picked up",
   cancelled: "Cancelled",
@@ -164,7 +164,10 @@ function Orders({ onAuthLost }: { onAuthLost: () => void }) {
     return (orders ?? []).filter(
       (o) =>
         (filter === "all" || o.status === filter) &&
-        (!needle || `${o.id} ${o.name} ${o.email} ${o.phone}`.toLowerCase().includes(needle)),
+        (!needle ||
+          `${o.id} ${o.name} ${o.email} ${o.phone} ${o.payment.method === "venmo" ? `@${o.payment.venmoUsername}` : ""}`
+            .toLowerCase()
+            .includes(needle)),
     );
   }, [orders, filter, q]);
 
@@ -224,7 +227,7 @@ function Orders({ onAuthLost }: { onAuthLost: () => void }) {
         <Input
           size="sm"
           className="flex-[1_1_200px]"
-          placeholder="Search name, email, phone, code"
+          placeholder="Search name, email, phone, code, Venmo"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           aria-label="Search orders"
@@ -278,7 +281,7 @@ function OrderCard({
     o.status === "submitted"
       ? [
           { label: "Mark verified", status: "verified" },
-          { label: "Receipt issue", status: "issue" },
+          { label: "Payment issue", status: "issue" },
           { label: "Cancel", status: "cancelled" },
         ]
       : o.status === "issue"
@@ -323,18 +326,29 @@ function OrderCard({
         ))}
       </ul>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-auto">
-          <span className={smallClass}>Receipt should show </span>
-          <strong>{formatCents(o.totalCents)}</strong>
-        </span>
-        <a
-          className={cn(buttonVariants({ variant: "tab" }), "text-ink hover:text-ink")}
-          href={o.receiptUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
-          View receipt
-        </a>
+        {o.payment.method === "school" ? (
+          <>
+            <span className="mr-auto">
+              <span className={smallClass}>Receipt should show </span>
+              <strong>{formatCents(o.totalCents)}</strong>
+            </span>
+            <a
+              className={cn(buttonVariants({ variant: "tab" }), "text-ink hover:text-ink")}
+              href={o.payment.receiptUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View receipt
+            </a>
+          </>
+        ) : (
+          <span className="mr-auto">
+            <span className={smallClass}>Venmo: look for </span>
+            <strong>@{o.payment.venmoUsername}</strong>
+            <span className={smallClass}> paying </span>
+            <strong>{formatCents(o.totalCents)}</strong>
+          </span>
+        )}
         {next.map((n) => (
           <Button
             key={n.status}
@@ -348,7 +362,8 @@ function OrderCard({
       </div>
       {o.status === "issue" && (
         <div className="rounded-[16px] bg-yellow-100 px-4 py-3.5 text-sm text-yellow-900">
-          Contact {o.name.split(" ")[0]} about the receipt:{" "}
+          Contact {o.name.split(" ")[0]} about the{" "}
+          {o.payment.method === "venmo" ? "Venmo payment" : "receipt"}:{" "}
           <a
             href={`mailto:${o.email}?subject=${encodeURIComponent(`Your Balloon x Bros pre-order ${o.id}`)}`}
           >
@@ -359,7 +374,7 @@ function OrderCard({
       )}
       <Input
         size="sm"
-        placeholder="Private note (e.g. receipt amount checked)"
+        placeholder="Private note (e.g. amount checked)"
         value={note}
         onChange={(e) => setNote(e.target.value)}
         onBlur={() => note !== (o.adminNote ?? "") && onUpdate(o.id, { adminNote: note })}
@@ -541,6 +556,7 @@ const SETTING_FIELDS: { key: keyof Settings; label: string; multiline?: boolean 
   { key: "event_address", label: "Street address (map links)" },
   { key: "announcement", label: "Home announcement", multiline: true },
   { key: "donation_url", label: "School donation page URL" },
+  { key: "venmo_handle", label: "Venmo username, without @ (empty hides Venmo)" },
   { key: "contact_email", label: "Contact email" },
 ];
 

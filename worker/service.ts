@@ -14,7 +14,14 @@ import {
 import { clearSessionCookies, isAdmin, makeSessionCookie, safeEqual } from "./auth";
 import { getItemsByIds, getOrder, getSettings, listItems, listOrders } from "./db";
 import { confirmationEmail, sendEmail } from "./email";
-import { checkReceipt, extForType, HttpError, newOrderCode, parseOrderInput } from "./validate";
+import {
+  checkReceipt,
+  extForType,
+  HttpError,
+  newOrderCode,
+  parseOrderInput,
+  parseVenmoHandle,
+} from "./validate";
 
 /** Runs work after the response is sent (`waitUntil` from cloudflare:workers). */
 export type Background = (work: Promise<unknown>) => void;
@@ -53,7 +60,12 @@ export async function createOrder(
     throw new HttpError(400, "Invalid order.");
   }
   const input = parseOrderInput(raw);
-  const receipt = checkReceipt(form.get("receipt"));
+  const { payment } = input;
+  if (payment.method === "venmo" && !settings.venmo_handle) {
+    throw new HttpError(409, "Venmo isn't available. Please donate to the school instead.");
+  }
+  // Only a school donation has a receipt; a Venmo order ignores any file sent.
+  const receipt = payment.method === "school" ? checkReceipt(form.get("receipt")) : null;
 
   const items = await getItemsByIds(
     env.DB,
@@ -85,18 +97,30 @@ export async function createOrder(
   const totalCents = lines.reduce((sum, l) => sum + l.qty * l.unitPriceCents, 0);
 
   const id = newOrderCode();
-  const receiptKey = `receipts/${id}${extForType(receipt.type)}`;
-  await env.FILES.put(receiptKey, receipt.stream(), {
-    httpMetadata: { contentType: receipt.type },
-    customMetadata: { originalName: receipt.name.slice(0, 200) },
-  });
+  const receiptKey = receipt && `receipts/${id}${extForType(receipt.type)}`;
+  if (receipt && receiptKey) {
+    await env.FILES.put(receiptKey, receipt.stream(), {
+      httpMetadata: { contentType: receipt.type },
+      customMetadata: { originalName: receipt.name.slice(0, 200) },
+    });
+  }
 
   // One transaction: order + lines + stock. The stock CHECK constraint makes an
   // oversell (two buyers racing for the last one) fail and roll back everything.
   const stmts = [
     env.DB.prepare(
-      "INSERT INTO orders (id, name, email, phone, total_cents, receipt_key, receipt_type) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    ).bind(id, input.name, input.email, input.phone, totalCents, receiptKey, receipt.type),
+      "INSERT INTO orders (id, name, email, phone, total_cents, payment_method, receipt_key, receipt_type, venmo_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    ).bind(
+      id,
+      input.name,
+      input.email,
+      input.phone,
+      totalCents,
+      payment.method,
+      receiptKey,
+      receipt?.type ?? null,
+      payment.method === "venmo" ? payment.venmoUsername : null,
+    ),
     ...lines.map((l) =>
       env.DB.prepare(
         "INSERT INTO order_items (order_id, item_id, name, unit_price_cents, qty, note) VALUES (?, ?, ?, ?, ?, ?)",
@@ -113,7 +137,7 @@ export async function createOrder(
   try {
     await env.DB.batch(stmts);
   } catch (err) {
-    background(env.FILES.delete(receiptKey));
+    if (receiptKey) background(env.FILES.delete(receiptKey));
     if (String(err).includes("CHECK constraint")) {
       throw new HttpError(409, "Sorry, a limited-edition balloon in your order just sold out.");
     }
@@ -124,6 +148,7 @@ export async function createOrder(
     id,
     name: input.name,
     totalCents,
+    paymentMethod: payment.method,
     status: "submitted",
     lines: lines.map((l) => ({
       itemId: l.itemId,
@@ -197,8 +222,9 @@ export async function adminReceipt(
 ): Promise<R2ObjectBody> {
   const order = await env.DB.prepare("SELECT receipt_key FROM orders WHERE id = ?")
     .bind(orderId)
-    .first<{ receipt_key: string }>();
-  const obj = order && (await env.FILES.get(order.receipt_key));
+    .first<{ receipt_key: string | null }>();
+  // A Venmo order has no receipt.
+  const obj = order?.receipt_key ? await env.FILES.get(order.receipt_key) : null;
   if (!obj) throw new HttpError(404, "Receipt not found.");
   return obj;
 }
@@ -333,11 +359,12 @@ export async function adminSaveSettings(
   _auth: AdminAuth,
   body: Record<string, unknown>,
 ): Promise<Settings> {
-  const stmts = SETTING_KEYS.filter((k) => typeof body[k] === "string").map((k) =>
-    env.DB.prepare(
+  const stmts = SETTING_KEYS.filter((k) => typeof body[k] === "string").map((k) => {
+    const raw = (body[k] as string).slice(0, 500);
+    return env.DB.prepare(
       "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-    ).bind(k, (body[k] as string).slice(0, 500)),
-  );
+    ).bind(k, k === "venmo_handle" ? parseVenmoHandle(raw) : raw);
+  });
   if (stmts.length) await env.DB.batch(stmts);
   return getSettings(env.DB);
 }

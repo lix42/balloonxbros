@@ -30,8 +30,11 @@ import {
 
 beforeEach(reset);
 
-async function placeOrder(lines: { itemId: string; qty: number }[]): Promise<PublicOrder> {
-  return (await createOrder(env, orderForm({ lines }), background())).order;
+async function placeOrder(
+  lines: { itemId: string; qty: number }[],
+  payment?: unknown,
+): Promise<PublicOrder> {
+  return (await createOrder(env, orderForm({ lines, payment }), background())).order;
 }
 
 describe("admin login", () => {
@@ -84,7 +87,12 @@ describe("admin orders", () => {
       email: "ada@example.com",
       totalCents: 1400,
       status: "submitted",
-      receiptUrl: `/api/admin/orders/${order.id}/receipt`,
+      paymentMethod: "school",
+      payment: {
+        method: "school",
+        receiptUrl: `/api/admin/orders/${order.id}/receipt`,
+        receiptType: "image/png",
+      },
       emailSent: false,
     });
 
@@ -93,6 +101,24 @@ describe("admin orders", () => {
     expect((await receipt.arrayBuffer()).byteLength).toBe(64);
 
     expect((await rejection(adminReceipt(env, auth, "BXB-ZZZZZ"))).status).toBe(404);
+  });
+
+  it("lists a Venmo order with the username to look for, and no receipt", async () => {
+    const order = await placeOrder([{ itemId: "dog", qty: 1 }], {
+      method: "venmo",
+      venmoUsername: "@ada",
+    });
+    const auth = await adminAuth();
+    const [listed] = await adminOrders(env, auth);
+    expect(listed).toMatchObject({
+      id: order.id,
+      paymentMethod: "venmo",
+      payment: { method: "venmo", venmoUsername: "ada" },
+    });
+    expect(await rejection(adminReceipt(env, auth, order.id))).toEqual({
+      status: 404,
+      message: "Receipt not found.",
+    });
   });
 
   it("returns limited stock on cancel and takes it again on un-cancel", async () => {
@@ -236,5 +262,24 @@ describe("admin settings", () => {
       createOrder(env, orderForm({ lines: [{ itemId: "dog", qty: 1 }] }), background()),
     );
     expect(closed.status).toBe(409);
+  });
+
+  it("stores the Venmo handle without the @ or spaces, and refuses a bad one", async () => {
+    const auth = await adminAuth();
+    const before = await adminSaveSettings(env, auth, {});
+    expect((await adminSaveSettings(env, auth, { venmo_handle: " @huhuwen " })).venmo_handle).toBe(
+      "huhuwen",
+    );
+    expect((await adminSaveSettings(env, auth, { venmo_handle: "" })).venmo_handle).toBe("");
+
+    const err = await rejection(
+      adminSaveSettings(env, auth, { venmo_handle: "huhu wen", event_date: "Sun, Nov 22" }),
+    );
+    expect(err.status).toBe(400);
+    expect(err.message).toMatch(/Venmo username/);
+    // Nothing in a refused save is written.
+    const settings = await adminSaveSettings(env, auth, {});
+    expect(settings.venmo_handle).toBe("");
+    expect(settings.event_date).toBe(before.event_date);
   });
 });
