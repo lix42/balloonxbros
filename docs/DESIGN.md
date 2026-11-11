@@ -41,7 +41,7 @@ A student fundraiser selling twist balloons for the school, in about two weeks
      count badge top-left when in cart), name, price. Sold-out tile greyed,
      struck-through price, disabled +. Photos are square `public/balloons/<id>.jpg`
      (600×600; the whole 3:2 photo fitted in, with a blurred copy filling the
-     edges so no balloon is cut off). Tapping a photo opens a popup
+     edges so no balloon is cut off; made by `scripts/square-photo.py`). Tapping a photo opens a popup
      (`src/components/ui/dialog.tsx`, Base UI Dialog): the photo large, name,
      price, "N left · N in your order", and a red "+ Add to order" button
      (disabled when sold out or all left are in the order). Esc, ✕ or a tap
