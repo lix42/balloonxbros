@@ -42,7 +42,8 @@ A student fundraiser selling twist balloons for the school, in about two weeks
      links to Maps in blue 700), link "See the donation steps" → `/donate`.
    - "How pre-ordering works": 3 numbered steps.
    - "The balloon menu": 3-col grid of tiles (tinted square, photo or
-     illustration, + button bottom-left, yellow "N left" badge top-right,
+     illustration, + button bottom-left, − button bottom-right once the
+     balloon is in the order (removes one), yellow "N left" badge top-right,
      count badge top-left when in cart), name, price. Sold-out tile greyed,
      struck-through price, disabled +. Photos are square `public/balloons/<id>.jpg`
      (600×600; the whole 3:2 photo fitted in, with a blurred copy filling the
