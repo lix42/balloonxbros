@@ -14,9 +14,9 @@ Venmo is the second way to pay, to **@huhuwen** (`venmo_handle`, migration
 
 ## Event details (`settings` table)
 
-| Key             | Placeholder              | Shown on                               |
-| --------------- | ------------------------ | -------------------------------------- |
-| `contact_email` | `hello@balloonxbros.com` | Footer; reply-to on confirmation email |
+| Key             | Placeholder              | Shown on                                                        |
+| --------------- | ------------------------ | --------------------------------------------------------------- |
+| `contact_email` | `hello@balloonxbros.com` | Footer; reply-to on confirmation email; gets the new-order note |
 
 ## Menu (`items` table)
 

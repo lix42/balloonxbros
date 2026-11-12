@@ -1,5 +1,6 @@
 import { EVENT_MAP, eventMapUrl } from "../shared/place";
-import { formatCents, type PublicOrder, type Settings } from "../shared/types";
+import { usPhoneDigits } from "../shared/phone";
+import { formatCents, type PaymentInput, type PublicOrder, type Settings } from "../shared/types";
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
@@ -46,6 +47,57 @@ export function confirmationEmail(order: PublicOrder, s: Settings, siteUrl: stri
   ].join("\n");
 
   return { subject: `Your Balloon x Bros pre-order ${order.id}`, html, text };
+}
+
+/** How to reach the buyer and check their payment: what an order adds to its PublicOrder. */
+export interface OrderContact {
+  email: string;
+  phone: string;
+  payment: PaymentInput;
+}
+
+/** The "new order" note to the team (contact_email), sent beside the buyer's confirmation. */
+export function orderNotificationEmail(order: PublicOrder, buyer: OrderContact, siteUrl: string) {
+  const venmo = buyer.payment.method === "venmo" ? buyer.payment.venmoUsername : null;
+  const payment = venmo
+    ? `Paid on Venmo as @${venmo}. Check that it came in.`
+    : "Donated to the school. The receipt is in admin.";
+  const adminUrl = new URL("/admin", siteUrl).href;
+  const lineText = (l: PublicOrder["lines"][number]) =>
+    `${l.qty} × ${l.name}${l.note ? ` (${l.note})` : ""}`;
+
+  const html = `<!doctype html><html><body style="margin:0;font-family:Nunito,Arial,sans-serif;color:#1B1F3B">
+<div style="max-width:520px;margin:0 auto;padding:20px">
+<h1 style="font-size:20px;margin:0 0 12px">New order ${order.id}: ${formatCents(order.totalCents)}</h1>
+<p style="margin:0 0 12px;line-height:1.5"><strong>${esc(order.name)}</strong><br>
+<a href="mailto:${esc(buyer.email)}" style="color:#2257C9">${esc(buyer.email)}</a><br>
+<a href="tel:+1${usPhoneDigits(buyer.phone)}" style="color:#2257C9">${esc(buyer.phone)}</a></p>
+<ul style="margin:0 0 12px;padding-left:20px;line-height:1.5">${order.lines
+    .map((l) => `<li>${esc(lineText(l))}</li>`)
+    .join("")}</ul>
+<p style="margin:0 0 12px;line-height:1.5">${esc(payment)}</p>
+<p style="margin:0"><a href="${esc(adminUrl)}" style="color:#2257C9">Open admin</a> · Reply to write to ${esc(order.name)}.</p>
+</div></body></html>`;
+
+  const text = [
+    `New order ${order.id}: ${formatCents(order.totalCents)}`,
+    "",
+    order.name,
+    buyer.email,
+    buyer.phone,
+    "",
+    ...order.lines.map(lineText),
+    "",
+    payment,
+    `Admin: ${adminUrl}`,
+  ].join("\n");
+
+  const how = venmo ? "Venmo" : "school donation";
+  return {
+    subject: `New order ${order.id} — ${formatCents(order.totalCents)} (${how})`,
+    html,
+    text,
+  };
 }
 
 /** Sends via Resend. Returns false (without throwing) when not configured or on failure. */

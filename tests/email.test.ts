@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { PublicOrder, Settings } from "../shared/types";
-import { confirmationEmail } from "../worker/email";
+import { confirmationEmail, orderNotificationEmail } from "../worker/email";
 
 const order: PublicOrder = {
   id: "BB-1234",
@@ -53,5 +53,41 @@ describe("confirmation email", () => {
     expect(venmo.html).toContain("check your Venmo payment");
     expect(venmo.html).toContain(">Paid on Venmo</td>");
     expect(venmo.text).toContain("Paid on Venmo: $5");
+  });
+});
+
+describe("order notification email", () => {
+  const buyer = { email: "ada@example.com", phone: "(425) 555-0100" };
+  const noted: PublicOrder = {
+    ...order,
+    name: "Ada <Lovelace>",
+    lines: [{ ...order.lines[0], qty: 2, note: "red & blue" }],
+  };
+
+  it("gives the buyer's contact, the balloons and the admin link", () => {
+    const { subject, html, text } = orderNotificationEmail(
+      noted,
+      { ...buyer, payment: { method: "school" } },
+      "https://balloonxbros.com",
+    );
+    expect(subject).toBe("New order BB-1234 — $5 (school donation)");
+    expect(html).toContain("<strong>Ada &#60;Lovelace&#62;</strong>");
+    expect(html).toContain('href="mailto:ada@example.com"');
+    expect(html).toContain('href="tel:+14255550100"');
+    expect(html).toContain("<li>2 × Balloon Dog (red &#38; blue)</li>");
+    expect(html).toContain('href="https://balloonxbros.com/admin"');
+    expect(text).toContain("2 × Balloon Dog (red & blue)");
+    expect(text).toContain("Donated to the school. The receipt is in admin.");
+    expect(text).toContain("Admin: https://balloonxbros.com/admin");
+  });
+
+  it("names the Venmo username to look for", () => {
+    const { subject, text } = orderNotificationEmail(
+      order,
+      { ...buyer, payment: { method: "venmo", venmoUsername: "ada-l" } },
+      "https://balloonxbros.com",
+    );
+    expect(subject).toBe("New order BB-1234 — $5 (Venmo)");
+    expect(text).toContain("Paid on Venmo as @ada-l. Check that it came in.");
   });
 });

@@ -80,7 +80,8 @@ https://claude.ai/artifact/XxCQyYroyUzx8EyymEZv5b. If the canvas and code disagr
   items) or /admin; see `docs/PLACEHOLDERS.md`. Every item has a stock count
   (`stock` NULL = unlimited survives only on legacy rows); `items.category` is
   unused (always `'menu'`).
-- Resend for customer confirmation email (skipped when `RESEND_API_KEY` unset).
+- Resend for the customer confirmation email and a "New order" note to
+  `contact_email` (reply-to the buyer); both skipped when `RESEND_API_KEY` is unset.
 - Domain: balloonxbros.com (registered on Cloudflare).
 - Vite+ (`vite-plus`, the `vp` CLI) wraps Vite, Vitest, Oxlint and Oxfmt;
   config lives in `vite.config.ts` (`fmt`, `lint` blocks). `vite`/`vitest` are
