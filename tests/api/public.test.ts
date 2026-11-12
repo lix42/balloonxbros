@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { beforeEach, describe, expect, it } from "vite-plus/test";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { createOrder, getMenu, getPhoto } from "../../worker/service";
 import {
   background,
@@ -279,5 +279,59 @@ describe("getPhoto", () => {
     ]) {
       expect((await rejection(getPhoto(env, key))).status).toBe(404);
     }
+  });
+});
+
+describe("createOrder emails", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  /** Submits with Resend configured and a stubbed fetch; returns what was sent. */
+  async function sendWith(fetchImpl: (to: string) => Response) {
+    const sent: { to: string[]; reply_to: string; subject: string }[] = [];
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+      const body = JSON.parse(init?.body as string);
+      sent.push(body);
+      return fetchImpl(body.to[0]);
+    });
+    const bg = background();
+    const { order } = await createOrder(
+      { ...env, RESEND_API_KEY: "test-key" },
+      orderForm({
+        lines: [{ itemId: "dog", qty: 1 }],
+        payment: { method: "venmo", venmoUsername: "ada-l" },
+      }),
+      bg,
+    );
+    await bg.settled();
+    const row = await env.DB.prepare("SELECT email_sent FROM orders WHERE id = ?")
+      .bind(order.id)
+      .first<{ email_sent: number }>();
+    return { order, sent, emailSent: row?.email_sent };
+  }
+
+  it("sends the buyer a confirmation and the team a new-order note", async () => {
+    const { order, sent, emailSent } = await sendWith(() => new Response("{}"));
+    const byTo = Object.fromEntries(sent.map((m) => [m.to[0], m]));
+    expect(Object.keys(byTo).sort()).toEqual(["ada@example.com", "hello@balloonxbros.com"]);
+    expect(byTo["ada@example.com"]).toMatchObject({ reply_to: "hello@balloonxbros.com" });
+    expect(byTo["hello@balloonxbros.com"]).toMatchObject({
+      reply_to: "ada@example.com",
+      subject: `New order ${order.id} — $5 (Venmo)`,
+    });
+    expect(emailSent).toBe(1);
+  });
+
+  it("still marks the buyer's email sent when the team note fails", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const { emailSent } = await sendWith((to) =>
+      to === "hello@balloonxbros.com" ? new Response("nope", { status: 500 }) : new Response("{}"),
+    );
+    expect(emailSent).toBe(1);
+  });
+
+  it("skips the team note when no contact email is set", async () => {
+    await env.DB.prepare("UPDATE settings SET value = '' WHERE key = 'contact_email'").run();
+    const { sent } = await sendWith(() => new Response("{}"));
+    expect(sent.map((m) => m.to[0])).toEqual(["ada@example.com"]);
   });
 });

@@ -13,7 +13,7 @@ import {
 } from "../shared/types";
 import { clearSessionCookies, isAdmin, makeSessionCookie, safeEqual } from "./auth";
 import { getItemsByIds, getOrder, getSettings, listItems, listOrders } from "./db";
-import { confirmationEmail, sendEmail } from "./email";
+import { confirmationEmail, orderNotificationEmail, sendEmail } from "./email";
 import {
   checkReceipt,
   extForType,
@@ -173,6 +173,17 @@ export async function createOrder(
       }
     })().catch((e) => console.error("email", e)),
   );
+  // Tell the team too; independent of the buyer's email, so either can fail alone.
+  if (settings.contact_email) {
+    background(
+      sendEmail(
+        env,
+        settings.contact_email,
+        input.email,
+        orderNotificationEmail(order, input, env.SITE_URL),
+      ).catch((e) => console.error("notify email", e)),
+    );
+  }
 
   return { order, settings };
 }
